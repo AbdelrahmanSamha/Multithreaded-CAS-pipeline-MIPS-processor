@@ -1,0 +1,32 @@
+#include "DecodeStage.h"
+#include "ConsoleLogger.h"
+
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* pipe)
+	: clk(clock), IFIDpipe(pipe) {
+	// Launch the decoding thread and store it in the class
+	Decodethread = std::thread([this]() { Decodejob(); });
+}
+
+
+void DecodeStage::Decodejob() {
+
+	//keep working 
+	while (true) {
+		logToConsole("\t\t\t\t\t\tDecodethread waiting for clock tick\n");
+		clk->waitforClockTick(); //called at the beggining of all the stages. 
+		logToConsole("\t\t\t\t\t\tDecodethread starting new clock \n");
+
+		//read data fro,m critical section 
+		IFIDpipe->readdata(PC, MC);
+
+		//do logic with PC and MC
+		std::cout << "\t\t\t\t\t\tAfterCritical sec read" << "\n" << std::endl;
+		std::cout << "\t\t\t\t\t\tdPC = " << PC << " dMC = " << MC << "\n" << std::endl;
+	}
+}
+DecodeStage::~DecodeStage() {
+	// Join the thread to ensure proper cleanup
+	if (Decodethread.joinable()) {
+		Decodethread.join();
+	}
+}

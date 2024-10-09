@@ -15,51 +15,51 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IFID.cpp">
+    <ClCompile Include="src\IFID.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FetchStage.cpp">
+    <ClCompile Include="src\FetchStage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DecodeStage.cpp">
+    <ClCompile Include="src\DecodeStage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Assembler.cpp">
+    <ClCompile Include="src\Assembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConsoleLogger.cpp">
+    <ClCompile Include="src\ConsoleLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Editor.cpp">
+    <ClCompile Include="src\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalClock.cpp">
+    <ClCompile Include="src\GlobalClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assembler.h">
+    <ClInclude Include="src\Assembler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConsoleLogger.h">
+    <ClInclude Include="src\ConsoleLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DecodeStage.h">
+    <ClInclude Include="src\DecodeStage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Editor.h">
+    <ClInclude Include="src\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FetchStage.h">
+    <ClInclude Include="src\FetchStage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalClock.h">
+    <ClInclude Include="src\GlobalClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IFID.h">
+    <ClInclude Include="src\IFID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

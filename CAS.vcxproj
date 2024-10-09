@@ -131,23 +131,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Assembler.cpp" />
-    <ClCompile Include="ConsoleLogger.cpp" />
-    <ClCompile Include="DecodeStage.cpp" />
-    <ClCompile Include="Editor.cpp" />
-    <ClCompile Include="FetchStage.cpp" />
-    <ClCompile Include="GlobalClock.cpp" />
-    <ClCompile Include="IFID.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Assembler.cpp" />
+    <ClCompile Include="src\ConsoleLogger.cpp" />
+    <ClCompile Include="src\DecodeStage.cpp" />
+    <ClCompile Include="src\Editor.cpp" />
+    <ClCompile Include="src\FetchStage.cpp" />
+    <ClCompile Include="src\GlobalClock.cpp" />
+    <ClCompile Include="src\IFID.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assembler.h" />
-    <ClInclude Include="ConsoleLogger.h" />
-    <ClInclude Include="DecodeStage.h" />
-    <ClInclude Include="Editor.h" />
-    <ClInclude Include="FetchStage.h" />
-    <ClInclude Include="GlobalClock.h" />
-    <ClInclude Include="IFID.h" />
+    <ClInclude Include="src\Assembler.h" />
+    <ClInclude Include="src\ConsoleLogger.h" />
+    <ClInclude Include="src\DecodeStage.h" />
+    <ClInclude Include="src\Editor.h" />
+    <ClInclude Include="src\FetchStage.h" />
+    <ClInclude Include="src\GlobalClock.h" />
+    <ClInclude Include="src\IFID.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
 #include "DecodeStage.h"
 #include "ConsoleLogger.h"
 
-DecodeStage::DecodeStage(GlobalClock* clock, IFID* pipe)
-	: clk(clock), IFIDpipe(pipe) {
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe)
+	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe) {
 	// Launch the decoding thread and store it in the class
 	Decodethread = std::thread([this]() { Decodejob(); });
 }
@@ -24,7 +24,7 @@ void DecodeStage::Decodejob() {
 		std::cout << "\t\t\t\t\t\tdPC = " << PC << " dMC = " << MC << "\n" << std::endl;
 		//end of deocde logic 
 		//writing to ID/EXE pipe.
-		IDEXEpipe->writedata();
+		IDEXEpipe->writedata(PC, MC);
 	}
 }
 DecodeStage::~DecodeStage() {

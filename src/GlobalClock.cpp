@@ -11,10 +11,8 @@ GlobalClock::GlobalClock(int num_threads)
 
 void GlobalClock::clockTick() {
 
-	while (waiting_threads_to_arrive.load() < 2) //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
+	while (waiting_threads_to_arrive.load() < 3) //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
 	{
-
-		getClockCycles();
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}
 
@@ -24,7 +22,7 @@ void GlobalClock::clockTick() {
 	tick = true;
 
 
-	while (waiting_threads_to_leave < 2) { //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
+	while (waiting_threads_to_leave < 3) { //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
 
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}
@@ -38,15 +36,13 @@ void GlobalClock::clockTick() {
 }
 
 void GlobalClock::waitforClockTick() {
+
+
 	// Increment the counter for waiting threads
 	waiting_threads_to_arrive.fetch_add(1);
 
-
-
 	// Wait at the barrier until all threads reach this point
 	sync_barrier.arrive_and_wait();
-
-
 
 	//make all threads wait until a new cycle starts
 	while (tick == false) {

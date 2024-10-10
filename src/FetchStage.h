@@ -15,18 +15,19 @@ class IFID;        // Forward declaration of IFID
 
 class FetchStage {
 private:
+    // Global Comunication needs:
     GlobalClock* clk;      // Clock object for synchronization
     IFID* IFIDpipe;        // IF/ID pipeline register
-
-    uint32_t PC = 0;       // Program Counter
+private:
+    //Local Stage needs
+    std::thread Fetchthread;      // Thread for the fetch stage
     const std::vector<Instruction>& instructions; // Reference to vector of instructions
-
     uint32_t fetchInstruction();  // Fetch instruction by PC
-    void Fetchjob();              // Fetch job method run by the thread
     bool hasNextInstruction();    // Check if there are more instructions
     uint32_t BaseAddress = 0x00400000;
-    std::thread Fetchthread;      // Thread for the fetch stage
-
+    uint32_t PC = 0;              // Program Counter
+    void Fetchjob();              // Fetch job method run by the thread
+    
 public:
     FetchStage(GlobalClock* clock, IFID* pipe, const std::vector<Instruction>& instrVector);
     ~FetchStage();                // Destructor to join the thread

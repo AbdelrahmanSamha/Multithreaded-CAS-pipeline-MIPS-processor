@@ -1,9 +1,13 @@
 #include <iostream>
+
+
 #include "GlobalClock.h"
 #include "Assembler.h"
-#include "DecodeStage.h"
 #include "FetchStage.h"
 #include "IFID.h"
+#include "DecodeStage.h"
+#include "IDEXE.h"
+#include "ExecuteStage.h"
 #include "Editor.h"
 
 
@@ -22,13 +26,24 @@ int main() {
     Assembler assembler(inputFileName, outputFileName);
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
+
     // generate a clock for 2 threads, among with the stages initialization and IF/ID pipe
-    GlobalClock clk(2);
-    IFID pipe;
-    FetchStage Fetchthread(&clk, &pipe, assembler.getInstructions());
-    DecodeStage Decodethread(&clk, &pipe);
+
+    GlobalClock clk(3); //remember to change this (num_threads), when you add a new stage.
+
+    //define the pipes before making objects of each stage 
+    IFID IFIDpipe;
+    IDEXE IDEXEpipe;
+
+    FetchStage Fetchthread(&clk, &IFIDpipe, assembler.getInstructions());
+  
+    DecodeStage Decodethread(&clk, &IFIDpipe,&IDEXEpipe);
+
+    ExecuteStage Executethread(&clk, &IDEXEpipe);
+
+
     //generate 2 clock ticks
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 5; i++)
         clk.clockTick();
 
     return 0;

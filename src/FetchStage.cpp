@@ -25,12 +25,12 @@ void FetchStage::Fetchjob() {
 
         std::cout << "Fetched instruction (PC = " << std::hex << PC << "): " << std::hex << fetchedInstruction << std::endl;
 
-        PC += 4; // Increment PC to the next instruction
+       
 
         // Here we would write the fetched instruction to the IF/ID pipeline register
         IFIDpipe->writedata(PC, fetchedInstruction); // Placeholder for now
 
-
+        PC += 4; // Increment PC to the next instruction
     }
 }
 

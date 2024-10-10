@@ -7,12 +7,13 @@
 
 class GlobalClock; // Forward declaration of GlobalClock
 class IFID;        // Forward declaration of IFID
-
+class IDEXE;       // Forward declaration of IFID 
 class DecodeStage {
 private:
 
     GlobalClock* clk;
     IFID* IFIDpipe;
+    IDEXE* IDEXEpipe;
     std::thread Decodethread;
     void Decodejob();
     uint32_t PC;	//Programcounter

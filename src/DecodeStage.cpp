@@ -22,6 +22,9 @@ void DecodeStage::Decodejob() {
 		//do logic with PC and MC
 		std::cout << "\t\t\t\t\t\tAfterCritical sec read" << "\n" << std::endl;
 		std::cout << "\t\t\t\t\t\tdPC = " << PC << " dMC = " << MC << "\n" << std::endl;
+		//end of deocde logic 
+		//writing to ID/EXE pipe.
+		IDEXEpipe->writedata();
 	}
 }
 DecodeStage::~DecodeStage() {

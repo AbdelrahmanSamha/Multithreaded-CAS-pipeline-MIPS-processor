@@ -131,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ExecuteStage.cpp" />
+    <ClCompile Include="src\IDEXE.cpp" />
     <ClCompile Include="src\Assembler.cpp" />
     <ClCompile Include="src\ConsoleLogger.cpp" />
     <ClCompile Include="src\DecodeStage.cpp" />
@@ -141,6 +143,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ExecuteStage.h" />
+    <ClInclude Include="src\IDEXE.h" />
     <ClInclude Include="src\Assembler.h" />
     <ClInclude Include="src\ConsoleLogger.h" />
     <ClInclude Include="src\DecodeStage.h" />

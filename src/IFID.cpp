@@ -29,9 +29,7 @@ void IFID::readdata(uint32_t& PCout, uint32_t& MCout) {
     PCout = this->PC;
     MCout = this->MC;
 
-    // Release semaphore s2
+    // Release 
     s2.release();
-
-    // Release semaphore s1
     s1.release();
 }

@@ -11,7 +11,7 @@ void IDEXE::writedata(uint32_t  PCin, uint32_t  MCin) {
 
     // Write data
     std::cout << "\t\t\t\t\t\tWriting data..." << std::endl;
-    std::cout << " fPC = " << PCin << " fMC = " << MCin << std::endl;
+    std::cout << "\t\t\t\t\t\t dPC = " << PCin << " dMC = " << MCin << std::endl;
     this->PC = PCin;
     this->MC = MCin;
 

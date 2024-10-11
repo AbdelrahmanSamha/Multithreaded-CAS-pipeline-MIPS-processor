@@ -24,6 +24,7 @@ void DecodeStage::Decodejob() {
 		std::cout << "\t\t\t\t\t\tdPC = " << PC << " dMC = " << MC << "\n" << std::endl;
 		//end of deocde logic 
 		//writing to ID/EXE pipe.
+		std::cout << "\t\t\t\t\t\tDecoding logic done..." << std::endl;
 		IDEXEpipe->writedata(PC, MC);
 	}
 }

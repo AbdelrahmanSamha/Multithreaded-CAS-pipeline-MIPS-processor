@@ -131,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EXEMEM.cpp" />
+    <ClCompile Include="src\MemoryStage.cpp" />
     <ClCompile Include="src\ExecuteStage.cpp" />
     <ClCompile Include="src\IDEXE.cpp" />
     <ClCompile Include="src\Assembler.cpp" />
@@ -143,6 +145,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\EXEMEM.h" />
+    <ClInclude Include="src\MemoryStage.h" />
     <ClInclude Include="src\ExecuteStage.h" />
     <ClInclude Include="src\IDEXE.h" />
     <ClInclude Include="src\Assembler.h" />

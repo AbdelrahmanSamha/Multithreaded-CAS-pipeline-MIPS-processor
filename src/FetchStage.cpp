@@ -1,7 +1,7 @@
 #include "FetchStage.h"
 #include "ConsoleLogger.h"
-FetchStage::FetchStage(GlobalClock* clock, IFID* pipe, const std::vector<Instruction>& instrVector)
-    : clk(clock), IFIDpipe(pipe), instructions(instrVector), PC(0x00400000) {
+FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe)
+    : clk(clock), instructions(instrVector), IFIDpipe(pipe),  PC(0x00400000) {
     Fetchthread = std::thread([this]() { Fetchjob(); });
 }
 
@@ -13,9 +13,9 @@ FetchStage::~FetchStage() {
 
 void FetchStage::Fetchjob() {
     while (true) {
-        logToConsole("Fetchthread waiting for clock tick\n");
+        ConsoleLog(1,"Fetchthread waiting for clock tick");
         clk->waitforClockTick(); // Wait for the global clock tick
-        logToConsole("Fetchthread starting new clock");
+        ConsoleLog(1,"Fetchthread starting new clock");
         if (!hasNextInstruction()) {
             std::cout << "No more instructions to fetch. Fetchthread terminated." << std::endl;
             break; // Exit the loop when there are no more instructions
@@ -23,7 +23,7 @@ void FetchStage::Fetchjob() {
 
         uint32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
 
-        std::cout << "Fetched instruction (PC = " << std::hex << PC << "): " << std::hex << fetchedInstruction << std::endl;
+        ConsoleLog(1,"Fetched instruction (PC = " , std::hex , PC , "): " , std::hex , fetchedInstruction );
 
        
 
@@ -38,7 +38,7 @@ bool FetchStage::hasNextInstruction() {
 
 
     // Calculate the maximum PC value, which corresponds to the last instruction's address
-    uint32_t maxPC = BaseAddress + (instructions.size() * 4);
+    size_t maxPC = BaseAddress + (instructions.size() * 4);
 
     // Check if the PC has reached or exceeded the end of the instruction vector
     return PC < maxPC;
@@ -51,7 +51,7 @@ uint32_t FetchStage::fetchInstruction() {
     // Calculate the current index 
     uint32_t currentIndex = (PC - BaseAddress) / 4;
 
-    std::cout << "Current Index: " << currentIndex << "\n";
+    ConsoleLog(1, "Current Index: " , currentIndex);
 
     // Return the machine code of the instruction at the current index
     return instructions[currentIndex].machineCode;

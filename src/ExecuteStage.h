@@ -9,7 +9,7 @@
 
 class GlobalClock;// Forward declaration of GlobalClock
 class IDEXE;// Forward declaration of IDEXE
-class EXEMEM; //// Forward declaration of EXEMEM
+class EXEMEM; // Forward declaration of EXEMEM
 class ExecuteStage {
 private:
 	// Global Comunication needs:
@@ -25,7 +25,7 @@ private:
 	void Executejob(); 
 
 public:
-	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe);
+	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe);
 	~ExecuteStage();
 };
 

@@ -1,4 +1,5 @@
 #include "IDEXE.h"
+#include "ConsoleLogger.h"
 
 
 // Constructor to initialize binary semaphores
@@ -10,8 +11,8 @@ void IDEXE::writedata(uint32_t  PCin, uint32_t  MCin) {
     s2.acquire();
 
     // Write data
-    std::cout << "\t\t\t\t\t\tWriting data..." << std::endl;
-    std::cout << "\t\t\t\t\t\t dPC = " << PCin << " dMC = " << MCin << std::endl;
+    ConsoleLog(2, "Writing data..." );
+    ConsoleLog(2, "dPC = " ,PCin ," dMC = " ,MCin );
     this->PC = PCin;
     this->MC = MCin;
 
@@ -24,8 +25,7 @@ void IDEXE::readdata(uint32_t& PCout, uint32_t& MCout) {
     s2.acquire();
 
     // Read data
-
-    std::cout << "\t\t\t\t\t\t\t\t\t\t\t\tReading data..." << std::endl;
+    ConsoleLog(3, "Reading data..." );
     PCout = this->PC;
     MCout = this->MC;
 

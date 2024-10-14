@@ -1,14 +1,17 @@
 #include <iostream>
 
-
-#include "GlobalClock.h"
+#include "Editor.h"
 #include "Assembler.h"
+#include "GlobalClock.h"
+
 #include "FetchStage.h"
 #include "IFID.h"
 #include "DecodeStage.h"
 #include "IDEXE.h"
 #include "ExecuteStage.h"
-#include "Editor.h"
+#include "EXEMEM.h"
+#include "MemoryStage.h"
+
 
 
 int main() {
@@ -27,19 +30,23 @@ int main() {
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
 
-    // generate a clock for 2 threads, among with the stages initialization and IF/ID pipe
+    // generate a clock for 4 threads, among with the stages initialization and IF/ID pipe
 
-    GlobalClock clk(3); //remember to change this (num_threads), when you add a new stage.
+    GlobalClock clk(4); //remember to change this (num_threads), when you add a new stage.
 
     //define the pipes before making objects of each stage 
     IFID IFIDpipe;
     IDEXE IDEXEpipe;
+    EXEMEM EXEMEMpipe;
 
-    FetchStage Fetchthread(&clk, &IFIDpipe, assembler.getInstructions());
+    //Stages object takes: (clk, previous memory or pipe, next_pipe)
+    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe);
   
     DecodeStage Decodethread(&clk, &IFIDpipe,&IDEXEpipe);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe);
+
+    MemoryStage Memorythread(&clk, &EXEMEMpipe);
 
 
     //generate 2 clock ticks

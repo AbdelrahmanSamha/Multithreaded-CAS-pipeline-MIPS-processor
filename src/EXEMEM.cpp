@@ -1,4 +1,5 @@
 #include "EXEMEM.h"
+#include "ConsoleLogger.h"
 
 
 // Constructor to initialize binary semaphores
@@ -10,8 +11,8 @@ void EXEMEM::writedata(uint32_t  PCin, uint32_t  MCin) {
     s2.acquire();
 
     // Write data
-    std::cout << "\t\t\t\t\t\tWriting data..." << std::endl;
-    std::cout << "\t\t\t\t\t\t ePC = " << PCin << " eMC = " << MCin << std::endl;
+    ConsoleLog(3,"Writing data...");
+    ConsoleLog(3, "ePC = " ,PCin , " eMC = " , MCin );
     this->PC = PCin;
     this->MC = MCin;
 
@@ -25,7 +26,7 @@ void EXEMEM::readdata(uint32_t& PCout, uint32_t& MCout) {
 
     // Read data
 
-    std::cout << "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tReading data..." << std::endl;
+    ConsoleLog(4, "Reading data...");
     PCout = this->PC;
     MCout = this->MC;
 

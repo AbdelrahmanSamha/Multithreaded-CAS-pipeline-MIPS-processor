@@ -12,16 +12,16 @@ void MemoryStage::Memoryjob() {
 
 	//keep working 
 	while (true) {
-		logToConsole("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMemoryThread waiting for clock tick\n");
+		ConsoleLog(4,"MemoryThread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
-		logToConsole("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tMemoryThread starting new clock \n");
+		ConsoleLog(4, "MemoryThread starting new clock");
 
 		//read data fro,m critical section 
 		EXEMEMpipe->readdata(PC, MC);
 
 		//do logic with PC and MC
-		std::cout << "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tAfterCritical sec read" << "\n" << std::endl;
-		std::cout << "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tmPC = " << PC << " mMC = " << MC << "\n" << std::endl;
+		ConsoleLog(4, "AfterCritical sec read" );
+		ConsoleLog(4, "mPC = " , PC ," mMC = " , MC );
 		//end of deocde logic 
 		//writing to ID/EXE pipe.
 		//EXEMEMpipe->writedata(PC, MC);

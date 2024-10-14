@@ -12,19 +12,21 @@ void DecodeStage::Decodejob() {
 
 	//keep working 
 	while (true) {
-		logToConsole("\t\t\t\t\t\tDecodethread waiting for clock tick\n");
+		ConsoleLog(2, "Decodethread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
-		logToConsole("\t\t\t\t\t\tDecodethread starting new clock \n");
+		ConsoleLog(2, "Decodethread starting new clock");
 
 		//read data fro,m critical section 
 		IFIDpipe->readdata(PC, MC);
 
 		//do logic with PC and MC
-		std::cout << "\t\t\t\t\t\tAfterCritical sec read" << "\n" << std::endl;
-		std::cout << "\t\t\t\t\t\tdPC = " << PC << " dMC = " << MC << "\n" << std::endl;
+
+		ConsoleLog(2, "AfterCritical sec read" );
+		ConsoleLog(2, "dPC = " , PC , "dMC =" , MC );
 		//end of deocde logic 
+		// 
 		//writing to ID/EXE pipe.
-		std::cout << "\t\t\t\t\t\tDecoding logic done..." << std::endl;
+		ConsoleLog(2, "Decoding logic done...");
 		IDEXEpipe->writedata(PC, MC);
 	}
 }

@@ -7,7 +7,7 @@ GlobalClock::GlobalClock(int num_threads)
 
 void GlobalClock::clockTick() {
 
-	while (waiting_threads_to_arrive.load() < 4) //needs to be changed once all the sages are set to 5..
+	while (waiting_threads_to_arrive.load() < 5) //determine the number of stages.
 	{
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}
@@ -18,8 +18,7 @@ void GlobalClock::clockTick() {
 	ConsoleLog(0, "Clock Cycle count = ", ClockCycles);
 	tick = true;
 
-
-	while (waiting_threads_to_leave < 4) { //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
+	while (waiting_threads_to_leave < 5) { //determine number of stages.
 
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}

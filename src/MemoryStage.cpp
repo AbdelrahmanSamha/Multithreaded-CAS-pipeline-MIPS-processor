@@ -1,8 +1,8 @@
 #include "MemoryStage.h"
 #include "ConsoleLogger.h"
 
-MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe)
-	: clk(clock), EXEMEMpipe(prev_pipe) {
+MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe,MEMWB* next_pipe)
+	: clk(clock), EXEMEMpipe(prev_pipe), MEMWBpipe(next_pipe) {
 	// Launch the decoding thread and store it in the class
 	Memorythread = std::thread([this]() { Memoryjob(); });
 }

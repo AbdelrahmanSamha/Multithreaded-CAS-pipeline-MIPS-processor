@@ -8,20 +8,20 @@ WritebackStage::WritebackStage(GlobalClock* clock, MEMWB* prev_pipe)
 }
 
 
-void MemoryStage::Memoryjob() {
+void WritebackStage::WBjob() {
 
 	//keep working 
 	while (true) {
-		ConsoleLog(4, "MemoryThread waiting for clock tick");
+		ConsoleLog(5, "WBthread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
-		ConsoleLog(4, "MemoryThread starting new clock");
+		ConsoleLog(5, "WBthread starting new clock");
 
 		//read data fro,m critical section 
-		EXEMEMpipe->readdata(PC, MC);
+		MEMWBpipe->readdata(PC, MC);
 
 		//do logic with PC and MC
-		ConsoleLog(4, "AfterCritical sec read");
-		ConsoleLog(4, "mPC = ", PC, " mMC = ", MC);
+		ConsoleLog(5, "AfterCritical sec read");
+		ConsoleLog(5, "wPC = ", PC, " wMC = ", MC);
 		//end of deocde logic 
 		
 	}

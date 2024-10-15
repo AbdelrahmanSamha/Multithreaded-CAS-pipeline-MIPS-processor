@@ -7,7 +7,7 @@ std::mutex console_mutex;
 int maxY = 10; 
 
 // Fixed for the coordinates calculations
-const int width = 50; // Width for the stages segment output
+const int width = 45; // Width for the stages segment output
 int yF = 10;
 int yD = 10;
 int yE = 10;

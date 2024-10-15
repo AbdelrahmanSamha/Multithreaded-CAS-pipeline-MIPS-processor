@@ -40,11 +40,11 @@ template<typename... Args>
             SetCursorPosition(startX, startY);
             std::cout << ss.str() << std::endl;
             maxY+=1;
-            yF = maxY;
-            yD = maxY;
-            yE = maxY;
-            yM = maxY;
-            yW = maxY;
+            yF = maxY+ 1;
+            yD = maxY+ 1;
+            yE = maxY+ 1;
+            yM = maxY+ 1;
+            yW = maxY+ 1;
             return; // Correctly return from the function
         }
 

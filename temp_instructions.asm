@@ -8,3 +8,4 @@
     sll  $t1, $t2, 2         
     srl  $s6, $s7, 3         
     addu $t0, $t0, $t1
+

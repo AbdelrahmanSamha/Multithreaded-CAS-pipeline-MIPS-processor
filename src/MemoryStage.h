@@ -23,7 +23,7 @@ private:
 	uint32_t MC= 0;				//MachineCode
 	void Memoryjob();
 public:
-	MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe);
+	MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe,MEMWB* next_pipe);
 	~MemoryStage();
 };
 #endif

@@ -5,13 +5,12 @@
 #include <thread>
 
 class GlobalClock;// Forward declaration of GlobalClock
-class EXEMEM; // Forward declaration of EXEMEM
+class MEMWB; // Forward declaration of EXEMEM
 
 class WritebackStage {
 private:
 	// Global Comunication needs:
 	GlobalClock* clk;
-	EXEMEM* EXEMEMpipe;
 	MEMWB* MEMWBpipe;
 
 private:

@@ -11,7 +11,7 @@ ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pi
 void ExecuteStage::Executejob() {
 
 	//keep working 
-	while (true) {
+	while (running) {
 		ConsoleLog(3,"Executethread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
 		ConsoleLog(3,"Executethread starting new clock");
@@ -26,6 +26,9 @@ void ExecuteStage::Executejob() {
 		//writing to EXE/MEM pipe.
 		EXEMEMpipe->writedata(PC, MC);
 	}
+}
+void ExecuteStage::stop() {
+	running = false;
 }
 ExecuteStage::~ExecuteStage() {
 	// Join the thread to ensure proper cleanup

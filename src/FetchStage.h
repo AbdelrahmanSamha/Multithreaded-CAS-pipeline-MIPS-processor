@@ -27,8 +27,10 @@ private:
     uint32_t BaseAddress = 0x00400000;
     uint32_t PC = 0;              // Program Counter
     void Fetchjob();              // Fetch job method run by the thread
+    bool running = true;          // temporary for debugging purposes.
     
 public:
+    void stop();                    // temporary for debugging purposes.(so we dont use 100%CPU)
     FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe);
     ~FetchStage();                // Destructor to join the thread
 };

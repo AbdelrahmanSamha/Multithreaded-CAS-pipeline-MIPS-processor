@@ -11,7 +11,7 @@ WritebackStage::WritebackStage(GlobalClock* clock, MEMWB* prev_pipe)
 void WritebackStage::WBjob() {
 
 	//keep working 
-	while (true) {
+	while (running) {
 		ConsoleLog(5, "WBthread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
 		ConsoleLog(5, "WBthread starting new clock");
@@ -25,6 +25,10 @@ void WritebackStage::WBjob() {
 		//end of deocde logic 
 		
 	}
+}
+void WritebackStage::stop() {
+	running = false; 
+
 }
 WritebackStage::~WritebackStage() {
 	// Join the thread to ensure proper cleanup

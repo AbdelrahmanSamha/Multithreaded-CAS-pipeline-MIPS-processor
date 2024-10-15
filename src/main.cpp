@@ -1,4 +1,5 @@
 #include <iostream>
+#include <Windows.h>
 
 #include "Editor.h"
 #include "Assembler.h"
@@ -17,6 +18,10 @@
 
 
 int main() {
+    //force the console window to be fullscreen since the ConsoleLogger deals with Y coordinates that need to be available before hand.
+    HWND console = GetConsoleWindow(); 
+    ShowWindow(console, SW_MAXIMIZE);
+
     // Define the temporary file name
     Editor editor;
     std::cout << "Opening file for editing: " << editor.getFileName() << std::endl;
@@ -56,8 +61,14 @@ int main() {
 
 
     //generate 2 clock ticks
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++) {
         clk.clockTick();
+    }
+    Fetchthread.stop();
+    Decodethread.stop();
+    Executethread.stop();
+    Memorythread.stop();
+    WBthread.stop();
 
     return 0;
 }//csmc

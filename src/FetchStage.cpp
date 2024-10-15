@@ -5,14 +5,9 @@ FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instr
     Fetchthread = std::thread([this]() { Fetchjob(); });
 }
 
-FetchStage::~FetchStage() {
-    if (Fetchthread.joinable()) {
-        Fetchthread.join();
-    }
-}
 
 void FetchStage::Fetchjob() {
-    while (true) {
+    while (running) {
         ConsoleLog(1,"Fetchthread waiting for clock tick");
         clk->waitforClockTick(); // Wait for the global clock tick
         ConsoleLog(1,"Fetchthread starting new clock");
@@ -55,4 +50,13 @@ uint32_t FetchStage::fetchInstruction() {
 
     // Return the machine code of the instruction at the current index
     return instructions[currentIndex].machineCode;
+}
+void FetchStage::stop() {
+    running = false; 
+}
+
+FetchStage::~FetchStage() {
+    if (Fetchthread.joinable()) {
+        Fetchthread.join();
+    }
 }

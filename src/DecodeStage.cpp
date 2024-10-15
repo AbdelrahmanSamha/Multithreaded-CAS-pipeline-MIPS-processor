@@ -11,7 +11,7 @@ DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe)
 void DecodeStage::Decodejob() {
 
 	//keep working 
-	while (true) {
+	while (running) {
 		ConsoleLog(2, "Decodethread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
 		ConsoleLog(2, "Decodethread starting new clock");
@@ -29,6 +29,10 @@ void DecodeStage::Decodejob() {
 		ConsoleLog(2, "Decoding logic done...");
 		IDEXEpipe->writedata(PC, MC);
 	}
+}
+
+void DecodeStage::stop() {
+	running = false; 
 }
 DecodeStage::~DecodeStage() {
 	// Join the thread to ensure proper cleanup

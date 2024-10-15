@@ -1,15 +1,13 @@
-#ifndef MEMORYSTAGE_H
-#define MEMORYSTAGE_H
+#ifndef WRITEBACKSTAGE_H
+#define WRITEBACKSTAGE_H
 #include "GlobalClock.h"
-#include "EXEMEM.h"
 #include "MEMWB.h"
 #include <thread>
 
 class GlobalClock;// Forward declaration of GlobalClock
 class EXEMEM; // Forward declaration of EXEMEM
-class MEMWB;  //forward declaration of MEMWB
 
-class MemoryStage {
+class WritebackStage {
 private:
 	// Global Comunication needs:
 	GlobalClock* clk;
@@ -18,12 +16,12 @@ private:
 
 private:
 	//local stage needs: 
-	std::thread Memorythread;
-	uint32_t PC= 0;				//Programcounter
-	uint32_t MC= 0;				//MachineCode
-	void Memoryjob();
+	std::thread Writebackthread;
+	uint32_t PC = 0;				//Programcounter
+	uint32_t MC = 0;				//MachineCode
+	void WBjob();
 public:
-	MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe);
-	~MemoryStage();
+	WritebackStage(GlobalClock* clock, MEMWB* prev_pipe);
+	~WritebackStage();
 };
 #endif

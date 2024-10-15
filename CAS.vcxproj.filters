@@ -69,6 +69,12 @@
     <ClCompile Include="src\IFID.cpp">
       <Filter>Source Files\Pipes</Filter>
     </ClCompile>
+    <ClCompile Include="src\WritebackStage.cpp">
+      <Filter>Source Files\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MEMWB.cpp">
+      <Filter>Source Files\Pipes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GlobalClock.h">
@@ -103,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="src\MemoryStage.h">
       <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WritebackStage.h">
+      <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MEMWB.h">
+      <Filter>Header Files\Pipes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

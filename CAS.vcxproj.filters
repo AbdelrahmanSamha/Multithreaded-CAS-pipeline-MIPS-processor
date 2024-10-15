@@ -13,66 +13,108 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Stages">
+      <UniqueIdentifier>{0a85990f-cc4a-471e-9ea6-f912f9b0e666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\IO">
+      <UniqueIdentifier>{9f0f2d40-9bcb-4012-a283-7188cc9617d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pipes">
+      <UniqueIdentifier>{926b16f4-4b17-4098-bb0f-781de296a7a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\IO">
+      <UniqueIdentifier>{e5030b98-7aef-4264-8ed9-7dcff1915a8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Stages">
+      <UniqueIdentifier>{65bbbd5f-f100-429c-ac2b-c2f6fab14b4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Pipes">
+      <UniqueIdentifier>{13feb55d-9692-4d46-a26c-e90d9b89c370}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\IFID.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FetchStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DecodeStage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Assembler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ConsoleLogger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\GlobalClock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\IDEXE.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Assembler.cpp">
+      <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConsoleLogger.cpp">
+      <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor.cpp">
+      <Filter>Source Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DecodeStage.cpp">
+      <Filter>Source Files\Stages</Filter>
     </ClCompile>
     <ClCompile Include="src\ExecuteStage.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FetchStage.cpp">
+      <Filter>Source Files\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MemoryStage.cpp">
+      <Filter>Source Files\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EXEMEM.cpp">
+      <Filter>Source Files\Pipes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IDEXE.cpp">
+      <Filter>Source Files\Pipes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IFID.cpp">
+      <Filter>Source Files\Pipes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WritebackStage.cpp">
+      <Filter>Source Files\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MEMWB.cpp">
+      <Filter>Source Files\Pipes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Assembler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ConsoleLogger.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\DecodeStage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Editor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FetchStage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\GlobalClock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Assembler.h">
+      <Filter>Header Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ConsoleLogger.h">
+      <Filter>Header Files\IO</Filter>
+    </ClInclude>
     <ClInclude Include="src\IFID.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Pipes</Filter>
     </ClInclude>
     <ClInclude Include="src\IDEXE.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Pipes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EXEMEM.h">
+      <Filter>Header Files\Pipes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Editor.h">
+      <Filter>Header Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DecodeStage.h">
+      <Filter>Header Files\Stages</Filter>
     </ClInclude>
     <ClInclude Include="src\ExecuteStage.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FetchStage.h">
+      <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MemoryStage.h">
+      <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WritebackStage.h">
+      <Filter>Header Files\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MEMWB.h">
+      <Filter>Header Files\Pipes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

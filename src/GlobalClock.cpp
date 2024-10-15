@@ -1,28 +1,24 @@
 #include<iostream>
+#include <string>
 #include"GlobalClock.h"
 #include"ConsoleLogger.h"
 GlobalClock::GlobalClock(int num_threads)
-	: tick(false), ClockCycles(0), waiting_threads_to_arrive(0), waiting_threads_to_leave(0), sync_barrier(num_threads) {
-	//tick = false;
-	//ClockCycles = 0;
-	//waiting_threads = 0;
-	//sync_barrier = std::barrier<>(num_threads);
-}
+	: tick(false), ClockCycles(0), waiting_threads_to_arrive(0), waiting_threads_to_leave(0), sync_barrier(num_threads) {}//constructor, initializing all necessary values.
 
 void GlobalClock::clockTick() {
 
-	while (waiting_threads_to_arrive.load() < 3) //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
+	while (waiting_threads_to_arrive.load() < 5) //determine the number of stages.
 	{
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}
 
 	ClockCycles++;
-	std::cout << "\n===========================================================================\n Clock Cycle count = " + std::to_string(ClockCycles) << std::endl;
-
+	std::string separator(200, '=');
+	ConsoleLog(0, separator);
+	ConsoleLog(0, "Clock Cycle count = ", ClockCycles);
 	tick = true;
 
-
-	while (waiting_threads_to_leave < 3) { //needs to be changed once all the sages are set to 5, now working on Fetch&decode.
+	while (waiting_threads_to_leave < 5) { //determine number of stages.
 
 		std::this_thread::sleep_for(std::chrono::nanoseconds(100));
 	}

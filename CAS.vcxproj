@@ -131,6 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MEMWB.cpp" />
+    <ClCompile Include="src\EXEMEM.cpp" />
+    <ClCompile Include="src\MemoryStage.cpp" />
     <ClCompile Include="src\ExecuteStage.cpp" />
     <ClCompile Include="src\IDEXE.cpp" />
     <ClCompile Include="src\Assembler.cpp" />
@@ -141,8 +144,12 @@
     <ClCompile Include="src\GlobalClock.cpp" />
     <ClCompile Include="src\IFID.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\WritebackStage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MEMWB.h" />
+    <ClInclude Include="src\EXEMEM.h" />
+    <ClInclude Include="src\MemoryStage.h" />
     <ClInclude Include="src\ExecuteStage.h" />
     <ClInclude Include="src\IDEXE.h" />
     <ClInclude Include="src\Assembler.h" />
@@ -152,6 +159,7 @@
     <ClInclude Include="src\FetchStage.h" />
     <ClInclude Include="src\GlobalClock.h" />
     <ClInclude Include="src\IFID.h" />
+    <ClInclude Include="src\WritebackStage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

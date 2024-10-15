@@ -1,4 +1,5 @@
 #include "IFID.h"
+#include "ConsoleLogger.h"
 
 
 // Constructor to initialize binary semaphores
@@ -10,8 +11,8 @@ void IFID::writedata(uint32_t  PCin, uint32_t  MCin) {
     s2.acquire();
 
     // Write data
-    std::cout << "Writing data..." << std::endl;
-    std::cout << " fPC = " << PCin << " fMC = " << MCin << std::endl;
+    ConsoleLog(1, "Writing data..." );
+    ConsoleLog(1, " fPC = " , PCin , " fMC = " , MCin );
     this->PC = PCin;
     this->MC = MCin;
 
@@ -25,7 +26,7 @@ void IFID::readdata(uint32_t& PCout, uint32_t& MCout) {
 
     // Read data
 
-    std::cout << "\t\t\t\t\t\tReading data..." << std::endl;
+    ConsoleLog(2, "Reading data...");
     PCout = this->PC;
     MCout = this->MC;
 

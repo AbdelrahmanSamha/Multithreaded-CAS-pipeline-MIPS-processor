@@ -1,18 +1,18 @@
-#include "IDEXE.h"
+#include "MEMWB.h"
 #include "ConsoleLogger.h"
 
 
 // Constructor to initialize binary semaphores
-IDEXE::IDEXE() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
+MEMWB::MEMWB() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
-void IDEXE::writedata(uint32_t  PCin, uint32_t  MCin) {
+void MEMWB::writedata(uint32_t  PCin, uint32_t  MCin) {
     // Acquire the semaphores
     s1.acquire();
     s2.acquire();
 
     // Write data
-    ConsoleLog(2, "Writing data..." );
-    ConsoleLog(2, "dPC = " ,PCin ," dMC = " ,MCin );
+    ConsoleLog(4, "Writing data...");
+    ConsoleLog(4, "mPC = ", PCin, " mMC = ", MCin);
     this->PC = PCin;
     this->MC = MCin;
 
@@ -20,12 +20,13 @@ void IDEXE::writedata(uint32_t  PCin, uint32_t  MCin) {
     s2.release();
 }
 
-void IDEXE::readdata(uint32_t& PCout, uint32_t& MCout) {
+void MEMWB::readdata(uint32_t& PCout, uint32_t& MCout) {
     // Acquire semaphore s2
     s2.acquire();
 
     // Read data
-    ConsoleLog(3, "Reading data..." );
+
+    ConsoleLog(5, "Reading data...");
     PCout = this->PC;
     MCout = this->MC;
 

@@ -29,7 +29,7 @@ private:
     void Fetchjob();              // Fetch job method run by the thread
     
 public:
-    FetchStage(GlobalClock* clock, IFID* pipe, const std::vector<Instruction>& instrVector);
+    FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe);
     ~FetchStage();                // Destructor to join the thread
 };
 

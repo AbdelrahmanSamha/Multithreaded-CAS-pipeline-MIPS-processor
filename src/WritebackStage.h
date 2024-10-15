@@ -19,7 +19,9 @@ private:
 	uint32_t PC = 0;				//Programcounter
 	uint32_t MC = 0;				//MachineCode
 	void WBjob();
+	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 public:
+	void stop(); 
 	WritebackStage(GlobalClock* clock, MEMWB* prev_pipe);
 	~WritebackStage();
 };

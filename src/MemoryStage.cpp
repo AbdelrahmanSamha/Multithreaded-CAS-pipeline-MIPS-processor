@@ -11,7 +11,7 @@ MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe,MEMWB* next_pipe)
 void MemoryStage::Memoryjob() {
 
 	//keep working 
-	while (true) {
+	while (running) {
 		ConsoleLog(4,"MemoryThread waiting for clock tick");
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
 		ConsoleLog(4, "MemoryThread starting new clock");
@@ -25,6 +25,9 @@ void MemoryStage::Memoryjob() {
 		
 		MEMWBpipe->writedata(PC, MC);
 	}
+}
+void MemoryStage::stop() {
+	running = false; 
 }
 MemoryStage::~MemoryStage() {
 	// Join the thread to ensure proper cleanup

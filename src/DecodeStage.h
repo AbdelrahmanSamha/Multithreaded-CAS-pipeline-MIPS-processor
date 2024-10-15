@@ -22,8 +22,9 @@ private:
     uint32_t PC=0;	//Programcounter
     uint32_t MC=0; //MachineCode
     void Decodejob();
+    bool running = true ;// temporary for debugging purposes.(so we dont use 100%CPU)
 public:
-
+    void stop();// temporary for debugging purposes.(so we dont use 100%CPU)
     DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe);
     ~DecodeStage();
 };

@@ -1,4 +1,4 @@
-    addu $t0, $t1, $t2       
+addu $t0, $t1, $t2       
     subu $s0, $s1, $s2      
     add  $a0, $a1, $a2       
     sub  $v0, $v1, $a0       
@@ -8,4 +8,3 @@
     sll  $t1, $t2, 2         
     srl  $s6, $s7, 3         
     addu $t0, $t0, $t1
-

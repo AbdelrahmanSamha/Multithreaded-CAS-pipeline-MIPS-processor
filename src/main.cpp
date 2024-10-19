@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Windows.h>
 
+
 #include "Editor.h"
 #include "Assembler.h"
 #include "GlobalClock.h"
@@ -31,14 +32,14 @@ int main() {
 
     // Create Assembler instance
     std::string inputFileName = editor.getFileName();
-    std::string outputFileName = "DataSegmeant.asm";
+    std::string outputFileName = "TextSegmeant.asm";
 
     Assembler assembler(inputFileName, outputFileName);
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
 
     // generate a clock for 5 threads, among with the stages initialization and pipes
-
+   
     GlobalClock clk(5); //determine the number of threads
 
     //define the pipes before making objects of each stage 

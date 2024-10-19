@@ -36,8 +36,11 @@ void Assembler::assemble() {
     }
 
     std::string line;
+
     while (getline(inputFile, line)) {
+
         uint32_t machineCode = assembleInstruction(line);
+
         if (machineCode == 0xDEADBEEF) {
             std::cerr << "Error assembling line: " << line << "\n";
 
@@ -50,7 +53,7 @@ void Assembler::assemble() {
             line             // Basic assembly code (source code)
         };
 
-        instructionSet.emplace_back(instr); // Store the instruction
+        instructions.emplace_back(instr); // Store the instruction
 
         // Write the instruction details to file
         writeHexToAssembledFile(instr);
@@ -143,5 +146,5 @@ std::string Assembler::trimWhitespace(const std::string& str) {
 
 // Get instructions to allow Fetch stage to retrieve machine code
 const std::vector<Instruction>& Assembler::getInstructions() const {
-    return instructionSet;
+    return instructions;
 }

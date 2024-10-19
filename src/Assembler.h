@@ -17,7 +17,7 @@ class Assembler {
 private:
     std::string inputFileName;
     std::string outputFileName;
-    std::vector<Instruction> instructionSet; // Stores all the instructions with details
+    std::vector<Instruction> instructions; // Stores all the instructions with details
     uint32_t currentAddress;                 // Keeps track of instruction addresses
 
     // Helper functions

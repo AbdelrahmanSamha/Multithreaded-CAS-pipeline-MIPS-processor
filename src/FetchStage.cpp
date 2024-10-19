@@ -1,5 +1,6 @@
 #include "FetchStage.h"
 #include "ConsoleLogger.h"
+#include<iomanip>
 FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe)
     : clk(clock), instructions(instrVector), IFIDpipe(pipe),  PC(0x00400000) {
     Fetchthread = std::thread([this]() { Fetchjob(); });
@@ -18,7 +19,7 @@ void FetchStage::Fetchjob() {
 
         uint32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
 
-        ConsoleLog(1,"Fetched instruction (PC = " , std::hex , PC , "): " , std::hex , fetchedInstruction );
+        ConsoleLog(1,"Fetched instruction (PC = " , std::hex , PC , "): " , std::hex , std::setw(8) ,fetchedInstruction );
 
        
 

@@ -31,6 +31,12 @@
     <Filter Include="Header Files\Pipes">
       <UniqueIdentifier>{13feb55d-9692-4d46-a26c-e90d9b89c370}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Units">
+      <UniqueIdentifier>{0385d7be-b2c9-4ffe-9b67-4a8bfcf1bd8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Units">
+      <UniqueIdentifier>{8afa4e08-8168-4c52-9820-905b15196a55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -75,6 +81,21 @@
     <ClCompile Include="src\MEMWB.cpp">
       <Filter>Source Files\Pipes</Filter>
     </ClCompile>
+    <ClCompile Include="src\ControlUnit.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ForwardingUnit.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Registerfile.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ALU.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InstructionDecoder.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GlobalClock.h">
@@ -115,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="src\MEMWB.h">
       <Filter>Header Files\Pipes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InstructionDecoder.h">
+      <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

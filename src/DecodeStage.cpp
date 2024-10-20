@@ -1,5 +1,6 @@
 #include "DecodeStage.h"
 #include "ConsoleLogger.h"
+#include <iomanip>
 
 DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe)
 	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe) {
@@ -22,7 +23,7 @@ void DecodeStage::Decodejob() {
 		//do logic with PC and MC
 
 		ConsoleLog(2, "AfterCritical sec read" );
-		ConsoleLog(2, "dPC = " , PC , "dMC =" , MC );
+		ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'), PC , " dMC =" , MC );
 		//end of deocde logic 
 		// 
 		//writing to ID/EXE pipe.

@@ -1,6 +1,6 @@
 #include "IDEXE.h"
 #include "ConsoleLogger.h"
-
+#include <iomanip>
 
 // Constructor to initialize binary semaphores
 IDEXE::IDEXE() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
@@ -12,7 +12,7 @@ void IDEXE::writedata(uint32_t  PCin, uint32_t  MCin) {
 
     // Write data
     ConsoleLog(2, "Writing data..." );
-    ConsoleLog(2, "dPC = " ,PCin ," dMC = " ,MCin );
+    ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'),PCin ," dMC = " ,MCin );
     this->PC = PCin;
     this->MC = MCin;
 

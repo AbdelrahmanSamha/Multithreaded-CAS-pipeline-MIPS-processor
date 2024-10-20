@@ -1,5 +1,6 @@
 #include "MemoryStage.h"
 #include "ConsoleLogger.h"
+#include <iomanip>
 
 MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe,MEMWB* next_pipe)
 	: clk(clock), EXEMEMpipe(prev_pipe), MEMWBpipe(next_pipe) {
@@ -21,7 +22,7 @@ void MemoryStage::Memoryjob() {
 
 		//do logic with PC and MC
 		ConsoleLog(4, "AfterCritical sec read" );
-		ConsoleLog(4, "mPC = " , PC ," mMC = " , MC );
+		ConsoleLog(4, "mPC = ", std::hex, std::setw(8), std::setfill('0'), PC ," mMC = " , MC );
 		
 		MEMWBpipe->writedata(PC, MC);
 	}

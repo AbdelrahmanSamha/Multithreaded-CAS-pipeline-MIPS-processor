@@ -1,5 +1,6 @@
 #include "ExecuteStage.h"
 #include "ConsoleLogger.h"
+#include <iomanip>
 
 ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe)
 	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe) {
@@ -21,7 +22,7 @@ void ExecuteStage::Executejob() {
 
 		//do logic with PC and MC
 		ConsoleLog(3, "AfterCritical sec read");
-		ConsoleLog(3, "ePC = ", PC , " eMC = " , MC );
+		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
 		//end of deocde logic 
 		//writing to EXE/MEM pipe.
 		EXEMEMpipe->writedata(PC, MC);

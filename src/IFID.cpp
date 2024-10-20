@@ -1,6 +1,6 @@
 #include "IFID.h"
 #include "ConsoleLogger.h"
-
+#include <iomanip>
 
 // Constructor to initialize binary semaphores
 IFID::IFID() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
@@ -12,7 +12,7 @@ void IFID::writedata(uint32_t  PCin, uint32_t  MCin) {
 
     // Write data
     ConsoleLog(1, "Writing data..." );
-    ConsoleLog(1, " fPC = " , PCin , " fMC = " , MCin );
+    ConsoleLog(1, " fPC = ", std::hex, std::setw(8), std::setfill('0'), PCin , " fMC = " , MCin );
     this->PC = PCin;
     this->MC = MCin;
 

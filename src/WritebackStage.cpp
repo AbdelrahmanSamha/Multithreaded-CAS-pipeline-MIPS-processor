@@ -1,5 +1,6 @@
 #include "WritebackStage.h"
 #include "ConsoleLogger.h"
+#include <iomanip>
 
 WritebackStage::WritebackStage(GlobalClock* clock, MEMWB* prev_pipe)
 	: clk(clock), MEMWBpipe(prev_pipe) {
@@ -21,7 +22,7 @@ void WritebackStage::WBjob() {
 
 		//do logic with PC and MC
 		ConsoleLog(5, "AfterCritical sec read");
-		ConsoleLog(5, "wPC = ", PC, " wMC = ", MC);
+		ConsoleLog(5, "wPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " wMC = ", MC);
 		//end of deocde logic 
 		
 	}

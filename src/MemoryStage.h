@@ -1,3 +1,4 @@
+#pragma once
 #ifndef MEMORYSTAGE_H
 #define MEMORYSTAGE_H
 #include "GlobalClock.h"

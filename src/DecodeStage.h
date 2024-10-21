@@ -1,10 +1,17 @@
 #pragma once
 #ifndef DECODESTAGE_H
 #define DECODESTAGE_h
+
+#include <thread>
+
+
 #include "GlobalClock.h"
 #include "IFID.h"
 #include"IDEXE.h"
-#include <thread>
+#include "RegisterFile.h"
+#include "ControlUnit.h"
+
+
 
 class GlobalClock; // Forward declaration of GlobalClock
 class IFID;        // Forward declaration of IFID 
@@ -16,6 +23,8 @@ private:
     GlobalClock* clk;
     IFID* IFIDpipe;
     IDEXE* IDEXEpipe;
+    ControlUnit* CU;
+    RegisterFile* RF;
 private: 
     //local stage needs:
     std::thread Decodethread;
@@ -25,7 +34,7 @@ private:
     bool running = true ;// temporary for debugging purposes.(so we dont use 100%CPU)
 public:
     void stop();// temporary for debugging purposes.(so we dont use 100%CPU)
-    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe);
+    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf);
     ~DecodeStage();
 };
 

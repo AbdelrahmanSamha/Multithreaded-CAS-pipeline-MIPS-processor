@@ -5,7 +5,7 @@
 #include "Editor.h"
 #include "Assembler.h"
 #include "GlobalClock.h"
-
+//stages and pipes
 #include "FetchStage.h"
 #include "IFID.h"
 #include "DecodeStage.h"
@@ -15,6 +15,9 @@
 #include "MemoryStage.h"
 #include "MEMWB.h"
 #include "WritebackStage.h"
+//units 
+#include "RegisterFile.h"
+#include "ControlUnit.h"
 
 
 
@@ -38,6 +41,12 @@ int main() {
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
 
+    //Initializing of the units in the data path 
+    ControlUnit CU;
+    RegisterFile RF;
+
+    
+
     // generate a clock for 5 threads, among with the stages initialization and pipes
    
     GlobalClock clk(5); //determine the number of threads
@@ -51,7 +60,7 @@ int main() {
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
     FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe);
   
-    DecodeStage Decodethread(&clk, &IFIDpipe,&IDEXEpipe);
+    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF);
 
     ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe);
 

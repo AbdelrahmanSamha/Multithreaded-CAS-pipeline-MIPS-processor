@@ -87,7 +87,7 @@
     <ClCompile Include="src\ForwardingUnit.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
-    <ClCompile Include="src\Registerfile.cpp">
+    <ClCompile Include="src\RegisterFile.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
     <ClCompile Include="src\ALU.cpp">
@@ -138,6 +138,12 @@
       <Filter>Header Files\Pipes</Filter>
     </ClInclude>
     <ClInclude Include="src\InstructionDecoder.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RegisterFile.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ControlUnit.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

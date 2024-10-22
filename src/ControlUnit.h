@@ -13,7 +13,7 @@ public:
     void setControlSignals(uint8_t opcode, uint8_t funct);
 
     // Accessors for control signals
-    uint8_t getAluOp() const;
+    uint8_t getALUOp() const ;
     bool getRegDst() const;
     bool getBranch() const;
     bool getMemReadEn() const;
@@ -25,7 +25,7 @@ public:
 
 private:
     // Control signals
-    uint8_t aluop;
+    uint8_t ALUOp;
     bool RegDst;
     bool Branch;
     bool MemReadEn;

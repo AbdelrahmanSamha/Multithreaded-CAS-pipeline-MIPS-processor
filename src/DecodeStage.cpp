@@ -20,10 +20,11 @@ void DecodeStage::Decodejob() {
 		//read data fro,m critical section 
 		IFIDpipe->readdata(PC, MC);
 
+		ConsoleLog(2, std::hex ,std::setw(8), MC);
 		ConsoleLog(2, "AfterCritical sec read");
 		ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " dMC =", MC);
 
-		//**********************************************************************do logic with PC and MC**********************************************************************//
+		//**********************************************************************Decode STAGE start**********************************************************************//
 		//Instruction decoding...
 		uint8_t opcode = (MC >> 26) & 0x3F;  // 6-bit opcode
 		uint8_t rs = (MC >> 21) & 0x1F;      // 5-bit source register
@@ -35,11 +36,24 @@ void DecodeStage::Decodejob() {
 		uint32_t address = MC & 0x03FFFFFF;   // 26-bit address (for jump)
 		
 
-		//ControlUnit signals generation
+		//**********************************************************************ControlUnit signals generation**********************************************************************//
 		CU->setControlSignals(opcode, funct);
+		//get the control signals 
+
+		uint8_t ALUOp = CU->getALUOp();
+		bool ALUsrc = CU->getAluSrc();
+		bool Branch = CU->getBranch();
+		bool JumpSel = CU->getJumpSel();
+		bool MemReadEn = CU->getMemReadEn();
+		bool MemtoReg = CU->getMemtoReg();
+		bool MemWriteEn = CU->getMemWriteEn();
+		bool RegDst = CU->getRegDst();
+		bool RegWriteEn = CU->getRegWriteEn();
+	 
+		//Sending the signals to the required UNITS 
 
 
-		//RF write 
+		//RF read
 		uint32_t readdata1;
 		uint32_t readdata2;
 		RF->readRegisters(rs, rt, readdata1, readdata2);
@@ -47,12 +61,15 @@ void DecodeStage::Decodejob() {
 		bool Zero; //zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise.
 		Zero = (readdata1 == readdata2);
 
+		
+		IDEXEpipe->writedata(PC,MC, ALUOp,RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn);
+
 
 		//end of deocde logic 
 		// 
 		//writing to ID/EXE pipe.
 		ConsoleLog(2, "Decoding logic done...");
-		IDEXEpipe->writedata(PC, MC);
+		//IDEXEpipe->writedata(PC, MC);
 	}
 }
 

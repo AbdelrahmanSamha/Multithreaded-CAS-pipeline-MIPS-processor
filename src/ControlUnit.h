@@ -25,16 +25,17 @@ public:
 
 private:
     // Control signals
+    //signals sent to the pipe
     uint8_t ALUOp;
     bool RegDst;
-    bool Branch;
     bool MemReadEn;
     bool MemtoReg;
     bool MemWriteEn;
     bool RegWriteEn;
     bool ALUSrc;
+    //signals sent to FetchStage
     bool JumpSel;
-
+    bool Branch;
     // Constants for opcodes and funct
     static const uint8_t Rtype = 0x00;
     static const uint8_t ADD = 0x20, ADDU = 0x21, SUB = 0x22, SUBU = 0x23;

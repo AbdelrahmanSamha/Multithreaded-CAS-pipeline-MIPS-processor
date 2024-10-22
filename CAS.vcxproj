@@ -131,9 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\HazardDetection.cpp" />
     <ClCompile Include="src\ControlUnit.cpp" />
     <ClCompile Include="src\ForwardingUnit.cpp" />
-    <ClCompile Include="src\InstructionDecoder.cpp" />
     <ClCompile Include="src\RegisterFile.cpp" />
     <ClCompile Include="src\ALU.cpp" />
     <ClCompile Include="src\MEMWB.cpp" />
@@ -152,9 +152,9 @@
     <ClCompile Include="src\WritebackStage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\HazardDetection.h" />
     <ClInclude Include="src\ControlUnit.h" />
     <ClInclude Include="src\RegisterFile.h" />
-    <ClInclude Include="src\InstructionDecoder.h" />
     <ClInclude Include="src\MEMWB.h" />
     <ClInclude Include="src\EXEMEM.h" />
     <ClInclude Include="src\MemoryStage.h" />

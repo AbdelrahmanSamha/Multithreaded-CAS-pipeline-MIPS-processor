@@ -2,8 +2,8 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,ControlUnit* Cu, RegisterFile* rf)
-	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe), CU(Cu), RF(rf) {
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
+	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe), CU(Cu), RF(rf), HDU(HDU) {
 	// Launch the decoding thread and store it in the class
 	Decodethread = std::thread([this]() { Decodejob(); });
 }
@@ -24,7 +24,7 @@ void DecodeStage::Decodejob() {
 		ConsoleLog(2, "AfterCritical sec read");
 		ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " dMC =", MC);
 
-		//**********************************************************************Decode STAGE start**********************************************************************//
+		//**********************************************************Decode STAGE start **********************************************************//
 		//Instruction decoding...
 		uint8_t opcode = (MC >> 26) & 0x3F;  // 6-bit opcode
 		uint8_t rs = (MC >> 21) & 0x1F;      // 5-bit source register
@@ -36,40 +36,39 @@ void DecodeStage::Decodejob() {
 		uint32_t address = MC & 0x03FFFFFF;   // 26-bit address (for jump)
 		
 
-		//**********************************************************************ControlUnit signals generation**********************************************************************//
+		//******************************************************ControlUnit signals generation ******************************************************//
 		CU->setControlSignals(opcode, funct);
 		//get the control signals 
-
+		//signals to the pipe
 		uint8_t ALUOp = CU->getALUOp();
 		bool ALUsrc = CU->getAluSrc();
-		bool Branch = CU->getBranch();
-		bool JumpSel = CU->getJumpSel();
 		bool MemReadEn = CU->getMemReadEn();
 		bool MemtoReg = CU->getMemtoReg();
 		bool MemWriteEn = CU->getMemWriteEn();
 		bool RegDst = CU->getRegDst();
 		bool RegWriteEn = CU->getRegWriteEn();
-	 
-		//Sending the signals to the required UNITS 
+		//signals to the fetch stage...
+		bool JumpSel = CU->getJumpSel();
+		bool Branch = CU->getBranch();
 
-
-		//RF read
+		//RF read will always happen
 		uint32_t readdata1;
 		uint32_t readdata2;
 		RF->readRegisters(rs, rt, readdata1, readdata2);
-		
-		bool Zero; //zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise.
-		Zero = (readdata1 == readdata2);
 
-		
-		IDEXEpipe->writedata(PC,MC, ALUOp,RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn);
+		//zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise. sent to the Fetch stage.
+		bool Zero = (readdata1 == readdata2);
+
+		//adding PC + (Imm<<2). sending the value to the Fetch stage.
+		uint32_t Address = PC + (immediate << 2);
+
+		//Sending the signals & data to the required UNITS 
+		HDU->setInputDecode(rs, rt);
+		IDEXEpipe->writedata(PC, MC, ALUOp, RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn, rs, rt, rd);
 
 
-		//end of deocde logic 
-		// 
-		//writing to ID/EXE pipe.
 		ConsoleLog(2, "Decoding logic done...");
-		//IDEXEpipe->writedata(PC, MC);
+
 	}
 }
 

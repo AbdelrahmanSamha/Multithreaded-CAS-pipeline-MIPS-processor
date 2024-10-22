@@ -3,7 +3,7 @@
 #include <iomanip>
 
 // Constructor to initialize binary semaphores
-IFID::IFID() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
+IFID::IFID(HazardDetection* HDU) :HDU(HDU), s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
 void IFID::writedata(uint32_t  PCin, uint32_t  MCin) {
     // Acquire the semaphores

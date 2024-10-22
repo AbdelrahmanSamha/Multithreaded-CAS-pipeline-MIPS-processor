@@ -10,6 +10,7 @@
 #include"IDEXE.h"
 #include "RegisterFile.h"
 #include "ControlUnit.h"
+#include "HazardDetection.h"
 
 
 
@@ -25,6 +26,7 @@ private:
     IDEXE* IDEXEpipe;
     ControlUnit* CU;
     RegisterFile* RF;
+    HazardDetection* HDU;
 private: 
     //local stage needs:
     std::thread Decodethread;
@@ -34,7 +36,7 @@ private:
     bool running = true ;// temporary for debugging purposes.(so we dont use 100%CPU)
 public:
     void stop();// temporary for debugging purposes.(so we dont use 100%CPU)
-    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf);
+    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU);
     ~DecodeStage();
 };
 

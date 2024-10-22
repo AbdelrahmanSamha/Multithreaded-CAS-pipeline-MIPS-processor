@@ -18,6 +18,7 @@
 //units 
 #include "RegisterFile.h"
 #include "ControlUnit.h"
+#include "HazardDetection.h"
 
 
 
@@ -44,25 +45,24 @@ int main() {
     //Initializing of the units in the data path 
     ControlUnit CU;
     RegisterFile RF;
-
+    HazardDetection HDU;
     
 
     // generate a clock for 5 threads, among with the stages initialization and pipes
-   
     GlobalClock clk(5); //determine the number of threads
 
     //define the pipes before making objects of each stage 
-    IFID IFIDpipe;
+    IFID IFIDpipe(&HDU);
     IDEXE IDEXEpipe;
     EXEMEM EXEMEMpipe;
     MEMWB MEMWBpipe;
 
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
-    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe);
+    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU);
   
-    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF);
+    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU);
 
     MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe);
 

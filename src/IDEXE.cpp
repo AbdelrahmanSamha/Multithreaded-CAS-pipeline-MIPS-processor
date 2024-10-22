@@ -5,8 +5,9 @@
 // Constructor to initialize binary semaphores
 IDEXE::IDEXE() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
-void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDstin, bool ALUsrcin,
-                        bool MemReadEnin, bool MemWriteEnin, bool MemtoRegin, bool RegWriteEnin) {
+void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDstin, bool ALUSrcin,
+                        bool MemReadEnin, bool MemWriteEnin, bool MemtoRegin, bool RegWriteEnin,
+                            uint8_t rsin, uint8_t rdin, uint8_t rtin) {
     // Acquire the semaphores
     s1.acquire();
     s2.acquire();
@@ -17,13 +18,16 @@ void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDst
     this->PC = PCin;
     this->MC = MCin;
     this->ALUOp = ALUOpin;
-    this->RegDstin = RegDst;
-    this->
-    this->
-    this->
-    this->
-    this->
-    this->
+    this->RegDst = RegDstin;
+    this->ALUsrc = ALUSrcin;
+    this->MemReadEn = MemReadEnin;
+    this->MemWriteEn = MemWriteEnin;
+    this->MemtoReg = MemtoRegin;
+    this->RegWriteEn = RegWriteEnin;
+    this->rs = rsin;
+    this->rd = rdin;
+    this->rt = rtin;
+
     // Release semaphore s2
     s2.release();
 }

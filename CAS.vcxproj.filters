@@ -93,7 +93,7 @@
     <ClCompile Include="src\ALU.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
-    <ClCompile Include="src\InstructionDecoder.cpp">
+    <ClCompile Include="src\HazardDetection.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,13 +137,13 @@
     <ClInclude Include="src\MEMWB.h">
       <Filter>Header Files\Pipes</Filter>
     </ClInclude>
-    <ClInclude Include="src\InstructionDecoder.h">
-      <Filter>Header Files\Units</Filter>
-    </ClInclude>
     <ClInclude Include="src\RegisterFile.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
     <ClInclude Include="src\ControlUnit.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HazardDetection.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

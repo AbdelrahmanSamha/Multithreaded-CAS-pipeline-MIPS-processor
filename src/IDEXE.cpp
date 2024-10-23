@@ -7,6 +7,7 @@ IDEXE::IDEXE() : s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2
 
 void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDstin, bool ALUSrcin,
                         bool MemReadEnin, bool MemWriteEnin, bool MemtoRegin, bool RegWriteEnin,
+                             uint32_t readdata1in, uint32_t readdata2in, uint32_t immediatein,
                             uint8_t rsin, uint8_t rdin, uint8_t rtin) {
     // Acquire the semaphores
     s1.acquire();
@@ -14,7 +15,7 @@ void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDst
 
     // Write data
     ConsoleLog(2, "Writing data..." );
-    ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'),PCin ," dMC = " ,MCin );
+  //  ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'),PCin ," dMC = " ,MCin );
     this->PC = PCin;
     this->MC = MCin;
     this->ALUOp = ALUOpin;
@@ -24,6 +25,9 @@ void IDEXE::writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOpin, bool RegDst
     this->MemWriteEn = MemWriteEnin;
     this->MemtoReg = MemtoRegin;
     this->RegWriteEn = RegWriteEnin;
+    this->readdata1 = readdata1in;
+    this->readdata2 = readdata2in;
+    this->immediate = immediatein;
     this->rs = rsin;
     this->rd = rdin;
     this->rt = rtin;

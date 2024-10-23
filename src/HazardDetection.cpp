@@ -14,7 +14,7 @@ void HazardDetection::setInputDecode(uint8_t IF_ID_Rs, uint8_t IF_ID_Rt) {
     this->IFID_Rs = IF_ID_Rs;
     this->IFID_Rt = IF_ID_Rt;
 }
-// Perform hazard detection logic
+// Perform hazard detection logic, requires syncronization
 void HazardDetection::detectHazard() {
     // If previous instruction is a load (ID_EX_MemRead is true) and
     // one of the source registers of the current instruction matches

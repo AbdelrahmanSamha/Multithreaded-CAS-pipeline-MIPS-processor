@@ -22,6 +22,9 @@ private:
 	bool MemWriteEn;
 	bool MemtoReg  ;
 	bool RegWriteEn;
+	uint32_t readdata1;
+	uint32_t readdata2;
+	uint32_t immediate;
 	uint8_t rs;
 	uint8_t rt;
 	uint8_t rd;
@@ -31,6 +34,7 @@ public :
 	IDEXE();
 	void writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOp, bool RegDst, bool ALUsrc,
 					bool MemReadEn, bool MemWriteEn, bool MemtoReg, bool RegWriteEn,
+		uint32_t readdata1, uint32_t readdata2, uint32_t immediate,
 						uint8_t rs , uint8_t rt , uint8_t rd);
 	void readdata(uint32_t& PCout, uint32_t& MCout);
 };

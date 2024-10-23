@@ -40,6 +40,7 @@ void DecodeStage::Decodejob() {
 		CU->setControlSignals(opcode, funct);
 		//get the control signals 
 		//signals to the pipe
+		//this block can be optimized, by making a getter method that returns a vector of all the signals at once then we assign these signals to the variables
 		uint8_t ALUOp = CU->getALUOp();
 		bool ALUsrc = CU->getAluSrc();
 		bool MemReadEn = CU->getMemReadEn();
@@ -63,9 +64,11 @@ void DecodeStage::Decodejob() {
 		uint32_t Address = PC + (immediate << 2);
 
 		//Sending the signals & data to the required UNITS 
-		HDU->setInputDecode(rs, rt);
-		IDEXEpipe->writedata(PC, MC, ALUOp, RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn, rs, rt, rd);
+		HDU->setInputDecode(rs, rt);//Input to the hazard detection unit 
+		IDEXEpipe->writedata(PC, MC, ALUOp, RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn,readdata1,readdata2,immediate, rs, rt, rd);//RF output and control signals sent to the pipe, along with register values
 
+		//hazard detection... 
+		HDU->detectHazard();
 
 		ConsoleLog(2, "Decoding logic done...");
 

@@ -11,6 +11,7 @@
 #include "RegisterFile.h"
 #include "ControlUnit.h"
 #include "HazardDetection.h"
+#include "FetchStage.h"
 
 
 
@@ -27,6 +28,7 @@ private:
     ControlUnit* CU;
     RegisterFile* RF;
     HazardDetection* HDU;
+    FetchStage* Fetchobj;
 private: 
     //local stage needs:
     std::thread Decodethread;
@@ -36,7 +38,7 @@ private:
     bool running = true ;// temporary for debugging purposes.(so we dont use 100%CPU)
 public:
     void stop();// temporary for debugging purposes.(so we dont use 100%CPU)
-    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU);
+    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, FetchStage* Fetchobj ,ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU);
     ~DecodeStage();
 };
 

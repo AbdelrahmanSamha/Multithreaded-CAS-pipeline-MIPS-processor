@@ -5,17 +5,19 @@
 // Constructor to initialize binary semaphores
 IFID::IFID(HazardDetection* HDU) :HDU(HDU), s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
-void IFID::writedata(uint32_t  PCin, uint32_t  MCin) {
+void IFID::writedata(uint32_t  PCin, uint32_t  MCin ) {
     // Acquire the semaphores
     s1.acquire();
     s2.acquire();
-
-    // Write data
-    ConsoleLog(1, "Writing data..." );
-    ConsoleLog(1, " fPC = ", std::hex, std::setw(8), std::setfill('0'), PCin , " fMC = " , MCin );
-    this->PC = PCin;
-    this->MC = MCin;
-
+    if (HDU->getIFID_Stall()) {
+        //do nothing...
+    }
+    else{    // Write data
+        ConsoleLog(1, "Writing data...");
+        ConsoleLog(1, " fPC = ", std::hex, std::setw(8), std::setfill('0'), PCin, " fMC = ", MCin);
+        this->PC = PCin;
+        this->MC = MCin;
+    }
     // Release semaphore s2
     s2.release();
 }

@@ -1,4 +1,6 @@
 #include "FetchStage.h"
+#include "ControlUnit.h"
+#include "DecodeStage.h"
 #include "ConsoleLogger.h"
 #include<iomanip>
 FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe)
@@ -43,7 +45,8 @@ bool FetchStage::hasNextInstruction() {
 // Return the machine code of the instruction at the current index
 uint32_t FetchStage::fetchInstruction() {
 
-
+    switch(Sel)
+        case 0: 
     // Calculate the current index 
     uint32_t currentIndex = (PC - BaseAddress) / 4;
 

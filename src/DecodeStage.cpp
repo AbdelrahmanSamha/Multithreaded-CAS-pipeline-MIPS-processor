@@ -2,7 +2,7 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,FetchStage* Fetchobj,ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
 	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe), CU(Cu), RF(rf), HDU(HDU) {
 	// Launch the decoding thread and store it in the class
 	Decodethread = std::thread([this]() { Decodejob(); });
@@ -64,6 +64,7 @@ void DecodeStage::Decodejob() {
 		uint32_t Address = PC + (immediate << 2);
 
 		//Sending the signals & data to the required UNITS 
+		Fetchobj->
 		HDU->setInputDecode(rs, rt);//Input to the hazard detection unit 
 		IDEXEpipe->writedata(PC, MC, ALUOp, RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn,readdata1,readdata2,immediate, rs, rt, rd);//RF output and control signals sent to the pipe, along with register values
 

@@ -60,7 +60,7 @@ int main() {
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
     FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU);
   
-    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU);
+    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &Fetchthread ,&CU, &RF, &HDU);
 
     ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU);
 

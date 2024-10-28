@@ -14,6 +14,7 @@ void FetchStage::Fetchjob() {
         ConsoleLog(1,"Fetchthread waiting for clock tick");
         clk->waitforClockTick(); // Wait for the global clock tick
         ConsoleLog(1,"Fetchthread starting new clock");
+
         if (!hasNextInstruction()) {
             std::cout << "No more instructions to fetch. Fetchthread terminated." << std::endl;
             break; // Exit the loop when there are no more instructions
@@ -45,15 +46,16 @@ bool FetchStage::hasNextInstruction() {
 // Return the machine code of the instruction at the current index
 uint32_t FetchStage::fetchInstruction() {
 
-    switch(Sel)
-        case 0: 
-    // Calculate the current index 
-    uint32_t currentIndex = (PC - BaseAddress) / 4;
+    switch (PCSel) {//implemnt as a mux...
+    case 0:    // Calculate the current index 
+        uint32_t currentIndex = (PC - BaseAddress) / 4;
 
-    ConsoleLog(1, "Current Index: " , currentIndex);
-
-    // Return the machine code of the instruction at the current index
-    return instructions[currentIndex].machineCode;
+        // Return the machine code of the instruction at the current index
+        return instructions[currentIndex].machineCode;
+    case 1:
+    case 2: 
+    case 3: 
+    }
 }
 void FetchStage::stop() {
     running = false; 

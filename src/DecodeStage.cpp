@@ -2,86 +2,99 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,FetchStage* Fetchobj,ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
-	: clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe), CU(Cu), RF(rf), HDU(HDU) {
-	// Launch the decoding thread and store it in the class
-	Decodethread = std::thread([this]() { Decodejob(); });
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, FetchStage* Fetch, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
+    : clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe),Fetch(Fetch), CU(Cu), RF(rf), HDU(HDU) {
+    // Launch the decoding thread and store it in the class
+    Decodethread = std::thread([this]() { Decodejob(); });
 }
 
-
 void DecodeStage::Decodejob() {
+    // Keep working
+    while (running) {
+        ConsoleLog(2, "Decodethread waiting for clock tick");
+        clk->waitforClockTick();  // Called at the beginning of all the stages.
+        ConsoleLog(2, "Decodethread starting new clock");
 
-	//keep working 
-	while (running) {
-		ConsoleLog(2, "Decodethread waiting for clock tick");
-		clk->waitforClockTick(); //called at the beggining of all the stages. 
-		ConsoleLog(2, "Decodethread starting new clock");
+        IFIDpipe->readdata(PC, MC);
+             
+        // Instruction decoding...
+        InstructionDecode();
 
-		//read data fro,m critical section 
-		IFIDpipe->readdata(PC, MC);
+        // Generate control signals
+        GenerateControlSignals();
 
-		ConsoleLog(2, std::hex ,std::setw(8), MC);
-		ConsoleLog(2, "AfterCritical sec read");
-		ConsoleLog(2, "dPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " dMC =", MC);
+        // RF read will always happen
+        uint32_t readdata1, readdata2;
+        RF->readRegisters(instrFields.rs, instrFields.rt, readdata1, readdata2);
 
-		//**********************************************************Decode STAGE start **********************************************************//
-		//Instruction decoding...
-		uint8_t opcode = (MC >> 26) & 0x3F;  // 6-bit opcode
-		uint8_t rs = (MC >> 21) & 0x1F;      // 5-bit source register
-		uint8_t rt = (MC >> 16) & 0x1F;      // 5-bit target register
-		uint8_t rd = (MC >> 11) & 0x1F;      // 5-bit destination register
-		uint8_t shamt = (MC >> 6) & 0x1F;    // 5-bit shift amount
-		uint8_t funct = MC & 0x3F;           // 6-bit function code
-		uint32_t immediate = MC & 0xFFFF;     // 16-bit immediate value
-		uint32_t address = MC & 0x03FFFFFF;   // 26-bit address (for jump)
-		
+        // Zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise. Sent to the Fetch stage.
+        bool Zero = (readdata1 == readdata2);
 
-		//******************************************************ControlUnit signals generation ******************************************************//
-		CU->setControlSignals(opcode, funct);
-		//get the control signals 
-		//signals to the pipe
-		//this block can be optimized, by making a getter method that returns a vector of all the signals at once then we assign these signals to the variables
-		uint8_t ALUOp = CU->getALUOp();
-		bool ALUsrc = CU->getAluSrc();
-		bool MemReadEn = CU->getMemReadEn();
-		bool MemtoReg = CU->getMemtoReg();
-		bool MemWriteEn = CU->getMemWriteEn();
-		bool RegDst = CU->getRegDst();
-		bool RegWriteEn = CU->getRegWriteEn();
-		//signals to the fetch stage...
-		bool JumpSel = CU->getJumpSel();
-		bool Branch = CU->getBranch();
+        // Adding PC + (Imm << 2). Sending the value to the Fetch stage.
+        uint32_t Address = PC + (instrFields.immediate << 2);
 
-		//RF read will always happen
-		uint32_t readdata1;
-		uint32_t readdata2;
-		RF->readRegisters(rs, rt, readdata1, readdata2);
+        // Sending the signals & data to the required units
+        HDU->setInputDecode(instrFields.rs, instrFields.rt);  // Input to the hazard detection unit
 
-		//zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise. sent to the Fetch stage.
-		bool Zero = (readdata1 == readdata2);
+        IDEXEpipe->writedata(
+            controlSignals.RegWriteEn,
+            controlSignals.MemtoReg,
+            controlSignals.MemWriteEn,
+            controlSignals.MemReadEn,
+            controlSignals.ALUsrc,
+            controlSignals.ALUOp,
+            controlSignals.RegDst,
+            PC,
+            readdata1,
+            readdata2,
+            instrFields.immediate,
+            instrFields.rs,
+            instrFields.rt,
+            instrFields.rd
+        );
 
-		//adding PC + (Imm<<2). sending the value to the Fetch stage.
-		uint32_t Address = PC + (immediate << 2);
+        // Hazard detection... needs further adjustment to flush IDEXE, need data from EXEC.
+        HDU->detectHazard();
 
-		//Sending the signals & data to the required UNITS 
-		Fetchobj->
-		HDU->setInputDecode(rs, rt);//Input to the hazard detection unit 
-		IDEXEpipe->writedata(PC, MC, ALUOp, RegDst, ALUsrc, MemReadEn, MemWriteEn, MemtoReg, RegWriteEn,readdata1,readdata2,immediate, rs, rt, rd);//RF output and control signals sent to the pipe, along with register values
-
-		//hazard detection... 
-		HDU->detectHazard();
-
-		ConsoleLog(2, "Decoding logic done...");
-
-	}
+        ConsoleLog(2, "Decoding logic done...");
+    }
 }
 
 void DecodeStage::stop() {
-	running = false; 
+    running = false;
 }
+
+void DecodeStage::InstructionDecode() {
+    // Decode the instruction and store fields in the struct
+    instrFields.opcode = (MC >> 26) & 0x3F;   // 6-bit opcode
+    instrFields.rs = (MC >> 21) & 0x1F;       // 5-bit source register
+    instrFields.rt = (MC >> 16) & 0x1F;       // 5-bit target register
+    instrFields.rd = (MC >> 11) & 0x1F;       // 5-bit destination register
+    instrFields.shamt = (MC >> 6) & 0x1F;     // 5-bit shift amount
+    instrFields.funct = MC & 0x3F;            // 6-bit function code
+    instrFields.immediate = MC & 0xFFFF;      // 16-bit immediate value
+    instrFields.address = MC & 0x03FFFFFF;    // 26-bit address (for jump)
+}
+
+void DecodeStage::GenerateControlSignals() {
+    // Set control signals based on opcode and function
+    CU->setControlSignals(instrFields.opcode, instrFields.funct);
+
+    // Get control signals and store them in the struct
+    controlSignals.ALUOp = CU->getALUOp();
+    controlSignals.ALUsrc = CU->getAluSrc();
+    controlSignals.MemReadEn = CU->getMemReadEn();
+    controlSignals.MemtoReg = CU->getMemtoReg();
+    controlSignals.MemWriteEn = CU->getMemWriteEn();
+    controlSignals.RegDst = CU->getRegDst();
+    controlSignals.RegWriteEn = CU->getRegWriteEn();
+    controlSignals.JumpSel = CU->getJumpSel();
+    controlSignals.Branch = CU->getBranch();
+}
+
 DecodeStage::~DecodeStage() {
-	// Join the thread to ensure proper cleanup
-	if (Decodethread.joinable()) {
-		Decodethread.join();
-	}
+    // Join the thread to ensure proper cleanup
+    if (Decodethread.joinable()) {
+        Decodethread.join();
+    }
 }

@@ -32,17 +32,14 @@ private:
 	
 public : 
 	IDEXE();
-	void writedata(uint32_t PCin, uint32_t MCin, uint8_t ALUOp, bool RegDst, bool ALUsrc,
-					bool MemReadEn, bool MemWriteEn, bool MemtoReg, bool RegWriteEn,
-		uint32_t readdata1, uint32_t readdata2, uint32_t immediate,
-						uint8_t rs , uint8_t rt , uint8_t rd);
+	void writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, bool MemReadEnin,
+		bool ALUsrcin, uint8_t ALUOpin, bool RegDstin,
+		uint32_t PCin,
+		uint32_t readdata1in, uint32_t readdata2in,
+		uint32_t immediatein,
+		uint8_t rsin, uint8_t rtin, uint8_t rdin);
+
 	void readdata(uint32_t& PCout, uint32_t& MCout);
 };
-
-
-
-
-
-
 
 #endif

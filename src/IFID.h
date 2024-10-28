@@ -7,6 +7,7 @@
 #include "DecodeStage.h" 
 #include "FetchStage.h"
 #include "HazardDetection.h"
+#include "ControlUnit.h"
 class IFID {
 private:
 	
@@ -15,6 +16,7 @@ private:
 	uint32_t PC = 0x00000000;	//Programcounter
 	uint32_t MC = 0x00000000; //MachineCode
 	HazardDetection* HDU;
+	
 
 
 public:

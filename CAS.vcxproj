@@ -150,6 +150,7 @@
     <ClCompile Include="src\IFID.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\WritebackStage.cpp" />
+    <ClCompile Include="ZERO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\HazardDetection.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="src\GlobalClock.h" />
     <ClInclude Include="src\IFID.h" />
     <ClInclude Include="src\WritebackStage.h" />
+    <ClInclude Include="ZERO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

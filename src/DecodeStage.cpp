@@ -27,8 +27,7 @@ void DecodeStage::Decodejob() {
         uint32_t readdata1, readdata2;
         RF->readRegisters(instrFields.rs, instrFields.rt, readdata1, readdata2);
 
-        // Zero signal, 1 if readdata1 and readdata2 are equal, 0 otherwise. Sent to the Fetch stage.
-        bool Zero = (readdata1 == readdata2);
+        
 
         // Adding PC + (Imm << 2). Sending the value to the Fetch stage.
         uint32_t Address = PC + (instrFields.immediate << 2);

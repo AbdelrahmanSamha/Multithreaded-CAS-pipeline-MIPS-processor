@@ -96,6 +96,9 @@
     <ClCompile Include="src\HazardDetection.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
+    <ClCompile Include="ZERO.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GlobalClock.h">
@@ -144,6 +147,9 @@
       <Filter>Header Files\Units</Filter>
     </ClInclude>
     <ClInclude Include="src\HazardDetection.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="ZERO.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

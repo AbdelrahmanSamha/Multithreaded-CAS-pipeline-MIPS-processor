@@ -3,8 +3,8 @@
 #include "DecodeStage.h"
 #include "ConsoleLogger.h"
 #include<iomanip>
-FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe)
-    : clk(clock), instructions(instrVector), IFIDpipe(pipe),  PC(0x00400000) {
+FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe,HazardDetection*HDU ,Jump* JU)
+    : clk(clock), instructions(instrVector), IFIDpipe(pipe),HDU(HDU),JU(JU), PC(0x00400000) {
     Fetchthread = std::thread([this]() { Fetchjob(); });
 }
 
@@ -20,12 +20,16 @@ void FetchStage::Fetchjob() {
             break; // Exit the loop when there are no more instructions
         }
 
+        //Jump unit 
+        JU->JumpUnit();
+
+
         uint32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
 
         ConsoleLog(1,"Fetched instruction (PC = " , std::hex , PC , "): " , std::hex , std::setw(8) ,fetchedInstruction );
 
        
-
+        
         // Here we would write the fetched instruction to the IF/ID pipeline register
         IFIDpipe->writedata(PC, fetchedInstruction); // Placeholder for now
 

@@ -96,7 +96,10 @@
     <ClCompile Include="src\HazardDetection.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
-    <ClCompile Include="ZERO.cpp">
+    <ClCompile Include="src\ZERO.cpp">
+      <Filter>Source Files\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Jump.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,7 +152,10 @@
     <ClInclude Include="src\HazardDetection.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
-    <ClInclude Include="ZERO.h">
+    <ClInclude Include="src\ZERO.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Jump.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

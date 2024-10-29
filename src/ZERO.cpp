@@ -1,5 +1,5 @@
 #include "ZERO.h"
-ZERO::ZERO() : Z1(0){
+ZERO::ZERO() : Z1(0), Zero(0){
 
 }
 //to insure that a write happens before any read. we flip the old syncronization method

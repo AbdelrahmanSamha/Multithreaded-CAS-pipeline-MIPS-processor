@@ -9,6 +9,8 @@
 #include <thread>
 #include <cstdint>
 #include <iostream>
+#include "Jump.h"
+#include "HazardDetection.h"
 
 class GlobalClock; // Forward declaration of GlobalClock
 class IFID;        // Forward declaration of IFID
@@ -17,7 +19,9 @@ class FetchStage {
 private:
     // Global Comunication needs:
     GlobalClock* clk;      // Clock object for synchronization
-    IFID* IFIDpipe;        // IF/ID pipeline register
+    IFID* IFIDpipe;// IF/ID pipeline register
+    HazardDetection* HDU;
+    Jump* JU;
 private:
     //Local Stage needs
     std::thread Fetchthread;      // Thread for the fetch stage
@@ -31,7 +35,7 @@ private:
     
 public:
     void stop();                    // temporary for debugging purposes.(so we dont use 100%CPU)
-    FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe);
+    FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe,HazardDetection*HDU ,Jump*JU);
     ~FetchStage();                // Destructor to join the thread
 };
 

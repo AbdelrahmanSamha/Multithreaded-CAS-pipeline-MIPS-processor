@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Jump.cpp" />
     <ClCompile Include="src\HazardDetection.cpp" />
     <ClCompile Include="src\ControlUnit.cpp" />
     <ClCompile Include="src\ForwardingUnit.cpp" />
@@ -150,9 +151,10 @@
     <ClCompile Include="src\IFID.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\WritebackStage.cpp" />
-    <ClCompile Include="ZERO.cpp" />
+    <ClCompile Include="src\ZERO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Jump.h" />
     <ClInclude Include="src\HazardDetection.h" />
     <ClInclude Include="src\ControlUnit.h" />
     <ClInclude Include="src\RegisterFile.h" />
@@ -169,7 +171,7 @@
     <ClInclude Include="src\GlobalClock.h" />
     <ClInclude Include="src\IFID.h" />
     <ClInclude Include="src\WritebackStage.h" />
-    <ClInclude Include="ZERO.h" />
+    <ClInclude Include="src\ZERO.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

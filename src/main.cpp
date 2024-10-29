@@ -46,7 +46,7 @@ int main() {
     ControlUnit CU;
     RegisterFile RF;
     HazardDetection HDU;
-    
+    Jump JU;
 
     // generate a clock for 5 threads, among with the stages initialization and pipes
     GlobalClock clk(5); //determine the number of threads
@@ -58,7 +58,7 @@ int main() {
     MEMWB MEMWBpipe;
 
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
-    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU);
+    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU , &JU);
   
     DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &Fetchthread ,&CU, &RF, &HDU);
 

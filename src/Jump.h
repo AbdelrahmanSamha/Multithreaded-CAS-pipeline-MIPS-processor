@@ -1,22 +1,27 @@
-#pragma once
-#include "ZERO.h"
+#include <semaphore>
+#include <cstdint>
 
 class Jump {
-public: 
-	//input
-	bool Zero, Jr, B; 
-	uint32_t Instruction;
-	uint32_t PC4 ;
-	//output
-	bool Flush;
-	uint8_t JmuxSel;
-public: 
-	Jump();
-	void JumpSignalF(uint32_t Instruction);
-	void JumpSignalD(bool Zero, bool Jr);
-	void JumpUnit();
+public:
+    // Input data
+    uint32_t Instruction, PC4; //recieved from the fetch stage
+    bool AndGate, Jr; //recieved from the decode stage.
 
-	uint32_t Jaddress();
+    // Output data
+    bool Flush;
+    uint8_t JmuxSel;
+    uint32_t Jaddress;
 
+    // Constructor
+    Jump();
 
+    // Functions to set inputs and perform logic
+    void JumpSignalF(uint32_t instruction, uint32_t pc4);
+    void JumpSignalD(bool zero, bool jr);
+    void JumpUnit(); // Core logic function
+
+private:
+    // Semaphores for synchronization
+    std::binary_semaphore fetchSemaphore{ 0 };
+    std::binary_semaphore decodeSemaphore{ 0 };
 };

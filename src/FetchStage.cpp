@@ -20,20 +20,18 @@ void FetchStage::Fetchjob() {
             break; // Exit the loop when there are no more instructions
         }
 
-        //Jump unit 
-        JU->JumpUnit();
-
-
+  
         uint32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
 
-        ConsoleLog(1,"Fetched instruction (PC = " , std::hex , PC , "): " , std::hex , std::setw(8) ,fetchedInstruction );
+        IFIDpipe->writedata(PC, fetchedInstruction);
 
-       
-        
+        ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
+
+        JU->JumpSignalF(fetchedInstruction, PC + 4);
+        JU->JumpUnit();
+
         // Here we would write the fetched instruction to the IF/ID pipeline register
-        IFIDpipe->writedata(PC, fetchedInstruction); // Placeholder for now
-
-        PC += 4; // Increment PC to the next instruction
+       
     }
 }
 
@@ -50,7 +48,7 @@ bool FetchStage::hasNextInstruction() {
 // Return the machine code of the instruction at the current index
 uint32_t FetchStage::fetchInstruction() {
 
-    switch (PCSel) {//implemnt as a mux...
+    switch (JU->JmuxSel) {//implemnt as a mux...
     case 0:    // Calculate the current index 
         uint32_t currentIndex = (PC - BaseAddress) / 4;
 

@@ -3,12 +3,12 @@
 #include <iomanip>
 
 // Constructor to initialize binary semaphores
-IFID::IFID(HazardDetection* HDU):HDU(HDU), s1(0), s2(1) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
+IFID::IFID(HazardDetection* HDU, Jump* JU):HDU(HDU),JU(JU), s1(0) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
 void IFID::writedata(uint32_t  PCin, uint32_t  MCin ) {
     // Acquire the semaphores
     s1.acquire();
-    s2.acquire();
+   
 
     if (HDU->getIFID_Stall()) {
         //do not overwrite the data, because there is a LW and RAW dependicy 
@@ -19,21 +19,25 @@ void IFID::writedata(uint32_t  PCin, uint32_t  MCin ) {
         this->PC = PCin;
         this->MC = MCin;
     }
-    // Release semaphore s2
-    s2.release();
+   
+   
 }
 
 void IFID::readdata(uint32_t& PCout, uint32_t& MCout) {
-    // Acquire semaphore s2
-    s2.acquire();
-
+    
+   
+    if (JU->Flush)
+    {
+        PCout = 0; 
+        MCout = 0; 
+    }
+    else {
+        PCout = this->PC;
+        MCout = this->MC;
+    }
     // Read data
     ConsoleLog(2, "Reading data...");
-    
-    PCout = this->PC;
-    MCout = this->MC;
-    
+
     // Release 
-    s2.release();
     s1.release();
 }

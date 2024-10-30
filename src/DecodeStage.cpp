@@ -2,8 +2,8 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, FetchStage* Fetch, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU)
-    : clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe),Fetch(Fetch), CU(Cu), RF(rf), HDU(HDU) {
+DecodeStage::DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe,  ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU, ZERO* Zu,Jump* JU)
+    : clk(clock), IFIDpipe(prev_pipe), IDEXEpipe(next_pipe), CU(Cu), RF(rf), HDU(HDU), ZU(Zu), JU(JU) {
     // Launch the decoding thread and store it in the class
     Decodethread = std::thread([this]() { Decodejob(); });
 }
@@ -23,37 +23,59 @@ void DecodeStage::Decodejob() {
         // Generate control signals
         GenerateControlSignals();
 
+
+        //Sign extend the immediate value 
+        int32_t signExtendedImmediate = (instrFields.immediate & 0x0000FFFF); // Mask to get the lower 16 bits
+        if (signExtendedImmediate & 0x00008000) {                 // Check if the 16th bit is set
+            signExtendedImmediate |= 0xFFFF0000;                  // Extend the sign to upper 16 bits
+        }
+        
+        //branch address calculation...
+        uint32_t BranchAddress = PC + (signExtendedImmediate << 2);
+
         // RF read will always happen
         uint32_t readdata1, readdata2;
         RF->readRegisters(instrFields.rs, instrFields.rt, readdata1, readdata2);
 
-        
+        //ZERO unit input
+        ZU->ZeroInput(readdata1, readdata2, controlSignals.ZERO);
 
-        // Adding PC + (Imm << 2). Sending the value to the Fetch stage.
-        uint32_t Address = PC + (instrFields.immediate << 2);
+        //this is the and gate result entering the JUMP unit
+        bool AndGate = (controlSignals.Branch && ZU->ZeroOutput());
+       
+        JU->JumpInputD(BranchAddress,readdata1 ,AndGate, controlSignals.JR_Signal);
 
-        // Sending the signals & data to the required units
         HDU->setInputDecode(instrFields.rs, instrFields.rt);  // Input to the hazard detection unit
 
-        IDEXEpipe->writedata(
-            controlSignals.RegWriteEn,
-            controlSignals.MemtoReg,
-            controlSignals.MemWriteEn,
-            controlSignals.MemReadEn,
-            controlSignals.ALUsrc,
-            controlSignals.ALUOp,
-            controlSignals.RegDst,
-            PC,
-            readdata1,
-            readdata2,
-            instrFields.immediate,
-            instrFields.rs,
-            instrFields.rt,
-            instrFields.rd
-        );
 
-        // Hazard detection... needs further adjustment to flush IDEXE, need data from EXEC.
+       // Hazard detection... needs further adjustment to flush IDEXE, need data from EXEC.
         HDU->detectHazard();
+
+       // Mux for the LW dependency, inserting a bubble if there is one.
+        if (HDU->getNOP()) {
+            IDEXEpipe->writedata(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+        }
+        else {
+            IDEXEpipe->writedata(
+                controlSignals.RegWriteEn,
+                controlSignals.MemtoReg,
+                controlSignals.MemWriteEn,
+                controlSignals.MemReadEn,
+                controlSignals.ALUSrc,
+                controlSignals.ALUop,
+                controlSignals.RegDst,
+                controlSignals.JAL_signal,
+                PC,
+                MC,
+                readdata1,
+                readdata2,
+                instrFields.immediate,
+                instrFields.rs,
+                instrFields.rt,
+                instrFields.rd);
+        }
+        
+
 
         ConsoleLog(2, "Decoding logic done...");
     }
@@ -78,17 +100,18 @@ void DecodeStage::InstructionDecode() {
 void DecodeStage::GenerateControlSignals() {
     // Set control signals based on opcode and function
     CU->setControlSignals(instrFields.opcode, instrFields.funct);
-
-    // Get control signals and store them in the struct
-    controlSignals.ALUOp = CU->getALUOp();
-    controlSignals.ALUsrc = CU->getAluSrc();
+    // Populate the controlSignals struct with values from ControlUnit
+    controlSignals.ALUop = CU->getALUOp();
+    controlSignals.RegDst = CU->getRegDst();
+    controlSignals.ALUSrc = CU->getALUSrc();
+    controlSignals.Branch = CU->getBranch();
     controlSignals.MemReadEn = CU->getMemReadEn();
     controlSignals.MemtoReg = CU->getMemtoReg();
     controlSignals.MemWriteEn = CU->getMemWriteEn();
-    controlSignals.RegDst = CU->getRegDst();
     controlSignals.RegWriteEn = CU->getRegWriteEn();
-    controlSignals.JumpSel = CU->getJumpSel();
-    controlSignals.Branch = CU->getBranch();
+    controlSignals.JR_Signal = CU->getJR_Signal();
+    controlSignals.ZERO = CU->getZERO();
+    controlSignals.JAL_signal = CU->getJAL_Signal();
 }
 
 DecodeStage::~DecodeStage() {

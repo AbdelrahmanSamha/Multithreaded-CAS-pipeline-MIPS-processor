@@ -16,7 +16,7 @@ public:
     // Outputs
     bool getPCWrite() const;
     bool getIFID_Stall() const;
-    bool getNopSel() const;
+    bool getNOP() const;
 
     // Perform hazard detection
     void detectHazard();
@@ -31,7 +31,7 @@ private:
     // Outputs
     bool PC_Write;
     bool IFID_stall;
-    bool NopSel;
+    bool NOP;
 };
 
 #endif // HAZARDDETECTION_H

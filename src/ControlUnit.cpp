@@ -1,82 +1,92 @@
 #include "ControlUnit.h"
-#include <iostream>
 
-// Constructor
-ControlUnit::ControlUnit() : ALUOp(0), RegDst(false), Branch(false), MemReadEn(false),
-MemtoReg(false), MemWriteEn(false), RegWriteEn(false),
-ALUSrc(false), JumpSel(false) {}
+ControlUnit::ControlUnit()
+    : aluop(0), RegDst(0), ALUSrc(0),
+    Branch(false), MemReadEn(false), MemtoReg(false),
+    MemWriteEn(false), RegWriteEn(false), JR_Signal(false),
+    ZERO(false), JAL_signal(false) {}
 
-// Set control signals based on opcode and funct
+// Set control signals based on opcode and funct fields
 void ControlUnit::setControlSignals(uint8_t opcode, uint8_t funct) {
-    // Default values for control signals
-    ALUOp = 0;
-    RegDst = Branch = MemReadEn = MemtoReg = MemWriteEn = RegWriteEn = ALUSrc = JumpSel = false;
+    // Reset control signals to default values
+    aluop = 0;
+    RegDst = 0;
+    ALUSrc = 0;
+    Branch = false;
+    MemReadEn = false;
+    MemtoReg = false;
+    MemWriteEn = false;
+    RegWriteEn = false;
+    JR_Signal = false;
+    ZERO = false;
+    JAL_signal = false;
 
+    // Set control signals based on opcode
     switch (opcode) {
     case Rtype:
-        ALUOp = 0x2;  // ALU control comes from funct
-        RegDst = true;
+        aluop = 2;
+        RegDst = 1;
         RegWriteEn = true;
-        switch (funct) {
-        //case ADD: case ADDU: case SUB: case SUBU: case OR:
-        //case NOR: case AND: case SLL: case SRL: case XOR:
-            // No specific action needed, these are regular R-type operations
-            //break;
-        case JR:
-            JumpSel = true;
+        if (funct == JR) {
+            JR_Signal = true;
             RegWriteEn = false;
-            break;
         }
         break;
-
-    case ADDI: case ORI: case ANDI:
-        ALUOp = 0x2;  // ALU uses immediate operations
-        ALUSrc = true;
+    case ADDI:
+    case ORI:
+    case ANDI:
+    case XORi:
+        aluop = 2;
+        ALUSrc = 1;
         RegWriteEn = true;
         break;
-
     case LW:
-        ALUOp = 0x0;  // ALU adds base + offset
-        ALUSrc = true;
+        aluop = 0;
+        ALUSrc = 1;
         MemReadEn = true;
         MemtoReg = true;
         RegWriteEn = true;
         break;
-
     case SW:
-        ALUOp = 0x0;  // ALU adds base + offset
-        ALUSrc = true;
+        aluop = 0;
+        ALUSrc = 1;
         MemWriteEn = true;
         break;
-
-    case XORI:
-        ALUOp = 0x2;  // ALU uses XOR immediate
-        ALUSrc = true;
-        RegWriteEn = true;
-        break;
-
-    case BEQ: case BNE:
-        ALUOp = 0x1;  // ALU subtracts
+    case BEQ:
+        aluop = 1;
         Branch = true;
+        ZERO = true;
         break;
-
+    case BNE:
+        aluop = 1;
+        Branch = true;
+        ZERO = false;
+        break;
     case J:
-        JumpSel = true;
+        // No aluop, direct jump
         break;
-
     case JAL:
-        JumpSel = true;
+        aluop = 2;
+        RegDst = 2;
+        RegWriteEn = false;
+        JAL_signal = true;
+        ALUSrc = 2;
+        break;
+    default:
+        // Unsupported opcode, leave default signals
         break;
     }
 }
 
-// Accessor methods
-uint8_t ControlUnit::getALUOp() const { return ALUOp; }
-bool ControlUnit::getRegDst() const { return RegDst; }
+// Accessor methods for control signals
+uint8_t ControlUnit::getALUOp() const { return aluop; }
+uint8_t ControlUnit::getRegDst() const { return RegDst; }
+uint8_t ControlUnit::getALUSrc() const { return ALUSrc; }
 bool ControlUnit::getBranch() const { return Branch; }
 bool ControlUnit::getMemReadEn() const { return MemReadEn; }
 bool ControlUnit::getMemtoReg() const { return MemtoReg; }
 bool ControlUnit::getMemWriteEn() const { return MemWriteEn; }
 bool ControlUnit::getRegWriteEn() const { return RegWriteEn; }
-bool ControlUnit::getAluSrc() const { return ALUSrc; }
-bool ControlUnit::getJumpSel() const { return JumpSel; }
+bool ControlUnit::getJR_Signal() const { return JR_Signal; }
+bool ControlUnit::getZERO() const { return ZERO; }
+bool ControlUnit::getJAL_Signal() const { return JAL_signal; }

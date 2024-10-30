@@ -12,6 +12,7 @@
 #include "Jump.h"
 #include "HazardDetection.h"
 
+
 class GlobalClock; // Forward declaration of GlobalClock
 class IFID;        // Forward declaration of IFID
 
@@ -22,6 +23,7 @@ private:
     IFID* IFIDpipe;// IF/ID pipeline register
     HazardDetection* HDU;
     Jump* JU;
+
 private:
     //Local Stage needs
     std::thread Fetchthread;      // Thread for the fetch stage

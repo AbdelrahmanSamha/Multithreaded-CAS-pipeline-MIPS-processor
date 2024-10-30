@@ -19,6 +19,8 @@
 #include "RegisterFile.h"
 #include "ControlUnit.h"
 #include "HazardDetection.h"
+#include "ZERO.h"
+#include "Jump.h"
 
 
 
@@ -47,22 +49,23 @@ int main() {
     RegisterFile RF;
     HazardDetection HDU;
     Jump JU;
+    ZERO ZU;
 
     // generate a clock for 5 threads, among with the stages initialization and pipes
     GlobalClock clk(5); //determine the number of threads
 
     //define the pipes before making objects of each stage 
-    IFID IFIDpipe(&HDU);
+    IFID IFIDpipe(&HDU, &JU);
     IDEXE IDEXEpipe;
     EXEMEM EXEMEMpipe;
     MEMWB MEMWBpipe;
 
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
-    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU , &JU);
+    FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU , &JU );
   
-    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &Fetchthread ,&CU, &RF, &HDU);
+    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU, &ZU ,&JU);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe);
 
     MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe);
 

@@ -5,8 +5,8 @@
 #include <semaphore>
 class EXEMEM {
 private:
-	std::binary_semaphore s1;  // Binary semaphore for write
-	std::binary_semaphore s2;  // Binary semaphore for read
+	std::binary_semaphore s1;  // Binary semaphore for Raw
+	
 	uint32_t PC = 0x00000000;	//Programcounter
 	uint32_t MC = 0x00000000; //MachineCode
 

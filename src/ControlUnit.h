@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #ifndef CONTROL_UNIT_H
 #define CONTROL_UNIT_H
 
@@ -9,33 +9,36 @@ public:
     // Constructor
     ControlUnit();
 
-    // Public method to set control signals based on opcode and funct
+    // Method to set control signals based on opcode and funct
     void setControlSignals(uint8_t opcode, uint8_t funct);
 
     // Accessors for control signals
-    uint8_t getALUOp() const ;
-    bool getRegDst() const;
+    uint8_t getALUOp() const;
+    uint8_t getRegDst() const;
+    uint8_t getALUSrc() const;
     bool getBranch() const;
     bool getMemReadEn() const;
     bool getMemtoReg() const;
     bool getMemWriteEn() const;
     bool getRegWriteEn() const;
-    bool getAluSrc() const;
-    bool getJumpSel() const;
+    bool getJR_Signal() const;
+    bool getZERO() const;
+    bool getJAL_Signal() const;
 
 private:
     // Control signals
-    //signals sent to the pipe
-    uint8_t ALUOp;
-    bool RegDst;
+    uint8_t aluop;
+    uint8_t RegDst;
+    uint8_t ALUSrc;
+    bool Branch;
     bool MemReadEn;
     bool MemtoReg;
     bool MemWriteEn;
     bool RegWriteEn;
-    bool ALUSrc;
-    //signals sent to FetchStage
-    bool JumpSel;
-    bool Branch;
+    bool JR_Signal;
+    bool ZERO;
+    bool JAL_signal;
+
     // Constants for opcodes and funct
     static const uint8_t Rtype = 0x00;
     static const uint8_t ADD = 0x20, ADDU = 0x21, SUB = 0x22, SUBU = 0x23;
@@ -43,7 +46,7 @@ private:
     static const uint8_t SLL = 0x00, SRL = 0x02, JR = 0x08, XOR = 0x26;
 
     static const uint8_t ADDI = 0x08, ORI = 0x0D, ANDI = 0x0C, LW = 0x23;
-    static const uint8_t SW = 0x2B, XORI = 0x0E;
+    static const uint8_t SW = 0x2B, XORi = 0x0E;
     static const uint8_t BEQ = 0x04, BNE = 0x05, J = 0x02, JAL = 0x03;
 };
 

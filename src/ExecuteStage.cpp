@@ -18,7 +18,15 @@ void ExecuteStage::Executejob() {
 		ConsoleLog(3,"Executethread starting new clock");
 
 		//read data from critical section 
-		IDEXEpipe->readdata(PC, MC);
+		IDEXEpipe->readdata(
+		EXEdata.RegWriteEn, EXEdata.MemtoReg, //WB
+		EXEdata.MemWriteEn,EXEdata.MemReadEn, //MEM
+		EXEdata.ALUsrc,EXEdata.ALUOp,EXEdata.RegDst,EXEdata.JAL, PC,
+		MC, //for display
+		EXEdata.readdata1,EXEdata.readdata2,
+		EXEdata.immediate,
+		EXEdata.rs,EXEdata.rt,EXEdata.rd
+		);
 
 		//do logic with PC and MC
 		ConsoleLog(3, "AfterCritical sec read");

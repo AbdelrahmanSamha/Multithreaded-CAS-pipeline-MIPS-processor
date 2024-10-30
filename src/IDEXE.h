@@ -11,12 +11,13 @@
 class IDEXE {
 
 private:
-	std::binary_semaphore s1;  // Binary semaphore for write
-	std::binary_semaphore s2;  // Binary semaphore for read
+	std::binary_semaphore s1;  // Binary semaphore for raw
+	
 	uint32_t PC = 0x00000000;	//Programcounter
 	uint32_t MC = 0x00000000; //MachineCode
 	uint8_t ALUOp; 
-	bool RegDst	   ;
+	uint8_t RegDst;
+	bool JAL;
 	bool ALUsrc	   ;
 	bool MemReadEn ;
 	bool MemWriteEn;
@@ -33,13 +34,18 @@ private:
 public : 
 	IDEXE();
 	void writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, bool MemReadEnin,
-		bool ALUsrcin, uint8_t ALUOpin, bool RegDstin,
-		uint32_t PCin,
+		bool ALUsrcin, uint8_t ALUOpin, uint8_t RegDstin,bool JALin,
+		uint32_t PCin, uint32_t MC,
 		uint32_t readdata1in, uint32_t readdata2in,
 		uint32_t immediatein,
 		uint8_t rsin, uint8_t rtin, uint8_t rdin);
 
-	void readdata(uint32_t& PCout, uint32_t& MCout);
+	void readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut, bool& MemReadEnOut,
+		bool& ALUsrcOut, uint8_t& ALUOpOut, uint8_t& RegDstOut, bool& JALOut,
+		uint32_t& PCOut, uint32_t& MCOut,
+		uint32_t& readdata1Out, uint32_t& readdata2Out,
+		uint32_t& immediateOut,
+		uint8_t& rsOut, uint8_t& rtOut, uint8_t& rdOut);
 };
 
 #endif

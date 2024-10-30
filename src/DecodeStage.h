@@ -10,17 +10,21 @@
 #include "ControlUnit.h"
 #include "HazardDetection.h"
 #include "FetchStage.h"
+#include "ZERO.h"
+#include "Jump.h"
 
 struct ControlSignals {
-    uint8_t ALUOp;
-    bool ALUsrc;
+    uint8_t ALUop;
+    uint8_t RegDst;
+    uint8_t ALUSrc;
+    bool Branch;
     bool MemReadEn;
     bool MemtoReg;
     bool MemWriteEn;
-    bool RegDst;
     bool RegWriteEn;
-    bool JumpSel;
-    bool Branch;
+    bool JR_Signal;
+    bool ZERO;
+    bool JAL_signal;
 };
 
 struct InstructionFields {
@@ -47,7 +51,9 @@ private:
     ControlUnit* CU;
     RegisterFile* RF;
     HazardDetection* HDU;
-    FetchStage* Fetch;
+   
+    ZERO* ZU;
+    Jump* JU;
 
     // Local stage needs:
     std::thread Decodethread;
@@ -65,7 +71,7 @@ private:
 
 public:
     void stop();  // Temporary for debugging purposes (so we don't use 100% CPU)
-    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, FetchStage* Fetch, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU);
+    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU, ZERO* Zu, Jump* JU);
     ~DecodeStage();
 };
 

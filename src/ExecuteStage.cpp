@@ -29,12 +29,18 @@ void ExecuteStage::Executejob() {
 		);
 
 		//do logic with PC and MC
+
+
 		ConsoleLog(3, "AfterCritical sec read");
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
 		//end of deocde logic 
 		//writing to EXE/MEM pipe.
 		EXEMEMpipe->writedata(PC, MC);
 	}
+}
+
+void ExecuteStage::ALU() {
+
 }
 void ExecuteStage::stop() {
 	running = false;

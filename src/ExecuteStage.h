@@ -44,6 +44,7 @@ private:
 	void Executejob(); 
 	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 	EControlSignals EXEdata; 
+	void ALU();
 public:
 	void stop();
 	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe);

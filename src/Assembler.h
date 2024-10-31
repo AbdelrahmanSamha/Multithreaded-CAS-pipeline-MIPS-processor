@@ -18,7 +18,11 @@ private:
     std::string inputFileName;
     std::string outputFileName;
     std::vector<Instruction> instructionSet; // Stores all the instructions with details
-    uint32_t currentAddress;                 // Keeps track of instruction addresses
+    uint32_t currentAddress;
+    std::unordered_map<std::string, uint32_t> labelTable; // Keeps track of instruction addresses
+
+    void firstPass();
+    void secondPass();
 
     // Helper functions
     std::string trimWhitespace(const std::string& str);

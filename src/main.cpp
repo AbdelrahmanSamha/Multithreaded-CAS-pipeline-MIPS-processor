@@ -19,7 +19,7 @@
 
 int main() {
     //force the console window to be fullscreen since the ConsoleLogger deals with Y coordinates that need to be available before hand.
-    HWND console = GetConsoleWindow(); 
+    HWND console = GetConsoleWindow();
     ShowWindow(console, SW_MAXIMIZE);
 
     // Define the temporary file name
@@ -36,7 +36,9 @@ int main() {
     Assembler assembler(inputFileName, outputFileName);
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
-
+    return 0;
+}
+/*
     // generate a clock for 5 threads, among with the stages initialization and pipes
 
     GlobalClock clk(5); //determine the number of threads
@@ -71,4 +73,4 @@ int main() {
     WBthread.stop();
 
     return 0;
-}//csmc
+}//csmc*/

@@ -28,6 +28,7 @@ struct EControlSignals{
 class GlobalClock;// Forward declaration of GlobalClock
 class IDEXE;// Forward declaration of IDEXE
 class EXEMEM; // Forward declaration of EXEMEM
+class HazardDetection;
 
 class ExecuteStage {
 private:
@@ -35,28 +36,38 @@ private:
 	GlobalClock* clk;
 	IDEXE* IDEXEpipe;
 	EXEMEM* EXEMEMpipe;
+	HazardDetection* HDU;
 
 private: 
 	//local stage needs: 
 	std::thread Executethread;
 	uint32_t PC;				//Programcounter
 	uint32_t MC;				//MachineCode
-	void Executejob(); 
 	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 	EControlSignals EXEdata; 
-	void ALU();
+	
+private: //functions 
+	void Executejob();
+	uint32_t ALU(uint32_t operand1, uint32_t operand2, uint8_t opSel);
+
+private: 
+	static constexpr uint8_t _ADD = 0b0000;
+	static constexpr uint8_t _SUB = 0b0001;
+	static constexpr uint8_t _AND = 0b0010;
+	static constexpr uint8_t _OR = 0b0011;
+	static constexpr uint8_t _NOR = 0b0100;
+	static constexpr uint8_t _XOR = 0b0101;
+	static constexpr uint8_t _SLT = 0b0110;
+	static constexpr uint8_t _SLL = 0b0111;
+	static constexpr uint8_t _SRL = 0b1000;
+	static constexpr uint8_t _SGT = 0b1001;
+
 public:
+
 	void stop();
-	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe);
+	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe , HazardDetection* HDU);
 	~ExecuteStage();
 };
-
-
-
-
-
-
-
 
 
 #endif

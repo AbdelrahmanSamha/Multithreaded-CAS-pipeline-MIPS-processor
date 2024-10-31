@@ -65,7 +65,7 @@ int main() {
   
     DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU, &ZU ,&JU);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU);
 
     MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe);
 

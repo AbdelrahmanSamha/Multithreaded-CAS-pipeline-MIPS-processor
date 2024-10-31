@@ -8,7 +8,7 @@
 std::unordered_map<std::string, uint8_t> opcodeMap = {
     {"add", 0x00},{"addu", 0x00}, {"sub", 0x00}, {"subu", 0x00}, {"and", 0x00}, {"or", 0x00}, {"nor", 0x00},
     {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},
-    {"j", 0x02}, {"jal", 0x03}
+    {"j", 0x02}, {"jal", 0x03} /*jhh*/
 };
 
 std::unordered_map<std::string, uint8_t> functMap = {

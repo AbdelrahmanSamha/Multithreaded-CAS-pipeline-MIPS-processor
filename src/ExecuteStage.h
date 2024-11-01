@@ -48,6 +48,8 @@ private:
 	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 	EControlSignals EXEdata; 
 	uint32_t Operand1, Operand2;
+	uint32_t Out_JALM, Out_BOP2M;
+	uint8_t Out_RegDstM;
 	
 private: //functions 
 	void Executejob();

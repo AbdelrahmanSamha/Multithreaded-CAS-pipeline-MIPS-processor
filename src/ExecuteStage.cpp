@@ -27,22 +27,19 @@ void ExecuteStage::Executejob() {
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
-        uint32_t Out_JALM, Out_BOP2M; 
-        uint8_t Out_RegDstM;
-
         HDU->setInputExecute(EXEdata.rt, EXEdata.MemReadEn);
+        RegDstMux(EXEdata.rt,EXEdata.rd,EXEdata.RegDst);
+        //ForwardingUnit
 
 
 
-
-
+        JalMux(PC, EXEdata.rs, EXEdata.JAL);
+        Op1Mux(Out_JALM, WBfromForward, FU->ForwardA);
+        BeforeOp2Mux(EXEdata.rt, WBfromForward, MEMfromForward, FU->ForwardB);
+        Op2Mux(Out_BOP2M,EXEdata.immediate,EXEdata.ALUsrc);
 
 		ConsoleLog(3, "AfterCritical sec read");
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
-
-
-
-
 
 		//EXEMEMpipe->writedata(PC, MC);
 	}
@@ -90,13 +87,77 @@ uint32_t ExecuteStage::ALU(uint32_t operand1, uint32_t operand2, uint8_t opSel) 
     return result;
 }
 
-void ExecuteStage::Op1Mux(){}
-void ExecuteStage::BeforeOp2Mux() {}
-void ExecuteStage::Op2Mux() {}
-void ExecuteStage::RegDstMux() {}
+void ExecuteStage::JalMux(uint32_t PC, uint32_t Rs, bool JalSignal){
+    if (JalSignal == 1)
+        Out_JALM = PC;
+    else
+        Out_JALM = Rs;
+}
+void ExecuteStage::Op1Mux(uint32_t JalMux, uint32_t WB32, uint32_t MEM32, uint8_t ForwardA) {
+    switch (ForwardA) {
+    case 0: 
+        Operand1 = JalMux;
+        break;
+    case 1 :
+        Operand1 = WB32;
+        break;
+    case 2 : 
+        Operand1 = MEM32;
+        break;
+    default: 
+        Operand1 = 0xFFFFFFFF;
+        break;
+    }
+}
+void ExecuteStage::BeforeOp2Mux(uint32_t Rt, uint32_t WB32, uint32_t MEM32, uint8_t ForwardB){
+    switch (ForwardB) {
+    case 0:
+        Out_BOP2M = Rt;
+        break;
+    case 1:
+        Out_BOP2M = WB32;
+        break;
+    case 2:
+        Out_BOP2M = MEM32;
+        break;
+    default:
+        Out_BOP2M = 0xFFFFFFFF;
+        break;
+    }
+}
+void ExecuteStage::Op2Mux(uint32_t BOP2Mux, uint32_t Imm, uint8_t AluSrc){
+    switch(AluSrc){
+    case 0:
+        Operand2 = Imm;
+        break;
+    case 1:
+        Operand2 = BOP2Mux;
+        break;
+    case 2:
+        Operand2 = 0x00000000;
+        break;
+    default:
+        Operand2 = 0xFFFFFFFF;
+        break;
+    }
+}
+void ExecuteStage::RegDstMux(uint8_t rt, uint8_t rd, uint8_t RegDstS) {
+    switch (RegDstS) {
+    case 0: 
+        Out_RegDstM = 31; 
+        break;
+    case 1 : 
+        Out_RegDstM = rt; 
+        break; 
+    case 2 :
+        Out_RegDstM = rd;
+        break;
+    default: 
+        Out_RegDstM = 0;
+        break;
 
-
-
+}
+}
 void ExecuteStage::stop() {
 	running = false;
 }

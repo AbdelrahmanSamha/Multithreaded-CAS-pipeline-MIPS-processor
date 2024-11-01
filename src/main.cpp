@@ -50,7 +50,7 @@ int main() {
     HazardDetection HDU;
     Jump JU;
     ZERO ZU;
-
+    ForwardingUnit FU;
     // generate a clock for 5 threads, among with the stages initialization and pipes
     GlobalClock clk(5); //determine the number of threads
 
@@ -65,9 +65,9 @@ int main() {
   
     DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU, &ZU ,&JU);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU, &FU);
 
-    MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe);
+    MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe, &FU);
 
     WritebackStage WBthread(&clk, &MEMWBpipe);
 

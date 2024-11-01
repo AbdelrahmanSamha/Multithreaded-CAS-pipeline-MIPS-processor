@@ -19,7 +19,7 @@ void ExecuteStage::Executejob() {
 
 		//read data from critical section 
 		IDEXEpipe->readdata(
-		EXEdata.RegWriteEn, EXEdata.MemtoReg, //WB
+		EXEdata.RegWriteEn, EXEdata.MemtoReg, //WB for the next pipe
 		EXEdata.MemWriteEn,EXEdata.MemReadEn, //MEM
 		EXEdata.ALUsrc,EXEdata.ALUOp,EXEdata.RegDst,EXEdata.JAL, PC,//exe
 		MC, //for display
@@ -27,8 +27,15 @@ void ExecuteStage::Executejob() {
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
+        uint32_t Out_JALM, Out_BOP2M; 
+        uint8_t Out_RegDstM;
 
         HDU->setInputExecute(EXEdata.rt, EXEdata.MemReadEn);
+
+
+
+
+
 
 		ConsoleLog(3, "AfterCritical sec read");
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
@@ -82,6 +89,11 @@ uint32_t ExecuteStage::ALU(uint32_t operand1, uint32_t operand2, uint8_t opSel) 
 
     return result;
 }
+
+void ExecuteStage::Op1Mux(){}
+void ExecuteStage::BeforeOp2Mux() {}
+void ExecuteStage::Op2Mux() {}
+void ExecuteStage::RegDstMux() {}
 
 
 

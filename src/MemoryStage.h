@@ -1,32 +1,48 @@
 #pragma once
 #ifndef MEMORYSTAGE_H
 #define MEMORYSTAGE_H
+
 #include "GlobalClock.h"
 #include "EXEMEM.h"
 #include "MEMWB.h"
 #include <thread>
+#include <vector>
+#include <cstdint>
+#include <string>
+#include <fstream>
 
-class GlobalClock;// Forward declaration of GlobalClock
+class GlobalClock; // Forward declaration of GlobalClock
 class EXEMEM; // Forward declaration of EXEMEM
-class MEMWB;  //forward declaration of MEMWB
+class MEMWB;  // Forward declaration of MEMWB
+
+struct MemoryEntry {
+    uint32_t address; // Memory address
+    uint32_t data;    // Content of the memory address
+};
 
 class MemoryStage {
 private:
-	// Global Comunication needs:
-	GlobalClock* clk;
-	EXEMEM* EXEMEMpipe;
-	MEMWB* MEMWBpipe;
+    GlobalClock* clk;
+    EXEMEM* EXEMEMpipe;
+    MEMWB* MEMWBpipe;
 
-private:
-	//local stage needs: 
-	std::thread Memorythread;
-	uint32_t PC= 0;				//Programcounter
-	uint32_t MC= 0;				//MachineCode
-	void Memoryjob();
-	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
+    std::thread Memorythread;
+    uint32_t PC = 0;
+    uint32_t MC = 0;
+    bool running = true;
+
+    std::vector<MemoryEntry> dataMemory; // Vector to represent data memory
+
+    void Memoryjob();
+    void dumpMemoryToFile(const std::string& filename);
+
 public:
-	void stop();
-	MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe,MEMWB* next_pipe);
-	~MemoryStage();
+    MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe);
+    ~MemoryStage();
+
+    void stop();
+    void writeToMemory(uint32_t address, uint32_t data);
+    uint32_t readFromMemory(uint32_t address);
 };
+
 #endif

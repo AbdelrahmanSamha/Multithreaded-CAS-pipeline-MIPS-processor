@@ -5,25 +5,46 @@
 // Constructor to initialize binary semaphores
 EXEMEM::EXEMEM() : s1(0)  { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
-void EXEMEM::writedata(uint32_t  PCin, uint32_t  MCin) {
+void EXEMEM::writedata(uint32_t PCIn,
+                        bool RegWriteEnIn, bool MemtoRegIn,//WBS
+                        bool MemWriteEnIn, bool MemReadEnIn, //mem
+                        uint32_t resultIn,
+                        uint32_t WriteDataIn,
+                        uint8_t WriteRegisterIn) {
 
     s1.acquire();
    
     // Write data
     ConsoleLog(3,"Writing data...");
-    ConsoleLog(3, "ePC = " ,std::hex, std::setw(8),std::setfill('0'), PCin, " eMC = ", MCin);
-    this->PC = PCin;
-    this->MC = MCin;
+    this->PC = PCIn;
+    this->RegWriteEn = RegWriteEnIn;
+    this->MemtoReg = MemtoRegIn;
+    this->MemWriteEn = MemWriteEnIn;
+    this->MemReadEn = MemReadEnIn;
+    this->result = resultIn;
+    this->WriteData =WriteDataIn ;
+    this->WriteRegister = WriteRegisterIn;
 
     
 }
 
-void EXEMEM::readdata(uint32_t& PCout, uint32_t& MCout) {
+void EXEMEM::readdata(uint32_t& PCOut,
+                        bool& RegWriteEnOut, bool& MemtoRegOut,//WBS
+                        bool& MemWriteEnOut, bool& MemReadEnOut, //mem
+                        uint32_t& resultOut,
+                        uint32_t& WriteDataOut,
+                        uint8_t& WriteRegisterOut) {
   
     // Read data
     ConsoleLog(4, "Reading data...");
-    PCout = this->PC;
-    MCout = this->MC;
+    PCOut = this->PC;
+    RegWriteEnOut = this->RegWriteEn;
+    MemtoRegOut = this->MemtoReg;
+    MemWriteEnOut = this->MemWriteEn;
+    MemReadEnOut = this->MemReadEn;
+    resultOut = this->result;
+    WriteDataOut = this->WriteData;
+    WriteRegisterOut = this->WriteRegister;
 
     s1.release();
 }

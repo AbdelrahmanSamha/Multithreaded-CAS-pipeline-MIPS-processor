@@ -2,7 +2,7 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU)
+ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU)
 	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe), HDU(HDU) {
 	// Launch the decoding thread and store it in the class
 	Executethread = std::thread([this]() { Executejob(); });
@@ -27,21 +27,31 @@ void ExecuteStage::Executejob() {
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
-        HDU->setInputExecute(EXEdata.rt, EXEdata.MemReadEn);
+        HDU->HDUinputExecute(EXEdata.rt, EXEdata.MemReadEn);
         RegDstMux(EXEdata.rt,EXEdata.rd,EXEdata.RegDst);
         //ForwardingUnit
+        FU->FUinputEXE(EXEdata.rs, EXEdata.rt);
+        FU->evaluateForwarding();
 
-
-
+        //Mux operation 
         JalMux(PC, EXEdata.rs, EXEdata.JAL);
-        Op1Mux(Out_JALM, WBfromForward, FU->ForwardA);
-        BeforeOp2Mux(EXEdata.rt, WBfromForward, MEMfromForward, FU->ForwardB);
+        Op1Mux(Out_JALM, FU->WBdata,FU->MEMdata, FU->ForwardA);
+        BeforeOp2Mux(EXEdata.rt, FU->WBdata, FU->MEMdata, FU->ForwardB);
         Op2Mux(Out_BOP2M,EXEdata.immediate,EXEdata.ALUsrc);
+        RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
-		ConsoleLog(3, "AfterCritical sec read");
+        //ALU
+       uint32_t ALUresult=  ALU(Operand1,Operand2, EXEdata.ALUOp);
+
+		EXEMEMpipe->writedata(PC,
+            EXEdata.RegWriteEn, EXEdata.MemtoReg,//WBS
+            EXEdata.MemWriteEn, EXEdata.MemReadEn,//MEMS
+            ALUresult,
+            Out_BOP2M,
+            Out_RegDstM);
+
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
 
-		//EXEMEMpipe->writedata(PC, MC);
 	}
 }
 

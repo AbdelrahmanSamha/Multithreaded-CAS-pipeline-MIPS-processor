@@ -21,7 +21,7 @@
 #include "HazardDetection.h"
 #include "ZERO.h"
 #include "Jump.h"
-
+#include "ForwardingUnit.h"
 
 
 int main() {

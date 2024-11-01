@@ -45,7 +45,7 @@ void DecodeStage::Decodejob() {
        
         JU->JumpInputD(BranchAddress,readdata1 ,AndGate, controlSignals.JR_Signal);
 
-        HDU->setInputDecode(instrFields.rs, instrFields.rt);  // Input to the hazard detection unit
+        HDU->HDUinputDecode(instrFields.rs, instrFields.rt);  // Input to the hazard detection unit
 
 
        // Hazard detection... needs further adjustment to flush IDEXE, need data from EXEC.

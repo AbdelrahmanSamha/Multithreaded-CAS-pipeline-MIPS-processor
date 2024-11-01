@@ -90,9 +90,6 @@
     <ClCompile Include="src\RegisterFile.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
-    <ClCompile Include="src\ALU.cpp">
-      <Filter>Source Files\Units</Filter>
-    </ClCompile>
     <ClCompile Include="src\HazardDetection.cpp">
       <Filter>Source Files\Units</Filter>
     </ClCompile>
@@ -156,6 +153,9 @@
       <Filter>Header Files\Units</Filter>
     </ClInclude>
     <ClInclude Include="src\Jump.h">
+      <Filter>Header Files\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ForwardingUnit.h">
       <Filter>Header Files\Units</Filter>
     </ClInclude>
   </ItemGroup>

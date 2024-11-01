@@ -136,7 +136,6 @@
     <ClCompile Include="src\ControlUnit.cpp" />
     <ClCompile Include="src\ForwardingUnit.cpp" />
     <ClCompile Include="src\RegisterFile.cpp" />
-    <ClCompile Include="src\ALU.cpp" />
     <ClCompile Include="src\MEMWB.cpp" />
     <ClCompile Include="src\EXEMEM.cpp" />
     <ClCompile Include="src\MemoryStage.cpp" />
@@ -154,6 +153,7 @@
     <ClCompile Include="src\ZERO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ForwardingUnit.h" />
     <ClInclude Include="src\Jump.h" />
     <ClInclude Include="src\HazardDetection.h" />
     <ClInclude Include="src\ControlUnit.h" />

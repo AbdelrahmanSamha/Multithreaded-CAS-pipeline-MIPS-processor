@@ -3,15 +3,15 @@
 #define HAZARDDETECTION_H
 
 #include <cstdint>
-
+#include <semaphore>
 class HazardDetection {
 public:
     // Constructor
     HazardDetection();
 
     // Inputs
-    void setInputExecute(uint8_t ID_EX_Rt, bool ID_EX_MemRead);
-    void setInputDecode(uint8_t IF_ID_Rs, uint8_t IF_ID_Rt);
+    void HDUinputExecute(uint8_t ID_EX_Rt, bool ID_EX_MemRead);
+    void HDUinputDecode(uint8_t IF_ID_Rs, uint8_t IF_ID_Rt);
     
     // Outputs
     bool getPCWrite() const;
@@ -22,6 +22,7 @@ public:
     void detectHazard();
 
 private:
+    std::binary_semaphore EXEsemaphore;
     // Inputs
     uint8_t IFID_Rs;
     uint8_t IFID_Rt;

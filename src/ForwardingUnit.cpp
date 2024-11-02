@@ -1,5 +1,5 @@
 #include "ForwardingUnit.h"
-
+#include <iostream>
 ForwardingUnit::ForwardingUnit() : ForwardA(0), ForwardB(0), MEMsemaphore(0),WBsemaphore(0) {}
 
 void ForwardingUnit::evaluateForwarding()
@@ -30,6 +30,10 @@ void ForwardingUnit::evaluateForwarding()
 }
 
 void ForwardingUnit::FUinputEXE(uint8_t EXErs, uint8_t EXErt) {
+    if (this == nullptr) {
+        std::cerr << "Error: Attempted to call FUinputEXE on a null pointer!" << std::endl;
+        return;
+    }
     this->IDEXE_Rs = EXErs;
     this->IDEXE_Rt = EXErt;
 }

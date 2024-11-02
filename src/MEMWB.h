@@ -11,9 +11,11 @@ private:
 	uint32_t PC = 0x00000000;	//Programcounter
 	uint32_t MC = 0x00000000; //MachineCode
 
-	bool RegWriteEn, MemtoReg;
-	uint32_t ReadData, Address;
-	uint8_t WriteRegister;
+	bool RegWriteEn = false;
+	bool MemtoReg=false;
+	uint32_t ReadData = 0x0;
+	uint32_t Address =0x0;
+	uint8_t WriteRegister=0x0;
 public:
 	MEMWB();
 	void writedata(uint32_t PCin, uint32_t MCin,

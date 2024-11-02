@@ -8,10 +8,13 @@ private:
 	std::binary_semaphore s1;  // Binary semaphore for Raw
 	
 	uint32_t PC = 0x00000000;	//Programcounter
-	bool RegWriteEn ,MemtoReg; //WBS
-	bool MemWriteEn,MemReadEn; //mem
-	uint32_t result, WriteData;
-	uint8_t WriteRegister;
+	bool RegWriteEn= false;
+	bool MemtoReg= false; //WBS
+	bool MemWriteEn= false;
+	bool MemReadEn= false; //mem
+	uint32_t result= false;
+	uint32_t WriteData= false;
+	uint8_t WriteRegister= false;
 
 public:
 	EXEMEM();

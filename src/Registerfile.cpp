@@ -1,5 +1,5 @@
 #include "RegisterFile.h"
-
+#include "ConsoleLogger.h"
 // Constructor: Initialize all registers to 0 and set SP and PC
 RegisterFile::RegisterFile(): reg_semaphore(0) {
     reset();  // Reset the registers and initialize special registers (SP, PC)
@@ -35,9 +35,9 @@ void RegisterFile::writeRegister(uint8_t writeReg, uint32_t writeData, bool regW
 // Debug method to print the register file (for inspection during simulation)
 void RegisterFile::printRegisterFile() const {
 
-        std::cout << "Register File Contents:\n";
+        ConsoleLog(1, "Register File Contents:\n");
     for (size_t i = 0; i < registers.size(); ++i) {
-        std::cout << "R" << i << ": " << std::hex << registers[i] << "\n";
+        ConsoleLog(1, "R" , i , ": " , std::hex , registers[i] , "\n");
 
     }
 

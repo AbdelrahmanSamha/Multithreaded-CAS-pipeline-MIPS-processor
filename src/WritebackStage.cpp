@@ -3,7 +3,7 @@
 #include <iomanip>
 
 WritebackStage::WritebackStage(GlobalClock* clock, MEMWB* prev_pipe, ForwardingUnit* FU, RegisterFile* RF)
-	: clk(clock), MEMWBpipe(prev_pipe),FU(FU),RF(RF) {
+	: clk(clock), MEMWBpipe(prev_pipe),FU(FU),RF(RF){
 	// Launch the decoding thread and store it in the class
 	Writebackthread = std::thread([this]() { WBjob(); });
 }
@@ -19,7 +19,7 @@ void WritebackStage::WBjob() {
 
 		bool RegWriteEn, MemtoReg;
 		uint32_t ReadData, Address;
-		uint8_t WriteRegister;
+		uint8_t WriteRegister = 0 ;
 		uint32_t OutWbMux;
 
 		//read data fro,m critical section 

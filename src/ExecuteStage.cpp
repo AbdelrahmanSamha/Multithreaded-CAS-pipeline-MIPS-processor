@@ -3,7 +3,7 @@
 #include <iomanip>
 
 ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU)
-	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe), HDU(HDU) {
+	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe), HDU(HDU), FU(FU) {
 	// Launch the decoding thread and store it in the class
 	Executethread = std::thread([this]() { Executejob(); });
 }

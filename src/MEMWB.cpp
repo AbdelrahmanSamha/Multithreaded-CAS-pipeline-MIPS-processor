@@ -3,7 +3,7 @@
 #include<iomanip>
 
 // Constructor to initialize binary semaphores
-MEMWB::MEMWB() : s1(0)  { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
+MEMWB::MEMWB() : s1(0){ } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
 void MEMWB::writedata(uint32_t PCin, uint32_t MCin,
                       bool RegWriteEnIn, bool MemtoRegIn,

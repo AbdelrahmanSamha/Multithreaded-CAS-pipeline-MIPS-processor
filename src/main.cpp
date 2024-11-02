@@ -82,6 +82,7 @@ int main() {
     Executethread.stop();
     Memorythread.stop();
     WBthread.stop();
+    RF.printRegisterFile();
 
     return 0;
 }//csmc

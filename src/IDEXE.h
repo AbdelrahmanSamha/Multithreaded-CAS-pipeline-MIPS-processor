@@ -15,20 +15,20 @@ private:
 	
 	uint32_t PC = 0x00000000;	//Programcounter
 	uint32_t MC = 0x00000000; //MachineCode
-	uint8_t ALUOp; 
-	uint8_t RegDst;
-	bool JAL;
-	bool ALUsrc	   ;
-	bool MemReadEn ;
-	bool MemWriteEn;
-	bool MemtoReg  ;
-	bool RegWriteEn;
-	uint32_t readdata1;
-	uint32_t readdata2;
-	uint32_t immediate;
-	uint8_t rs;
-	uint8_t rt;
-	uint8_t rd;
+	uint8_t ALUOp=0x0; 
+	uint8_t RegDst=0x0;
+	bool JAL=false;
+	bool ALUsrc= false;
+	bool MemReadEn = false;
+	bool MemWriteEn= false;
+	bool MemtoReg  = false;
+	bool RegWriteEn= false;
+	uint32_t readdata1=0x0;
+	uint32_t readdata2= 0x0;
+	uint32_t immediate= 0x0;
+	uint8_t rs= 0x0;
+	uint8_t rt= 0x0;
+	uint8_t rd= 0x0;
 	
 	
 public : 

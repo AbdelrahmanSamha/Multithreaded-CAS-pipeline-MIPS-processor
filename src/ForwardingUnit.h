@@ -16,8 +16,8 @@ private:
     bool MEMWB_RegWrite;
     uint8_t MEMWB_Rd;
 
-    uint8_t IDEXE_Rs;
-    uint8_t IDEXE_Rt;
+    uint8_t IDEXE_Rs= 0;
+    uint8_t IDEXE_Rt=0;
 public:
     uint32_t MEMdata, WBdata;
     uint8_t ForwardA, ForwardB;

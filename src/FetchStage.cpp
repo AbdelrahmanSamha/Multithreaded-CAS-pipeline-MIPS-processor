@@ -71,12 +71,6 @@ void FetchStage::stop() {
     running = false; 
 }
 
-FetchStage::~FetchStage() {
-    if (Fetchthread.joinable()) {
-        Fetchthread.join();
-    }
-}
-
 bool FetchStage::hasNextInstruction() {
 
 
@@ -85,4 +79,10 @@ bool FetchStage::hasNextInstruction() {
 
     // Check if the PC has reached or exceeded the end of the instruction vector
     return PC < maxPC;
+}
+
+FetchStage::~FetchStage() {
+    if (Fetchthread.joinable()) {
+        Fetchthread.join();
+    }
 }

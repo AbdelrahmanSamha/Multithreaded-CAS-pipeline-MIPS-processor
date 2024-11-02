@@ -6,5 +6,4 @@ addu $t0, $t1, $t2
     or   $t6, $t7, $t8       
     nor  $s3, $s4, $s5       
     sll  $t1, $t2, 2         
-    srl  $s6, $s7, 3         
-    addu $t0, $t0, $t1
+    srl  $s6, $s7, 3

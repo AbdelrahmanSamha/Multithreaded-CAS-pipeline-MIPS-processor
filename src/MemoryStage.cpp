@@ -4,8 +4,8 @@
 #include <sstream>
 #include <algorithm>
 
-MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe)
-    : clk(clock), EXEMEMpipe(prev_pipe), MEMWBpipe(next_pipe) {
+MemoryStage::MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe, ForwardingUnit* FU)
+    : clk(clock), EXEMEMpipe(prev_pipe), MEMWBpipe(next_pipe),FU(FU) {
     Memorythread = std::thread([this]() { Memoryjob(); });
 }
 
@@ -14,13 +14,23 @@ void MemoryStage::Memoryjob() {
         ConsoleLog(4, "MemoryThread waiting for clock tick");
         clk->waitforClockTick();
         ConsoleLog(4, "MemoryThread starting new clock");
+        bool RegWriteEn, MemtoReg; //WBS
+        bool MemWriteEn, MemReadEn; 
+        uint32_t Address, WriteData;
+        uint8_t WriteRegister;
+        uint32_t ReadData= 0; //this is the DM output
+        
+        EXEMEMpipe->readdata(PC,RegWriteEn, MemtoReg, MemWriteEn, MemReadEn, Address, WriteData, WriteRegister);
 
-        EXEMEMpipe->readdata(PC);
+        //Forwarding Early in the stage because EXECUTE is waiting on its input
+        FU->FUinputMEM(RegWriteEn,WriteRegister,Address);
 
-        ConsoleLog(4, "AfterCritical sec read");
+        if (MemReadEn) { ReadData = readFromMemory(Address); }
+        if (MemWriteEn) { writeToMemory(Address, WriteData); }
+
         ConsoleLog(4, "mPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " mMC = ", MC);
 
-        MEMWBpipe->writedata(PC, MC);
+        MEMWBpipe->writedata(PC, MC,  RegWriteEn, MemtoReg, ReadData , Address, WriteRegister);
     }
 }
 

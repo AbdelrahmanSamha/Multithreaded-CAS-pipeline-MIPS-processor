@@ -69,7 +69,7 @@ int main() {
 
     MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe, &FU);
 
-    WritebackStage WBthread(&clk, &MEMWBpipe);
+    WritebackStage WBthread(&clk, &MEMWBpipe,&FU,&RF);
 
 
 

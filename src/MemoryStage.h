@@ -14,6 +14,7 @@
 class GlobalClock; // Forward declaration of GlobalClock
 class EXEMEM; // Forward declaration of EXEMEM
 class MEMWB;  // Forward declaration of MEMWB
+class ForwardingUnit;
 
 struct MemoryEntry {
     uint32_t address; // Memory address
@@ -25,6 +26,7 @@ private:
     GlobalClock* clk;
     EXEMEM* EXEMEMpipe;
     MEMWB* MEMWBpipe;
+    ForwardingUnit* FU; 
 
     std::thread Memorythread;
     uint32_t PC = 0;
@@ -37,7 +39,7 @@ private:
     void dumpMemoryToFile(const std::string& filename);
 
 public:
-    MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe);
+    MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe, ForwardingUnit* FU);
     ~MemoryStage();
 
     void stop();

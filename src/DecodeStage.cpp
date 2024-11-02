@@ -34,9 +34,9 @@ void DecodeStage::Decodejob() {
         uint32_t BranchAddress = PC + (signExtendedImmediate << 2);
 
         // RF read will always happen
+        //RF Write happens from the WB stage. Read is syncronized with write in a way that read cant happen before a write.   
         uint32_t readdata1, readdata2;
         RF->readRegisters(instrFields.rs, instrFields.rt, readdata1, readdata2);
-
         //ZERO unit input
         ZU->ZeroInput(readdata1, readdata2, controlSignals.ZERO);
 

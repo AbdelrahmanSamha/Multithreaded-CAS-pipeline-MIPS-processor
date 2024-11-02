@@ -34,13 +34,15 @@ void ForwardingUnit::FUinputEXE(uint8_t EXErs, uint8_t EXErt) {
     this->IDEXE_Rt = EXErt;
 }
 void ForwardingUnit::FUinputMEM(bool EXEMEM_RegWrite, uint8_t EXEMEM_Rd, uint32_t MEMdata) {
-    this->MEMdata = MEMdata; 
+    this->MEMdata = MEMdata; //this has nothing to do with Forwarding Logic, Its just to pass data to the Alu Mux.
+                             //##Can be moved to another function for better clarity,But requires further syncronization,##
     this->EXEMEM_RegWrite = EXEMEM_RegWrite;
     this->EXEMEM_Rd = EXEMEM_Rd;
     MEMsemaphore.release();
 }
 void ForwardingUnit::FUinputWB(bool MEMWB_RegWrite, uint8_t MEMWB_Rd, uint32_t WBdata) {
-    this->WBdata = WBdata;
+    this->WBdata = WBdata;//this has nothing to do with Forwarding Logic, Its just to pass data to the Alu Mux.
+                          //##Can be moved to another function for better clarity,But requires further syncronization,##
     this->MEMWB_RegWrite = MEMWB_RegWrite;
     this->MEMWB_Rd = MEMWB_Rd;
     WBsemaphore.release();

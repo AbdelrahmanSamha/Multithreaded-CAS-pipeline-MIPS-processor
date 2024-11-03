@@ -7,7 +7,7 @@ ControlUnit::ControlUnit()
     ZERO(false), JAL_signal(false) {}
 
 // Set control signals based on opcode and funct fields
-void ControlUnit::setControlSignals(uint8_t opcode, uint8_t funct) {
+void ControlUnit::setControlSignals(int32_t opcode, int32_t funct) {
     // Reset control signals to default values
     aluop = 0;
     RegDst = 0;
@@ -79,9 +79,9 @@ void ControlUnit::setControlSignals(uint8_t opcode, uint8_t funct) {
 }
 
 // Accessor methods for control signals
-uint8_t ControlUnit::getALUOp() const { return aluop; }
-uint8_t ControlUnit::getRegDst() const { return RegDst; }
-uint8_t ControlUnit::getALUSrc() const { return ALUSrc; }
+int32_t ControlUnit::getALUOp() const { return aluop; }
+int32_t ControlUnit::getRegDst() const { return RegDst; }
+int32_t ControlUnit::getALUSrc() const { return ALUSrc; }
 bool ControlUnit::getBranch() const { return Branch; }
 bool ControlUnit::getMemReadEn() const { return MemReadEn; }
 bool ControlUnit::getMemtoReg() const { return MemtoReg; }

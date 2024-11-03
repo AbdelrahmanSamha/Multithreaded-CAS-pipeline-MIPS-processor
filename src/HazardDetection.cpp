@@ -7,14 +7,14 @@ HazardDetection::HazardDetection()
 
 
 // Set inputs (register values and memory read signal)
-void HazardDetection::HDUinputExecute( uint8_t ID_EX_Rt, bool ID_EX_MemRead) {
+void HazardDetection::HDUinputExecute( int32_t ID_EX_Rt, bool ID_EX_MemRead) {
     this->IDEX_Rt = ID_EX_Rt;
     this->IDEX_MemRead = ID_EX_MemRead;
     EXEsemaphore.release();
 }
 
 
-void HazardDetection::HDUinputDecode(uint8_t IF_ID_Rs, uint8_t IF_ID_Rt) {
+void HazardDetection::HDUinputDecode(int32_t IF_ID_Rs, int32_t IF_ID_Rt) {
     this->IFID_Rs = IF_ID_Rs;
     this->IFID_Rt = IF_ID_Rt;
 }

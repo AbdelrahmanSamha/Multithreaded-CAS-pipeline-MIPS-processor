@@ -28,10 +28,10 @@ private:
     //Local Stage needs
     std::thread Fetchthread;      // Thread for the fetch stage
     const std::vector<Instruction>& instructions; // Reference to vector of instructions
-    uint32_t fetchInstruction();  // Fetch instruction by PC
+    int32_t fetchInstruction();  // Fetch instruction by PC
     bool hasNextInstruction();    // Check if there are more instructions
-    uint32_t BaseAddress = 0x00400000;
-    uint32_t PC = 0;              // Program Counter
+    int32_t BaseAddress = 0x00400000;
+    int32_t PC = 0;              // Program Counter
     void Fetchjob();              // Fetch job method run by the thread
     bool running = true;          // temporary for debugging purposes.
     

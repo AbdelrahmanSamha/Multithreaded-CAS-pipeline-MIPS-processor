@@ -21,13 +21,15 @@ void FetchStage::Fetchjob() {
         }
 
   
-        uint32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
+        int32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
 
+
+        ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
+        
         PC += 4;
 
         IFIDpipe->writedata(PC, fetchedInstruction);
 
-        ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
 
         JU->JumpInputF(fetchedInstruction, PC );
         JU->JumpUnitSignalsOutput();
@@ -36,8 +38,8 @@ void FetchStage::Fetchjob() {
 }
 
 // Fetch the machine code of the instruction based on Jump unit selection
-uint32_t FetchStage::fetchInstruction() {
-    uint32_t address;
+int32_t FetchStage::fetchInstruction() {
+    int32_t address;
 
     // Set the address based on the jump selector
     switch (JU->JmuxSel) {
@@ -63,7 +65,7 @@ uint32_t FetchStage::fetchInstruction() {
     }
 
     // Calculate current index and fetch machine code
-    uint32_t currentIndex = (address - BaseAddress) / 4;
+    int32_t currentIndex = (address - BaseAddress) / 4;
     return instructions[currentIndex].machineCode;
 }
 

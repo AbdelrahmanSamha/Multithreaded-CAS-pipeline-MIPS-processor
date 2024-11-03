@@ -26,16 +26,16 @@ void DecodeStage::Decodejob() {
 
         //Sign extend the immediate value 
         int32_t signExtendedImmediate = (instrFields.immediate & 0x0000FFFF); // Mask to get the lower 16 bits
-        if (signExtendedImmediate & 0x00008000) {                 // Check if the 16th bit is set
-            signExtendedImmediate |= 0xFFFF0000;                  // Extend the sign to upper 16 bits
+        if (signExtendedImmediate & 0x00008000) {                             // Check if the 16th bit is set
+            signExtendedImmediate |= 0xFFFF0000;                              // Extend the sign to upper 16 bits
         }
         
         //branch address calculation...
-        uint32_t BranchAddress = PC + (signExtendedImmediate << 2);
+        int32_t BranchAddress = PC + (signExtendedImmediate << 2);
 
         // RF read will always happen
         //RF Write happens from the WB stage. Read is syncronized with write in a way that read cant happen before a write.   
-        uint32_t readdata1, readdata2;
+        int32_t readdata1, readdata2;
         RF->readRegisters(instrFields.rs, instrFields.rt, readdata1, readdata2);
         //ZERO unit input
         ZU->ZeroInput(readdata1, readdata2, controlSignals.ZERO);
@@ -116,6 +116,7 @@ void DecodeStage::GenerateControlSignals() {
 
 DecodeStage::~DecodeStage() {
     // Join the thread to ensure proper cleanup
+    RF->printRegisterFile();
     if (Decodethread.joinable()) {
         Decodethread.join();
     }

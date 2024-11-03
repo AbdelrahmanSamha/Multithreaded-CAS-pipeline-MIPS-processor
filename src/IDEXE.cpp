@@ -6,11 +6,11 @@
 IDEXE::IDEXE() : s1(0) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
 void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, bool MemReadEnin,
-                      bool ALUSrcin, uint8_t ALUOpin, uint8_t RegDstin,bool JAL,
-                      uint32_t PCin, uint32_t MCin,
-                      uint32_t readdata1in, uint32_t readdata2in,
-                      uint32_t immediatein,
-                      uint8_t rsin, uint8_t rtin, uint8_t rdin) {
+                      bool ALUSrcin, int32_t ALUOpin, int32_t RegDstin,bool JAL,
+                      int32_t PCin, int32_t MCin,
+                      int32_t readdata1in, int32_t readdata2in,
+                      int32_t immediatein,
+                      int32_t rsin, int32_t rtin, int32_t rdin) {
     // Acquire the semaphores
     s1.acquire();
    
@@ -33,16 +33,30 @@ void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, boo
     this->rs         = rsin;
     this->rt         = rtin;
     this->rd         = rdin;
+    ConsoleLog(2,"RegWriteEnin", std::hex, RegWriteEnin);
+    ConsoleLog(2,"MemWriteEnin", std::hex, MemWriteEnin);
+    ConsoleLog(2,"MemtoRegin", std::hex, MemtoRegin);
+    ConsoleLog(2,"MemReadEnin", std::hex, MemReadEnin);
+    ConsoleLog(2,"ALUSrcin", std::hex, ALUSrcin);
+    ConsoleLog(2,"ALUOpin",std::hex, ALUOpin);
+    ConsoleLog(2,"RegDstin", std::hex, RegDstin);
+    ConsoleLog(2,"PCin", std::hex, PCin);
+    ConsoleLog(2,"readdata1in", std::hex, readdata1in);
+    ConsoleLog(2,"readdata2in", std::hex, readdata2in);
+    ConsoleLog(2,"immediatein", std::hex, immediatein);
+    ConsoleLog(2, "rsin", std::hex, rsin);
+    ConsoleLog(2, "rtin", std::hex, rtin);
+    ConsoleLog(2, "rdin", std::hex, rdin);
 
     
 }
 
 void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut, bool& MemReadEnOut,
-                    bool& ALUsrcOut, uint8_t& ALUOpOut, uint8_t& RegDstOut,bool& JALOut,
-                    uint32_t& PCOut, uint32_t& MCOut,
-                    uint32_t& readdata1Out, uint32_t& readdata2Out,
-                    uint32_t& immediateOut,
-                    uint8_t& rsOut, uint8_t& rtOut, uint8_t& rdOut) {
+                    bool& ALUsrcOut, int32_t& ALUOpOut, int32_t& RegDstOut,bool& JALOut,
+                    int32_t& PCOut, int32_t& MCOut,
+                    int32_t& readdata1Out, int32_t& readdata2Out,
+                    int32_t& immediateOut,
+                    int32_t& rsOut, int32_t& rtOut, int32_t& rdOut) {
     
 
     // Read data
@@ -64,6 +78,21 @@ void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut
      rsOut         = this->rs;
      rtOut         = this->rt;
      rdOut         = this->rd;
+
+     ConsoleLog(3, "RegWriteEnOut", RegWriteEnOut);
+     ConsoleLog(3, "MemWriteEnOut", MemWriteEnOut);
+     ConsoleLog(3, "MemtoRegOut", MemtoRegOut);
+     ConsoleLog(3, "MemReadEnOut", MemReadEnOut);
+     ConsoleLog(3, "ALUSrcOut", ALUsrcOut);
+     ConsoleLog(3, "ALUOpOut", ALUOpOut);
+     ConsoleLog(3, "RegDstOut", RegDstOut);
+     ConsoleLog(3, "PCOut", PCOut);
+     ConsoleLog(3, "readdata1Out", readdata1Out);
+     ConsoleLog(3, "readdata2Out", readdata2Out);
+     ConsoleLog(3, "immediateOut", immediateOut);
+     ConsoleLog(3, "rsOut", rsOut);
+     ConsoleLog(3, "rtOut", rtOut);
+     ConsoleLog(3, "rdOut", rdOut);
 
     // Release semaphore 
     s1.release();

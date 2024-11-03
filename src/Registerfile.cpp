@@ -15,7 +15,7 @@ void RegisterFile::reset() {
 }
 
 // Read two registers: data1 = registers[readReg1], data2 = registers[readReg2]
-void RegisterFile::readRegisters(uint8_t readReg1, uint8_t readReg2, uint32_t& data1, uint32_t& data2) {
+void RegisterFile::readRegisters(int32_t readReg1, int32_t readReg2, int32_t& data1, int32_t& data2) {
     reg_semaphore.acquire();
     data1 = registers[readReg1];
     data2 = registers[readReg2];
@@ -23,7 +23,7 @@ void RegisterFile::readRegisters(uint8_t readReg1, uint8_t readReg2, uint32_t& d
 }
 
 // Write to a register if regWrite is true
-void RegisterFile::writeRegister(uint8_t writeReg, uint32_t writeData, bool regWrite) {
+void RegisterFile::writeRegister(int32_t writeReg, int32_t writeData, bool regWrite) {
     
     if (regWrite && writeReg != 0) {  // Don't write to register 0 ($zero)
         registers[writeReg] = writeData;

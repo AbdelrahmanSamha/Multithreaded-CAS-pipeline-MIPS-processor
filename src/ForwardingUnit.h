@@ -11,24 +11,24 @@ private:
     
 
     bool EXEMEM_RegWrite;
-    uint8_t EXEMEM_Rd;
+    int32_t EXEMEM_Rd;
 
     bool MEMWB_RegWrite;
-    uint8_t MEMWB_Rd;
+    int32_t MEMWB_Rd;
 
-    uint8_t IDEXE_Rs= 0;
-    uint8_t IDEXE_Rt=0;
+    int32_t IDEXE_Rs= 0;
+    int32_t IDEXE_Rt=0;
 public:
-    uint32_t MEMdata, WBdata;
-    uint8_t ForwardA, ForwardB;
+    int32_t MEMdata, WBdata;
+    int32_t ForwardA, ForwardB;
 public:
     // Constructor
     ForwardingUnit();
 
     // Function to evaluate forwarding logic
-    void FUinputEXE(uint8_t IDEXE_Rs, uint8_t IDEXE_Rt);
-    void FUinputMEM(bool EXEMEM_RegWrite, uint8_t EXEMEM_Rd, uint32_t MEMdata);
-    void FUinputWB(bool MEMWB_RegWrite, uint8_t MEMWB_Rd, uint32_t WBdata);
+    void FUinputEXE(int32_t IDEXE_Rs, int32_t IDEXE_Rt);
+    void FUinputMEM(bool EXEMEM_RegWrite, int32_t EXEMEM_Rd, int32_t MEMdata);
+    void FUinputWB(bool MEMWB_RegWrite, int32_t MEMWB_Rd, int32_t WBdata);
 
     void evaluateForwarding();
 };

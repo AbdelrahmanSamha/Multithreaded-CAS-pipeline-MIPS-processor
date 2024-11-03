@@ -1,9 +1,24 @@
-addu $t0, $t1, $t2       
-    subu $s0, $s1, $s2      
-    add  $a0, $a1, $a2       
-    sub  $v0, $v1, $a0       
-    and  $t3, $t4, $t5       
-    or   $t6, $t7, $t8       
-    nor  $s3, $s4, $s5       
-    sll  $t1, $t2, 2         
-    srl  $s6, $s7, 3
+addi $t1, $zero, 10
+        addi $t2, $zero, 20
+        addi $s1, $zero, 30
+        addi $s2, $zero, 15
+        addi $a1, $zero, 5
+        addi $a2, $zero, 12
+        addi $v1, $zero, 25
+        addi $t4, $zero, 6
+        addi $t5, $zero, 3
+        addi $t7, $zero, 8
+        addi $t8, $zero, 1
+        addi $s4, $zero, 42
+        addi $s5, $zero, 55
+        addi $s7, $zero, 64
+
+        addu $t0, $t1, $t2
+        subu $s0, $s1, $s2
+        add  $a0, $a1, $a2
+        sub  $v0, $v1, $a0
+        and  $t3, $t4, $t5
+        or   $t6, $t7, $t8
+        nor  $s3, $s4, $s5
+        sll  $t1, $t2, 2
+        srl  $s6, $s7, 3

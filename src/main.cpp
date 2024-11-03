@@ -74,7 +74,7 @@ int main() {
 
 
     //generate 2 clock ticks
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 23; i++) {
         clk.clockTick();
     }
     Fetchthread.stop();
@@ -82,7 +82,6 @@ int main() {
     Executethread.stop();
     Memorythread.stop();
     WBthread.stop();
-    RF.printRegisterFile();
 
     return 0;
 }//csmc

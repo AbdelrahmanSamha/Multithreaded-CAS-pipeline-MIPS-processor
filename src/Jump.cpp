@@ -4,14 +4,14 @@
 Jump::Jump() : decodeSemaphore(0),JmuxSel(0), AndGate(false), Flush(false), Instruction(0), JAL(false), Jaddress(0),PC4(0), Jr(false) {}
 
 // Function to receive fetch stage input
-void Jump::JumpInputF(uint32_t instruction, uint32_t pc4) {
+void Jump::JumpInputF(int32_t instruction, int32_t pc4) {
     Instruction = instruction;
     PC4 = pc4;
     JumpUnitAddressOutput();
 }
 
 // Function to receive decode stage input
-void Jump::JumpInputD(uint32_t bAddress, uint32_t rAddress, bool zANDb, bool jr) {
+void Jump::JumpInputD(int32_t bAddress, int32_t rAddress, bool zANDb, bool jr) {
     Baddress = bAddress; 
     Raddress = rAddress;
     AndGate = zANDb;
@@ -24,7 +24,7 @@ void Jump::JumpUnitSignalsOutput() {
     // Wait until both inputs are set
     decodeSemaphore.acquire();
 
-    uint8_t instrOpcode = (Instruction & 0xFC000000) >> 26;
+    int32_t instrOpcode = (Instruction & 0xFC000000) >> 26;
     if ((instrOpcode == 0x2) || (instrOpcode == 0x3)) {
         JAL = true;
     }
@@ -44,9 +44,9 @@ void Jump::JumpUnitSignalsOutput() {
 
 //called automatically when the Fetch instruction calls JumpSignalF
 void Jump::JumpUnitAddressOutput() {
-    uint32_t instrAddress = (Instruction & 0x03FFFFFF);
+    int32_t instrAddress = (Instruction & 0x03FFFFFF);
     instrAddress <<= 2;
-    uint32_t upperPC = (PC4 & 0xF0000000);
+    int32_t upperPC = (PC4 & 0xF0000000);
     Jaddress = upperPC | instrAddress;
 
 }

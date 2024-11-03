@@ -14,8 +14,8 @@ private:
 	
 	std::binary_semaphore s1;  // Binary semaphore raw
 	
-	uint32_t PC = 0x00000000;	//Programcounter
-	uint32_t MC = 0x00000000; //MachineCode
+	int32_t PC = 0x00000000;	//Programcounter
+	int32_t MC = 0x00000000; //MachineCode
 	HazardDetection* HDU;
 	Jump* JU;
 	
@@ -23,8 +23,8 @@ private:
 
 public:
 	IFID(HazardDetection* HDU,Jump* JU);
-	void writedata(uint32_t PCin, uint32_t MCin);
-	void readdata(uint32_t& PCout, uint32_t& MCout);
+	void writedata(int32_t PCin, int32_t MCin);
+	void readdata(int32_t& PCout, int32_t& MCout);
 };
 
 #endif 

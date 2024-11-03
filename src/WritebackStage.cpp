@@ -18,9 +18,9 @@ void WritebackStage::WBjob() {
 		ConsoleLog(5, "WBthread starting new clock");
 
 		bool RegWriteEn, MemtoReg;
-		uint32_t ReadData, Address;
-		uint8_t WriteRegister = 0 ;
-		uint32_t OutWbMux;
+		int32_t ReadData, Address;
+		int32_t WriteRegister = 0 ;
+		int32_t OutWbMux;
 
 		//read data fro,m critical section 
 		MEMWBpipe->readdata(PC, MC,
@@ -28,6 +28,8 @@ void WritebackStage::WBjob() {
 		ReadData, Address,
 		WriteRegister);
 		
+		ConsoleLog(5, "AfterCritical sec read");
+		ConsoleLog(5, "wPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " wMC = ", MC);
 		if (MemtoReg) {
 			OutWbMux = ReadData;
 		}
@@ -38,8 +40,6 @@ void WritebackStage::WBjob() {
 		//Forwarding...
 		FU->FUinputWB(RegWriteEn, WriteRegister, OutWbMux);
 		RF->writeRegister(WriteRegister,OutWbMux,RegWriteEn);
-		ConsoleLog(5, "AfterCritical sec read");
-		ConsoleLog(5, "wPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " wMC = ", MC);
 		 
 		
 	}

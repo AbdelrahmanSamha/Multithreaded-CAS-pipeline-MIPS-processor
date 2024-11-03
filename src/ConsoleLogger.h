@@ -30,7 +30,7 @@ template<typename... Args>
 
         // Create a stringstream to handle concatenating different types
         std::stringstream ss;
-
+        ss << std::hex;  // Set hex formatting here, affecting all integer insertions in this stream
         // Using a fold expression to unpack the parameter pack and append to the stringstream
         (ss << ... << args);
 

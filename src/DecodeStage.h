@@ -14,28 +14,28 @@
 #include "Jump.h"
 
 struct ControlSignals {
-    uint8_t ALUop;
-    uint8_t RegDst;
-    uint8_t ALUSrc;
-    bool Branch;
-    bool MemReadEn;
-    bool MemtoReg;
-    bool MemWriteEn;
-    bool RegWriteEn;
-    bool JR_Signal;
-    bool ZERO;
-    bool JAL_signal;
+    int32_t ALUop =0;
+    int32_t RegDst = 0;
+    int32_t ALUSrc = 0;
+    bool Branch = 0;
+    bool MemReadEn = 0;
+    bool MemtoReg = 0;
+    bool MemWriteEn = 0;
+    bool RegWriteEn = 0;
+    bool JR_Signal = 0;
+    bool ZERO = 0;
+    bool JAL_signal = 0;
 };
 
 struct InstructionFields {
-    uint8_t opcode;
-    uint8_t rs;
-    uint8_t rt;
-    uint8_t rd;
-    uint8_t shamt;
-    uint8_t funct;
-    uint32_t immediate;
-    uint32_t address;
+    int32_t opcode = 0;
+    int32_t rs = 0;
+    int32_t rt = 0;
+    int32_t rd = 0;
+    int32_t shamt = 0;
+    int32_t funct=0;
+    int32_t immediate = 0;
+    int32_t address = 0;
 };
 
 class GlobalClock; // Forward declaration of GlobalClock
@@ -58,8 +58,8 @@ private:
     // Local stage needs:
     std::thread Decodethread;
     bool running = true;  // Temporary for debugging purposes (so we don't use 100% CPU).
-    uint32_t PC = 0;      // Program counter
-    uint32_t MC = 0;      // Machine code
+    int32_t PC = 0;      // Program counter
+    int32_t MC = 0;      // Machine code
 
     // Decoding variables
     InstructionFields instrFields;

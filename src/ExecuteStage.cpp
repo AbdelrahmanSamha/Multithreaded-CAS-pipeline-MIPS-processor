@@ -41,9 +41,9 @@ void ExecuteStage::Executejob() {
         RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
         //ALU
-       uint32_t ALUresult=  ALU(Operand1,Operand2, EXEdata.ALUOp);
+       int32_t ALUresult=  ALU(Operand1,Operand2, EXEdata.ALUOp);
 
-		EXEMEMpipe->writedata(PC,
+		EXEMEMpipe->writedata(PC,MC,
             EXEdata.RegWriteEn, EXEdata.MemtoReg,//WBS
             EXEdata.MemWriteEn, EXEdata.MemReadEn,//MEMS
             ALUresult,
@@ -55,8 +55,8 @@ void ExecuteStage::Executejob() {
 	}
 }
 
-uint32_t ExecuteStage::ALU(uint32_t operand1, uint32_t operand2, uint8_t opSel) {
-    uint32_t result = 0;
+int32_t ExecuteStage::ALU(int32_t operand1, int32_t operand2, int32_t opSel) {
+    int32_t result = 0;
 
     switch (opSel) {
     case _ADD:
@@ -97,13 +97,13 @@ uint32_t ExecuteStage::ALU(uint32_t operand1, uint32_t operand2, uint8_t opSel) 
     return result;
 }
 
-void ExecuteStage::JalMux(uint32_t PC, uint32_t Rs, bool JalSignal){
+void ExecuteStage::JalMux(int32_t PC, int32_t Rs, bool JalSignal){
     if (JalSignal == 1)
         Out_JALM = PC;
     else
         Out_JALM = Rs;
 }
-void ExecuteStage::Op1Mux(uint32_t JalMux, uint32_t WB32, uint32_t MEM32, uint8_t ForwardA) {
+void ExecuteStage::Op1Mux(int32_t JalMux, int32_t WB32, int32_t MEM32, int32_t ForwardA) {
     switch (ForwardA) {
     case 0: 
         Operand1 = JalMux;
@@ -119,7 +119,7 @@ void ExecuteStage::Op1Mux(uint32_t JalMux, uint32_t WB32, uint32_t MEM32, uint8_
         break;
     }
 }
-void ExecuteStage::BeforeOp2Mux(uint32_t Rt, uint32_t WB32, uint32_t MEM32, uint8_t ForwardB){
+void ExecuteStage::BeforeOp2Mux(int32_t Rt, int32_t WB32, int32_t MEM32, int32_t ForwardB){
     switch (ForwardB) {
     case 0:
         Out_BOP2M = Rt;
@@ -135,7 +135,7 @@ void ExecuteStage::BeforeOp2Mux(uint32_t Rt, uint32_t WB32, uint32_t MEM32, uint
         break;
     }
 }
-void ExecuteStage::Op2Mux(uint32_t BOP2Mux, uint32_t Imm, uint8_t AluSrc){
+void ExecuteStage::Op2Mux(int32_t BOP2Mux, int32_t Imm, int32_t AluSrc){
     switch(AluSrc){
     case 0:
         Operand2 = Imm;
@@ -151,7 +151,7 @@ void ExecuteStage::Op2Mux(uint32_t BOP2Mux, uint32_t Imm, uint8_t AluSrc){
         break;
     }
 }
-void ExecuteStage::RegDstMux(uint8_t rt, uint8_t rd, uint8_t RegDstS) {
+void ExecuteStage::RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS) {
     switch (RegDstS) {
     case 0: 
         Out_RegDstM = 31; 

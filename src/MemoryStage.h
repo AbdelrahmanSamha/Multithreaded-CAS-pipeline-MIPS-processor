@@ -17,8 +17,8 @@ class MEMWB;  // Forward declaration of MEMWB
 class ForwardingUnit;
 
 struct MemoryEntry {
-    uint32_t address; // Memory address
-    uint32_t data;    // Content of the memory address
+    int32_t address; // Memory address
+    int32_t data;    // Content of the memory address
 };
 
 class MemoryStage {
@@ -29,8 +29,8 @@ private:
     ForwardingUnit* FU; 
 
     std::thread Memorythread;
-    uint32_t PC = 0;
-    uint32_t MC = 0;
+    int32_t PC = 0;
+    int32_t MC = 0;
     bool running = true;
 
     std::vector<MemoryEntry> dataMemory; // Vector to represent data memory
@@ -43,8 +43,8 @@ public:
     ~MemoryStage();
 
     void stop();
-    void writeToMemory(uint32_t address, uint32_t data);
-    uint32_t readFromMemory(uint32_t address);
+    void writeToMemory(int32_t address, int32_t data);
+    int32_t readFromMemory(int32_t address);
 };
 
 #endif

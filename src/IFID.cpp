@@ -5,7 +5,7 @@
 // Constructor to initialize binary semaphores
 IFID::IFID(HazardDetection* HDU, Jump* JU):HDU(HDU),JU(JU), s1(0) { } // Initial state of s1 = 0 (not available), s2 = 1 (available)
 
-void IFID::writedata(uint32_t  PCin, uint32_t  MCin ) {
+void IFID::writedata(int32_t  PCin, int32_t  MCin ) {
     // Acquire the semaphores
     s1.acquire();
    
@@ -23,7 +23,7 @@ void IFID::writedata(uint32_t  PCin, uint32_t  MCin ) {
    
 }
 
-void IFID::readdata(uint32_t& PCout, uint32_t& MCout) {
+void IFID::readdata(int32_t& PCout, int32_t& MCout) {
     
    
     if (JU->Flush)
@@ -37,6 +37,8 @@ void IFID::readdata(uint32_t& PCout, uint32_t& MCout) {
     }
     // Read data
     ConsoleLog(2, "Reading data...");
+    ConsoleLog(2, "PC" , PCout);
+    ConsoleLog(2, "MC", MCout);
 
     // Release 
     s1.release();

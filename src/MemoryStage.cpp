@@ -16,11 +16,11 @@ void MemoryStage::Memoryjob() {
         ConsoleLog(4, "MemoryThread starting new clock");
         bool RegWriteEn, MemtoReg; //WBS
         bool MemWriteEn, MemReadEn; 
-        uint32_t Address, WriteData;
-        uint8_t WriteRegister;
-        uint32_t ReadData= 0; //this is the DM output
+        int32_t Address, WriteData;
+        int32_t WriteRegister;
+        int32_t ReadData= 0; //this is the DM output
         
-        EXEMEMpipe->readdata(PC,RegWriteEn, MemtoReg, MemWriteEn, MemReadEn, Address, WriteData, WriteRegister);
+        EXEMEMpipe->readdata(PC,MC,RegWriteEn, MemtoReg, MemWriteEn, MemReadEn, Address, WriteData, WriteRegister);
 
         //Forwarding Early in the stage because EXECUTE is waiting on its input
         FU->FUinputMEM(RegWriteEn,WriteRegister,Address);
@@ -34,7 +34,7 @@ void MemoryStage::Memoryjob() {
     }
 }
 
-void MemoryStage::writeToMemory(uint32_t address, uint32_t data) {
+void MemoryStage::writeToMemory(int32_t address, int32_t data) {
     auto it = std::find_if(dataMemory.begin(), dataMemory.end(),[address](const MemoryEntry& entry) { return entry.address == address; });
     if (it != dataMemory.end()) {
         it->data = data; // Update existing entry
@@ -44,7 +44,7 @@ void MemoryStage::writeToMemory(uint32_t address, uint32_t data) {
     }
 }
 
-uint32_t MemoryStage::readFromMemory(uint32_t address) {
+int32_t MemoryStage::readFromMemory(int32_t address) {
     auto it = std::find_if(dataMemory.begin(), dataMemory.end(),
         [address](const MemoryEntry& entry) { return entry.address == address; });
     if (it != dataMemory.end()) {

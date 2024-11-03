@@ -10,8 +10,8 @@ public:
     HazardDetection();
 
     // Inputs
-    void HDUinputExecute(uint8_t ID_EX_Rt, bool ID_EX_MemRead);
-    void HDUinputDecode(uint8_t IF_ID_Rs, uint8_t IF_ID_Rt);
+    void HDUinputExecute(int32_t ID_EX_Rt, bool ID_EX_MemRead);
+    void HDUinputDecode(int32_t IF_ID_Rs, int32_t IF_ID_Rt);
     
     // Outputs
     bool getPCWrite() const;
@@ -24,9 +24,9 @@ public:
 private:
     std::binary_semaphore EXEsemaphore;
     // Inputs
-    uint8_t IFID_Rs;
-    uint8_t IFID_Rt;
-    uint8_t IDEX_Rt;
+    int32_t IFID_Rs;
+    int32_t IFID_Rt;
+    int32_t IDEX_Rt;
     bool IDEX_MemRead;
 
     // Outputs

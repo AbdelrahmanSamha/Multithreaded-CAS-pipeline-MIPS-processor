@@ -7,7 +7,7 @@
 class Jump {
 private:
     // Input data
-    uint32_t Instruction, PC4; //recieved from the fetch stage
+    int32_t Instruction, PC4; //recieved from the fetch stage
     bool AndGate, Jr ; //recieved from the decode stage.
     
 
@@ -19,16 +19,16 @@ private:
 public:
     // Output data
     bool Flush;
-    uint8_t JmuxSel ;
-    uint32_t Jaddress;
-    uint32_t Baddress;
-    uint32_t Raddress;
+    int32_t JmuxSel ;
+    int32_t Jaddress;
+    int32_t Baddress;
+    int32_t Raddress;
     // Constructor
     Jump();
 
     // Functions to set inputs and perform logic
-    void JumpInputF(uint32_t instruction, uint32_t pc4);
-    void JumpInputD(uint32_t baddress,uint32_t raddress,bool zero, bool jr);
+    void JumpInputF(int32_t instruction, int32_t pc4);
+    void JumpInputD(int32_t baddress,int32_t raddress,bool zero, bool jr);
     void JumpUnitSignalsOutput(); 
     void JumpUnitAddressOutput();
 

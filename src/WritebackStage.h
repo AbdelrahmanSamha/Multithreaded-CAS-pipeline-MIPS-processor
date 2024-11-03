@@ -18,8 +18,8 @@ private:
 private:
 	//local stage needs: 
 	std::thread Writebackthread;
-	uint32_t PC = 0;				//Programcounter
-	uint32_t MC = 0;				//MachineCode
+	int32_t PC = 0;				//Programcounter
+	int32_t MC = 0;				//MachineCode
 	void WBjob();
 	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 public:

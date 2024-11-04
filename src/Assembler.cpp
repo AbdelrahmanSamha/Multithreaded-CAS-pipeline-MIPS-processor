@@ -11,7 +11,7 @@ using std::vector;
 
 // Hash tables for opcodes, functs, and registers (same as your original code)
 std::unordered_map<std::string, uint8_t> opcodeMap = {
-    {"add", 0x00},{"addu", 0x00}, {"sub", 0x00}, {"subu", 0x00}, {"and", 0x00}, {"or", 0x00}, {"nor", 0x00},
+    {"add", 0x00},{"addu", 0x00}, {"sub", 0x00}, {"subu", 0x00}, {"and", 0x00}, {"or", 0x00}, {"nor", 0x00},{"andi",0x0C},
     {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},
     {"j", 0x02}, {"jal", 0x03}, {"bltz",0x01},{"bgez",0x01},{"xor", 0x00}, {"xori", 0x0E}, {"ori", 0x0D}, {"slti",0x0A},{"slt",0x00}
 };
@@ -120,197 +120,21 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
 
     uint8_t opcode = opcodeIt->second;
 
-    if (opcode == 0x00) {
-        if (!(iss >> rd)) {
-            return 0xDEADBEEF;
+   
+        if (opcode == 0x00) {
+            return assembleRTypeInstruction(iss, op);
         }
-        rd = trimWhitespace(rd);
-        if (rd.back() == ',') {
-            rd.pop_back();
+        else if (opcode == 0x02 || opcode == 0x03) { // J-type
+            return assembleJTypeInstruction(iss, opcode);
         }
-
-        if (op == "sll" || op == "srl") {
-            iss >> rt;
-            rt = trimWhitespace(rt);
-            if (rt.back() == ',') {
-                rt.pop_back();
-            }
-            std::string shamtStr;
-            iss >> shamtStr;
-            shamt = std::stoi(shamtStr);
+        else if (opcode == 0x04 || opcode == 0x05) { // Branch instructions
+            return assembleBranchInstruction(iss, opcode);
         }
-        else {
-            std::string temp;
-            while (std::getline(iss, temp, ',')) {
-                temp = trimWhitespace(temp);
-                if (rs.empty()) {
-                    rs = temp;
-                }
-                else if (rt.empty()) {
-                    rt = temp;
-                }
-                else {
-                    return 0xDEADBEEF;
-                }
-            }
+        else if (opcode >= 0x08 && opcode <= 0x0E) { // I-type instructions
+            return assembleITypeInstruction(iss, opcode);
         }
-
-        uint32_t machineCode = (opcode << 26) |
-            (registerMap[rs] << 21) |
-            (registerMap[rt] << 16) |
-            (registerMap[rd] << 11) |
-            (shamt << 6) |
-            functMap[op];
-
-        return machineCode;
+        return 0xDEADBEEF; // If none of the above cases match
     }
-
-    else if (opcode == 0x01) { // Special I-type for bltz, bgez
-        if (!(iss >> rs)) {
-            return 0xDEADBEEF;
-        }
-        rs = trimWhitespace(rs);
-        if (rs.back() == ',') {
-            rs.pop_back();
-        }
-
-        if (!(iss >> label) || labelMap.find(label) == labelMap.end()) return 0xDEADBEEF;
-
-        int16_t offset = (labelMap[label] - currentAddress - 4) >> 2;
-        uint8_t rt = rtMap[op];
-
-        return (opcode << 26) | (registerMap[rs] << 21) | (rt << 16) | (offset & 0xFFFF);
-    }
-
-    else if (opcode == 0x02 || opcode == 0x03) { // J-type instructions
-        if (!(iss >> label) || labelMap.find(label) == labelMap.end()) return 0xDEADBEEF;
-        uint32_t labelAddress = labelMap[label] >> 2;
-
-        return (opcode << 26) | (labelAddress & 0x03FFFFFF);
-    }
-
-    else if (opcode == 0x04 || opcode == 0x05) { // Branch instructions
-        if (!(iss >> rs)) {
-            return 0xDEADBEEF; // Return error if rs is not found
-        }
-
-        rs = trimWhitespace(rs);
-        if (rs.back() == ',') {
-            rs.pop_back(); // Remove the trailing comma if present
-        }
-
-        // Read the second register
-        if (!(iss >> rt)) {
-            return 0xDEADBEEF; // Return error if rt is not found
-        }
-
-        rt = trimWhitespace(rt);
-        if (rt.back() == ',') {
-            rt.pop_back(); // Remove the trailing comma if present
-        }
-
-        // Read the label
-        if (!(iss >> label)) {
-            return 0xDEADBEEF; // Return error if label is not found
-        }
-
-        label = trimWhitespace(label);
-        if (label.back() == ',') {
-            label.pop_back(); // Remove the trailing comma if present
-        }
-
-        auto labelIt = labelMap.find(label);
-        if (labelIt == labelMap.end()) {
-            return 0xDEADBEEF; // Return error if label is not found
-        }
-        int16_t offset = (labelMap[label] - currentAddress - 4) >> 2;
-
-        return (opcode << 26) | (registerMap[rs] << 21) | (registerMap[rt] << 16) | (offset & 0xFFFF);
-    }
-
-    else if (opcode >= 0x08 && opcode <= 0x0E) { // I-type instructions with immediate values
-        if (!(iss >> rt))  return 0xDEADBEEF;
-
-        rt = trimWhitespace(rt);
-        if (rt.back() == ',') {
-            rt.pop_back();
-        }
-
-        if (!(iss >> rs))  return 0xDEADBEEF;
-
-
-        rs = trimWhitespace(rs);
-        if (rs.back() == ',') {
-            rs.pop_back();
-        }
-
-        if (!(iss >> immediateStr))  return 0xDEADBEEF;
-
-
-        immediateStr = trimWhitespace(immediateStr);
-        if (immediateStr.back() == ',') {
-            immediateStr.pop_back();
-        }
-
-        immediate = std::stoi(immediateStr);
-        // Ensure immediate is within valid 16-bit signed integer range
-        if (immediate < -32768 || immediate > 32767) {
-            return 0xDEADBEEF;
-        }
-
-
-        uint32_t machineCode = (opcode << 26) |
-            (registerMap[rs] << 21) |
-            (registerMap[rt] << 16) |
-            (immediate & 0xFFFF);
-
-        return machineCode;
-    }
-    else if (opcode == 0x23 || opcode == 0x2B) { // sw or lw
-        if (!(iss >> rt)) {
-            return 0xDEADBEEF; // Error if rt is not found
-        }
-        rt = trimWhitespace(rt);
-        if (rt.back() == ',') {
-            rt.pop_back(); // Remove the trailing comma if present
-        }
-
-        // Read the offset and base register (in offset(base) format)
-        if (!(iss >> address)) {
-            return 0xDEADBEEF; // Error if address (offset + base) is not found
-        }
-        address = trimWhitespace(address);
-
-        // Find the offset and base register by parsing the address
-        size_t start = address.find('(');
-        size_t end = address.find(')');
-        if (start == std::string::npos || end == std::string::npos || end <= start + 1) {
-            return 0xDEADBEEF; // Error if format is incorrect
-        }
-
-        // Parse offset and base register
-        std::string offsetStr = address.substr(0, start);
-        std::string baseRegister = address.substr(start + 1, end - start - 1);
-
-        // Trim and convert the offset
-        offsetStr = trimWhitespace(offsetStr);
-        baseRegister = trimWhitespace(baseRegister);
-        int16_t offset = static_cast<int16_t>(std::stoi(offsetStr));
-        int baseRegisterNumber = std::stoi(baseRegister.substr(1)); // Assuming "baseRegister" is in "$X" format, like "$4"
-
-        // Encode the machine code for lw/sw
-        uint32_t machineCode = (opcode << 26) |
-            (baseRegisterNumber << 21) | // Directly using baseRegisterNumber as rs
-            (std::stoi(rt.substr(1)) << 16) | // Assuming "rt" is in "$X" format, like "$5"
-            (offset & 0xFFFF); // Offset value               // Offset value
-
-        return machineCode;
-    }
-
-
-
-    return 0xDEADBEEF; // Error
-}
 
 void Assembler::writeHexToAssembledFile(const Instruction& instr) {
     std::ofstream outputFile(outputFileName, std::ios::app); // Open in append mode
@@ -339,3 +163,123 @@ const std::vector<Instruction>& Assembler::getInstructions() const {
             opcode  source   destination  offset extended
             kkkkk
 */
+uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std::string& op) {
+    std::string rd, rs, rt;
+    uint8_t shamt = 0;
+    if (op == "jr") {
+        // For 'jr', we only need to read 'rs', 'rd', and 'shamt' are not used
+        if (!(iss >> rs)) {
+            return 0xDEADBEEF;
+        }
+        rs = trimWhitespace(rs);
+        if (rs.back() == ',') {
+            rs.pop_back();
+        }
+
+        // Machine code for 'jr': opcode is still 0 (for R-type),
+        // but rd, shamt are ignored, so we set them to 0
+        uint32_t machineCode = (0 << 26) |
+            (registerMap[rs] << 21) | // Only use rs
+            (0 << 16) |               // rt is 0
+            (0 << 11) |               // rd is 0
+            (0 << 6) |                // shamt is 0
+            functMap[op];            // funct for 'jr'
+
+        return machineCode;
+    }
+    // Read rd
+    if (!(iss >> rd)) return 0xDEADBEEF;
+    rd = trimWhitespace(rd);
+    if (rd.back() == ',') rd.pop_back();
+
+    // Handle `jr` instruction
+    
+
+    // Handle other R-type instructions
+    if (op == "sll" || op == "srl") {
+        if (!(iss >> rs)) return 0xDEADBEEF;
+        rs = trimWhitespace(rs);
+        if (rs.back() == ',') rs.pop_back();
+        std::string shamtStr;
+        if (!(iss >> shamtStr)) return 0xDEADBEEF;
+        shamt = std::stoi(shamtStr);
+        return (0 << 26) |
+            (registerMap[rt] << 21) |
+            (registerMap[rs] << 16) |
+            (registerMap[rd] << 11) |
+            (shamt << 6) |
+            functMap[op];
+    }
+    else {
+        std::string temp;
+        while (std::getline(iss, temp, ',')) {
+            temp = trimWhitespace(temp);
+            if (rs.empty()) {
+                rs = temp;
+            }
+            else if (rt.empty()) {
+                rt = temp;
+            }
+            else {
+                return 0xDEADBEEF;
+            }
+        }
+    }
+    return (0 << 26) |
+        (registerMap[rs] << 21) |
+        (registerMap[rt] << 16) |
+        (registerMap[rd] << 11) |
+        (shamt << 6) |
+        functMap[op];
+   
+}
+
+
+uint32_t Assembler::assembleJTypeInstruction(std::istringstream& iss, uint8_t opcode) {
+    std::string label;
+    if (!(iss >> label) || labelMap.find(label) == labelMap.end()) return 0xDEADBEEF;
+    uint32_t labelAddress = labelMap[label] >> 2;
+    return (opcode << 26) | (labelAddress & 0x03FFFFFF);
+}
+
+
+uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t opcode) {
+    std::string rs, rt, label;
+    if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
+
+    rs = trimWhitespace(rs);
+    if (rs.back() == ',') rs.pop_back();
+    rt = trimWhitespace(rt);
+    if (rt.back() == ',') rt.pop_back();
+    label = trimWhitespace(label);
+    if (label.back() == ',') label.pop_back();
+
+    auto labelIt = labelMap.find(label);
+    if (labelIt == labelMap.end()) return 0xDEADBEEF;
+
+    int16_t offset = (labelMap[label] - currentAddress - 4) >> 2;
+    return (opcode << 26) |
+        (registerMap[rs] << 21) |
+        (registerMap[rt] << 16) |
+        (offset & 0xFFFF);
+}
+
+
+
+uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t opcode) {
+    std::string rt, rs, immediateStr;
+    if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
+
+    rt = trimWhitespace(rt);
+    if (rt.back() == ',') rt.pop_back();
+    rs = trimWhitespace(rs);
+    if (rs.back() == ',') rs.pop_back();
+
+    int16_t immediate = std::stoi(trimWhitespace(immediateStr));
+    if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
+
+    return (opcode << 26) |
+        (registerMap[rs] << 21) |
+        (registerMap[rt] << 16) |
+        (immediate & 0xFFFF);
+}

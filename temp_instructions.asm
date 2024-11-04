@@ -1,10 +1,21 @@
-addu $t0, $t1, $t2       
-    subu $s0, $s1, $s2      
-    add  $a0, $a1, $a2       
-    sub  $v0, $v1, $a0       
-    and  $t3, $t4, $t5       
-    or   $t6, $t7, $t8       
-    nor  $s3, $s4, $s5       
-    sll  $t1, $t2, 2         
-    srl  $s6, $s7, 3         
-    addu $t0, $t0, $t1
+
+
+add $t0, $t1, $t2
+        sub $t0, $t1, $t2
+        and $t0, $t1, $t2
+        addi $t0, $t0, 2
+                addi $t2, $t2, 7
+        j loop
+        or $t0, $t1, $t2
+        loop:
+        j l3
+        nor $t0, $t1, $t2
+        j loop
+        l3:
+        
+        slt $t0, $t0, $t2
+        
+	sll $t0, $t4, 5
+	andi $t0, $t1, 10
+	beq $t7, $t1, loop
+	jr $ra

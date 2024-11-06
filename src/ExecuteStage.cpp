@@ -19,8 +19,8 @@ void ExecuteStage::Executejob() {
 
 		//read data from critical section 
 		IDEXEpipe->readdata(
-		EXEdata.RegWriteEn, EXEdata.MemtoReg, //WB for the next pipe
-		EXEdata.MemWriteEn,EXEdata.MemReadEn, //MEM
+		EXEdata.MemWriteEn, EXEdata.MemtoReg, //WB for the next pipe
+		EXEdata.RegWriteEn,EXEdata.MemReadEn, //MEM
 		EXEdata.ALUsrc,EXEdata.ALUOp,EXEdata.RegDst,EXEdata.JAL, PC,//exe
 		MC, //for display
 		EXEdata.readdata1,EXEdata.readdata2,//exe

@@ -10,20 +10,20 @@
 class ForwardingUnit;
 
 struct EControlSignals{
-	bool RegWriteEn;
-	bool MemtoReg;
-	bool MemWriteEn;
-	bool MemReadEn;
-	bool ALUsrc;
-	int32_t ALUOp;
-	int32_t RegDst;
-	bool JAL;
-	int32_t readdata1;
-	int32_t readdata2;
-	int32_t immediate;
-	int32_t rs;
-	int32_t rt;
-	int32_t rd;
+	bool MemWriteEn=0;
+	bool MemtoReg=0;
+	bool RegWriteEn=0;
+	bool MemReadEn = 0;
+	bool ALUsrc = 0;
+	int32_t ALUOp=0;
+	int32_t RegDst=0;
+	bool JAL=0;
+	int32_t readdata1=0;
+	int32_t readdata2=0;
+	int32_t immediate=0;
+	int32_t rs=0;
+	int32_t rt=0;
+	int32_t rd=0;
 };
 
 

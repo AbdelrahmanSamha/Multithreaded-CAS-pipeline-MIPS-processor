@@ -170,7 +170,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
     std::string rd, rs, rt;
     uint8_t shamt = 0;
     if (op == "jr") {
-        // For 'jr', we only need to read 'rs', 'rd', and 'shamt' are not used
+    
         if (!(iss >> rs)) {
             return 0xDEADBEEF;
         }
@@ -179,18 +179,17 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             rs.pop_back();
         }
 
-        // Machine code for 'jr': opcode is still 0 (for R-type),
-        // but rd, shamt are ignored, so we set them to 0
+        
         uint32_t machineCode = (0 << 26) |
-            (registerMap[rs] << 21) | // Only use rs
-            (0 << 16) |               // rt is 0
-            (0 << 11) |               // rd is 0
-            (0 << 6) |                // shamt is 0
-            functMap[op];            // funct for 'jr'
+            (registerMap[rs] << 21) |
+            (0 << 16) |               
+            (0 << 11) |              
+            (0 << 6) |                
+            functMap[op];            
 
         return machineCode;
     }
-    // Read rd
+    
     if (!(iss >> rd)) return 0xDEADBEEF;
     rd = trimWhitespace(rd);
     if (rd.back() == ',') rd.pop_back();
@@ -198,7 +197,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
 
     
 
-    // Handle other R-type instructions
+   
     if (op == "sll" || op == "srl") {
         if (!(iss >> rs)) return 0xDEADBEEF;
         rs = trimWhitespace(rs);

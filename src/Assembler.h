@@ -19,6 +19,8 @@ private:
     uint32_t assembleJTypeInstruction(std::istringstream& iss, uint8_t opcode);
     uint32_t assembleBranchInstruction(std::istringstream& iss, uint8_t opcode);
     uint32_t assembleITypeInstruction(std::istringstream& iss, uint8_t opcode);
+    uint32_t assembleLoadStore(std::istringstream& iss, uint8_t opcode);
+
     std::string inputFileName;
     std::string outputFileName;
     std::vector<Instruction> instructionSet; // Stores all the instructions with details

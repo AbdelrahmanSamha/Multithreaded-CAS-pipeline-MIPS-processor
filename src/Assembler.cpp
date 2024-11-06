@@ -121,7 +121,7 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
     uint8_t opcode = opcodeIt->second;
 
    
-        if (opcode == 0x00) {
+        if (opcode == 0x00) { // R-type
             return assembleRTypeInstruction(iss, op);
         }
         else if (opcode == 0x02 || opcode == 0x03) { // J-type
@@ -132,6 +132,9 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
         }
         else if (opcode >= 0x08 && opcode <= 0x0E) { // I-type instructions
             return assembleITypeInstruction(iss, opcode);
+        }
+        else if (opcode == 0x23 || opcode == 0x2B) { // LW & SW
+            return assembleLoadStore(iss, opcode);
         }
         return 0xDEADBEEF; // If none of the above cases match
     }
@@ -282,4 +285,31 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
         (registerMap[rs] << 21) |
         (registerMap[rt] << 16) |
         (immediate & 0xFFFF);
+}
+
+uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
+    std::string rt, offsetAndRs;
+    if (!(iss >> rt) || !(iss >> offsetAndRs)) return 0xDEADBEEF;
+
+    // Remove comma from rt
+    rt = trimWhitespace(rt);
+    if (rt.back() == ',') rt.pop_back();
+
+    // Extract offset and rs from the format offset($rs)
+    size_t openParen = offsetAndRs.find('(');
+    size_t closeParen = offsetAndRs.find(')');
+    if (openParen == std::string::npos || closeParen == std::string::npos) return 0xDEADBEEF;
+
+    std::string offsetStr = offsetAndRs.substr(0, openParen);
+    std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
+
+    // Convert offset to a signed 16-bit integer
+    int16_t offset = std::stoi(trimWhitespace(offsetStr));
+    if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
+
+    // Assemble the instruction
+    return (opcode << 26) |
+        (registerMap[rs] << 21) |
+        (registerMap[rt] << 16) |
+        (offset & 0xFFFF);
 }

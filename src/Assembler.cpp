@@ -12,7 +12,7 @@ using std::vector;
 // Hash tables for opcodes, functs, and registers (same as your original code)
 std::unordered_map<std::string, uint8_t> opcodeMap = {
     {"add", 0x00},{"addu", 0x00}, {"sub", 0x00}, {"subu", 0x00}, {"and", 0x00}, {"or", 0x00}, {"nor", 0x00},{"andi",0x0C},
-    {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},
+    {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},{"sgt", 0x2C},
     {"j", 0x02}, {"jal", 0x03}, {"bltz",0x01},{"bgez",0x01},{"xor", 0x00}, {"xori", 0x0E}, {"ori", 0x0D}, {"slti",0x0A},{"slt",0x00}
 };
 
@@ -195,7 +195,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
     rd = trimWhitespace(rd);
     if (rd.back() == ',') rd.pop_back();
 
-    // Handle `jr` instruction
+
     
 
     // Handle other R-type instructions
@@ -207,8 +207,8 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         if (!(iss >> shamtStr)) return 0xDEADBEEF;
         shamt = std::stoi(shamtStr);
         return (0 << 26) |
-            (registerMap[rt] << 21) |
-            (registerMap[rs] << 16) |
+            (registerMap[rs] << 21) |
+            (registerMap[rt] << 16) |
             (registerMap[rd] << 11) |
             (shamt << 6) |
             functMap[op];

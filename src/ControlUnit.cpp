@@ -11,12 +11,12 @@ void ControlUnit::setControlSignals(int32_t opcode, int32_t funct) {
     // Reset control signals to default values
     aluop = 0;
     RegDst = 0;
-    ALUSrc = 0;
     Branch = false;
     MemReadEn = false;
     MemtoReg = false;
     MemWriteEn = false;
     RegWriteEn = false;
+    ALUSrc = 0;
     JR_Signal = false;
     ZERO = false;
     JAL_signal = false;
@@ -24,56 +24,129 @@ void ControlUnit::setControlSignals(int32_t opcode, int32_t funct) {
     // Set control signals based on opcode
     switch (opcode) {
     case Rtype:
-        aluop = 2;
         RegDst = 1;
         RegWriteEn = true;
-        if (funct == JR) {
+        ALUSrc = 0;
+
+        switch (funct) {
+        case ADD:
+        case ADDU:
+            aluop = 0;
+            break;
+        case SUB:
+        case SUBU:
+            aluop = 1;
+            break;
+        case OR:
+            aluop = 3;
+            break;
+        case NOR:
+            aluop = 4;
+            break;
+        case AND:
+            aluop = 2;
+            break;
+        case SLL:
+            aluop = 7;
+            break;
+        case SRL:
+            aluop = 8;
+            break;
+        case JR:
             JR_Signal = true;
             RegWriteEn = false;
+            break;
+        case XOR:
+            aluop = 5;
+            break;
+        case SLT:
+            aluop = 6;
+            break;
+        case SGT:
+            aluop = 9;
+            ALUSrc = 1;
+            break;
+        default:
+            break;
         }
         break;
+
     case ADDI:
-    case ORI:
-    case ANDI:
-    case XORi:
-        aluop = 2;
+        aluop = 0;
+        RegDst = 0;
         ALUSrc = 1;
         RegWriteEn = true;
         break;
+
+    case ORI:
+        aluop = 3;
+        RegDst = 0;
+        ALUSrc = 1;
+        RegWriteEn = true;
+        break;
+
+    case ANDI:
+        aluop = 2;
+        RegDst = 0;
+        ALUSrc = 1;
+        RegWriteEn = true;
+        break;
+
     case LW:
         aluop = 0;
-        ALUSrc = 1;
+        RegDst = 0;
         MemReadEn = true;
         MemtoReg = true;
+        ALUSrc = 1;
         RegWriteEn = true;
         break;
+
     case SW:
         aluop = 0;
-        ALUSrc = 1;
         MemWriteEn = true;
+        ALUSrc = 1;
         break;
+
+    case XORi:
+        aluop = 5;
+        RegDst = 0;
+        ALUSrc = 1;
+        RegWriteEn = true;
+        break;
+
     case BEQ:
-        aluop = 1;
         Branch = true;
         ZERO = true;
+        ALUSrc = 0;
         break;
+
     case BNE:
-        aluop = 1;
         Branch = true;
         ZERO = false;
+        ALUSrc = 0;
         break;
+
+    case SLTI:
+        aluop = 6;
+        RegDst = 0;
+        ALUSrc = 1;
+        RegWriteEn = true;
+        break;
+
     case J:
-        // No aluop, direct jump
+        // No aluop needed for J
+        RegDst = 0;
         break;
+
     case JAL:
         aluop = 2;
         RegDst = 2;
-        RegWriteEn = false;
         JAL_signal = true;
         ALUSrc = 2;
         break;
+
     default:
-        // Unsupported opcode, leave default signals
+        // Unsupported opcode, leave default values
         break;
     }
 }

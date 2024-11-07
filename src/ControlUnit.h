@@ -44,8 +44,9 @@ private:
     static const int32_t ADD = 0x20, ADDU = 0x21, SUB = 0x22, SUBU = 0x23;
     static const int32_t OR = 0x25, NOR = 0x27, AND = 0x24;
     static const int32_t SLL = 0x00, SRL = 0x02, JR = 0x08, XOR = 0x26;
+    static const int32_t SLT = 0x2a, SGT = 0x2c;
 
-    static const int32_t ADDI = 0x08, ORI = 0x0D, ANDI = 0x0C, LW = 0x23;
+    static const int32_t ADDI = 0x08, ORI = 0x0D, ANDI = 0x0C, LW = 0x23, SLTI = 0xa;
     static const int32_t SW = 0x2B, XORi = 0x0E;
     static const int32_t BEQ = 0x04, BNE = 0x05, J = 0x02, JAL = 0x03;
 };

@@ -61,6 +61,7 @@ void EXEMEM::readdata(int32_t& PCOut, int32_t& MCOut,
     ConsoleLog(4, "resultOut", resultOut);
     ConsoleLog(4, "WriteDataOut", WriteDataOut);
     ConsoleLog(4, "WriteRegisterOut", WriteRegisterOut);
+    ConsoleLog(4, "#################");
 
     s1.release();
 }

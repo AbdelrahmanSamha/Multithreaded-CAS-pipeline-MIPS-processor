@@ -35,7 +35,7 @@ void Jump::JumpUnitSignalsOutput() {
     bool S0 = AndGate || ((!Jr) && JAL);
     bool S1 = Jr || AndGate;
     Flush = S1; 
-    JmuxSel = (S1 << 1) || S0;
+    JmuxSel = (S1 << 1) | S0;
 
     // Release semaphore
     decodeSemaphore.release();

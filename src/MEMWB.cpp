@@ -50,5 +50,6 @@ void MEMWB::readdata(int32_t& PCout, int32_t& MCout,
     ConsoleLog(5, "ReadDataOut", ReadDataOut);
     ConsoleLog(5, "AddressOut", AddressOut);
     ConsoleLog(5, "WriteRegisterOut", WriteRegisterOut);
+    ConsoleLog(5, "#################");
     s1.release();
 }

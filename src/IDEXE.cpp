@@ -93,6 +93,7 @@ void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut
      ConsoleLog(3, "rsOut", rsOut);
      ConsoleLog(3, "rtOut", rtOut);
      ConsoleLog(3, "rdOut", rdOut);
+     ConsoleLog(3, "#################");
 
     // Release semaphore 
     s1.release();

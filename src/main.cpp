@@ -73,9 +73,20 @@ int main() {
 
 
 
-    //generate 2 clock ticks
-    for (int i = 0; i < 23; i++) {
-        clk.clockTick();
+    
+    while (true) {
+        if (!Fetchthread.hasNextInstruction()) {
+            clk.clockTick();
+            clk.clockTick();
+            clk.clockTick();
+            clk.clockTick();
+            clk.clockTick();
+            break;
+
+        }
+        else {
+            clk.clockTick();
+        }
     }
     Fetchthread.stop();
     Decodethread.stop();
@@ -85,3 +96,4 @@ int main() {
 
     return 0;
 }//csmc
+//machanisim for ending a simulation...

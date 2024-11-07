@@ -27,16 +27,16 @@ void ExecuteStage::Executejob() {
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
+
         HDU->HDUinputExecute(EXEdata.rt, EXEdata.MemReadEn);
-        RegDstMux(EXEdata.rt,EXEdata.rd,EXEdata.RegDst);
         //ForwardingUnit
         FU->FUinputEXE(EXEdata.rs, EXEdata.rt);
         FU->evaluateForwarding();
 
         //Mux operation 
-        JalMux(PC, EXEdata.rs, EXEdata.JAL);
+        JalMux(PC, EXEdata.readdata1, EXEdata.JAL);
         Op1Mux(Out_JALM, FU->WBdata,FU->MEMdata, FU->ForwardA);
-        BeforeOp2Mux(EXEdata.rt, FU->WBdata, FU->MEMdata, FU->ForwardB);
+        BeforeOp2Mux(EXEdata.readdata2, FU->WBdata, FU->MEMdata, FU->ForwardB);
         Op2Mux(Out_BOP2M,EXEdata.immediate,EXEdata.ALUsrc);
         RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
@@ -138,10 +138,10 @@ void ExecuteStage::BeforeOp2Mux(int32_t Rt, int32_t WB32, int32_t MEM32, int32_t
 void ExecuteStage::Op2Mux(int32_t BOP2Mux, int32_t Imm, int32_t AluSrc){
     switch(AluSrc){
     case 0:
-        Operand2 = Imm;
+        Operand2 = BOP2Mux;
         break;
     case 1:
-        Operand2 = BOP2Mux;
+        Operand2 = Imm;
         break;
     case 2:
         Operand2 = 0x00000000;
@@ -153,14 +153,14 @@ void ExecuteStage::Op2Mux(int32_t BOP2Mux, int32_t Imm, int32_t AluSrc){
 }
 void ExecuteStage::RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS) {
     switch (RegDstS) {
-    case 0: 
-        Out_RegDstM = 31; 
-        break;
-    case 1 : 
+    case 0 : 
         Out_RegDstM = rt; 
         break; 
-    case 2 :
+    case 1 :
         Out_RegDstM = rd;
+        break;
+    case 2: 
+        Out_RegDstM = 31; 
         break;
     default: 
         Out_RegDstM = 0;

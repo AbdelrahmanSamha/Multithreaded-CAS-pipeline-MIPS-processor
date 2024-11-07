@@ -35,6 +35,6 @@ public:
     int32_t assembleInstruction(const std::string& instruction);
 
     const std::vector<Instruction>& getInstructions() const; // Fetch stage will need this
+    
 };
-
 #endif // ASSEMBLER_H

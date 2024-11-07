@@ -14,26 +14,26 @@ void FetchStage::Fetchjob() {
         ConsoleLog(1,"Fetchthread waiting for clock tick");
         clk->waitforClockTick(); // Wait for the global clock tick
         ConsoleLog(1,"Fetchthread starting new clock");
-
+        int32_t fetchedInstruction;
         if (!hasNextInstruction()) {
-            std::cout << "No more instructions to fetch. Fetchthread terminated." << std::endl;
-            break; // Exit the loop when there are no more instructions
+            ConsoleLog(1, "No more instructions to fetch. Halt inserted");
+             fetchedInstruction = 0x00000000;
+             IFIDpipe->writedata(PC, fetchedInstruction);
         }
-
-  
-        int32_t fetchedInstruction = fetchInstruction(); // Fetch the current instruction
-
-
-        ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
-        
-        PC += 4;
-
-        IFIDpipe->writedata(PC, fetchedInstruction);
+        else {
+            fetchedInstruction = fetchInstruction();// Fetch the current instruction
 
 
-        JU->JumpInputF(fetchedInstruction, PC );
-        JU->JumpUnitSignalsOutput();
-       
+            ConsoleLog(1, "Fetched instruction (PC = ", std::dec ,PC , "): ", std::hex, std::setw(8), fetchedInstruction);
+
+            PC += 4;
+
+            IFIDpipe->writedata(PC, fetchedInstruction);
+
+
+            JU->JumpInputF(fetchedInstruction, PC);
+            JU->JumpUnitSignalsOutput();
+        }
     }
 }
 

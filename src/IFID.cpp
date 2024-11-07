@@ -39,6 +39,7 @@ void IFID::readdata(int32_t& PCout, int32_t& MCout) {
     ConsoleLog(2, "Reading data...");
     ConsoleLog(2, "PC" , PCout);
     ConsoleLog(2, "MC", MCout);
+    ConsoleLog(2, "#################" );
 
     // Release 
     s1.release();

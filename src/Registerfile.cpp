@@ -37,7 +37,7 @@ void RegisterFile::printRegisterFile() const {
 
         ConsoleLog(1, "Register File Contents:\n");
     for (size_t i = 0; i < registers.size(); ++i) {
-        ConsoleLog(1, "R" , i , ": " , std::hex , registers[i] , "\n");
+        ConsoleLog(1, "R" ,std::dec ,i , ": " , std::hex , registers[i] , "\n");
 
     }
 

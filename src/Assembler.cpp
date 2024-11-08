@@ -61,9 +61,7 @@ void Assembler::firstPass() {
             continue;
         }
 
-        // Here you would parse the line to identify labels and add them to the labelTable
-        // For example:
-        if (line.back() == ':') { // Simple label detection
+        if (!line.empty() && line.back() == ':') { // Simple label detection
             std::string label = line.substr(0, line.size() - 1);
             labelMap[label] = currentAddress;
         }
@@ -165,13 +163,6 @@ const std::vector<Instruction>& Assembler::getInstructions() const {
 uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std::string& op) {
     std::string rd, rs, rt;
     uint8_t shamt = 0;
-    if (!(iss >> rd)) {
-        return 0xDEADBEEF;
-    }
-    rd = trimWhitespace(rd);
-    if (rd.back() == ',') {
-        rd.pop_back();
-    }
 
     if (op == "jr") {
     
@@ -182,24 +173,28 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         if (rs.back() == ',') {
             rs.pop_back();
         }
-
-        
-        uint32_t machineCode = (0 << 26) |
+        return (0 << 26) |
             (registerMap[rs] << 21) |
             (0 << 16) |               
             (0 << 11) |              
             (0 << 6) |                
             functMap[op];            
 
-        return machineCode;
+    }
+    if (!(iss >> rd)) {
+        return 0xDEADBEEF;
+    }
+    rd = trimWhitespace(rd);
+    if (rd.back() == ',') {
+        rd.pop_back();
     }
     
     if (op == "sll" || op == "srl") {
-        if (!(iss >> rs)) return 0xDEADBEEF;
+        iss >> rs;
         rs = trimWhitespace(rs);
         if (rs.back() == ',') rs.pop_back();
         std::string shamtStr;
-        if (!(iss >> shamtStr)) return 0xDEADBEEF;
+        iss >> shamtStr;
         shamt = std::stoi(shamtStr);
         return (0 << 26) |
             (registerMap[rs] << 21) |
@@ -222,16 +217,16 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
                 return 0xDEADBEEF;
             }
         }
+        return  (00 << 26) |
+            (registerMap[rs] << 21) |
+            (registerMap[rt] << 16) |
+            (registerMap[rd] << 11) |
+            (shamt << 6) |
+            functMap[op];
+
     }
 
-    uint32_t machineCode = (00 << 26) |
-        (registerMap[rs] << 21) |
-        (registerMap[rt] << 16) |
-        (registerMap[rd] << 11) |
-        (shamt << 6) |
-        functMap[op];
 
-    return machineCode;
 }
 
 
@@ -319,5 +314,4 @@ op   rd  rs   rt
 
  0000 0001 0000 1110 0110 0000 0010 1100
  sgt done
- 010  02c
 */

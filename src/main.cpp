@@ -26,7 +26,7 @@
 
 int main() {
     //force the console window to be fullscreen since the ConsoleLogger deals with Y coordinates that need to be available before hand.
-    HWND console = GetConsoleWindow(); 
+    HWND console = GetConsoleWindow();
     ShowWindow(console, SW_MAXIMIZE);
 
     // Define the temporary file name
@@ -43,8 +43,8 @@ int main() {
     Assembler assembler(inputFileName, outputFileName);
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
-
-    //Initializing of the units in the data path 
+}
+    /*//Initializing of the units in the data path 
     ControlUnit CU;
     RegisterFile RF;
     HazardDetection HDU;
@@ -80,7 +80,6 @@ int main() {
             clk.clockTick();
             clk.clockTick();
             clk.clockTick();
-            clk.clockTick();
             break;
 
         }
@@ -96,4 +95,4 @@ int main() {
 
     return 0;
 }//csmc
-//machanisim for ending a simulation...
+//machanisim for ending a simulation...*/

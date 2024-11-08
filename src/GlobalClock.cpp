@@ -15,7 +15,7 @@ void GlobalClock::clockTick() {
 	ClockCycles++;
 	std::string separator(200, '=');
 	ConsoleLog(0, separator);
-	ConsoleLog(0, "Clock Cycle count = ", ClockCycles);
+	ConsoleLog(0, "Clock Cycle count = ", std::dec,ClockCycles);
 	tick = true;
 
 	while (waiting_threads_to_leave < 5) { //determine number of stages.

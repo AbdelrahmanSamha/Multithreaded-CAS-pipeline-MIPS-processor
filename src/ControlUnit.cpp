@@ -48,9 +48,11 @@ void ControlUnit::setControlSignals(int32_t opcode, int32_t funct) {
             break;
         case SLL:
             aluop = 7;
+            ALUSrc = 1;
             break;
         case SRL:
             aluop = 8;
+            ALUSrc = 1;
             break;
         case JR:
             JR_Signal = true;

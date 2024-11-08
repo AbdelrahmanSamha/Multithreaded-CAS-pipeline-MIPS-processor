@@ -24,7 +24,7 @@ void FetchStage::Fetchjob() {
             fetchedInstruction = fetchInstruction();// Fetch the current instruction
 
 
-            ConsoleLog(1, "Fetched instruction (PC = ", std::dec ,PC , "): ", std::hex, std::setw(8), fetchedInstruction);
+            ConsoleLog(1, "Fetched instruction (PC = ", std::hex ,PC , "): ", std::hex, std::setw(8), fetchedInstruction);
 
             PC += 4;
 

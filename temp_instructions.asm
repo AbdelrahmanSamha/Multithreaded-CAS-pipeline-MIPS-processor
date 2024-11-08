@@ -1,14 +1,4 @@
-	addi $t1, $zero, 10
-        addi $t2, $zero, 20
-        addi $s1, $zero, 30
-        addi $s2, $zero, 15
-        addi $a1, $zero, 5
-        addi $a2, $zero, 12
-        addi $v1, $zero, 25
-        addi $t4, $zero, 6
-        addi $t5, $zero, 3
-        addi $t7, $zero, 8
-        addi $t8, $zero, 1
-        addi $s4, $zero, 42
-        addi $s5, $zero, 55
-        addi $s7, $zero, 64
+
+addi $t1, $zero, 5
+    addi $s5, $zero, 15
+    sll $t9, $t0, 14121

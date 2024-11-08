@@ -81,10 +81,10 @@ int32_t ExecuteStage::ALU(int32_t operand1, int32_t operand2, int32_t opSel) {
         result = (operand1 < operand2) ? 1 : 0;
         break;
     case _SLL:
-        result = operand2 << (operand2 & 0x1F); // Shift amount is bits 10:6, equivalent to lower 5 bits
-        break;
-    case _SRL:
-        result = operand2 >> (operand2 & 0x1F);
+        result = operand1 << ((operand2>>6) & 0x1F); //Shift amount is bits 10:6,
+        break;                                       //so we shift the imm value to the right by 6 
+    case _SRL:                                       //and then we mask the least 5 bits to extract shmat
+        result = operand1 >> ((operand2>>6) & 0x1F); //then we perform the shift operation on Op1.
         break;
     case _SGT:
         result = (operand1 > operand2) ? 1 : 0;

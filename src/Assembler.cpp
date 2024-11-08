@@ -181,7 +181,8 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             functMap[op];            
 
     }
-    if (!(iss >> rd)) {
+    //if (!(iss>>rd))
+    if (!(std::getline(iss, rd, ','))) {
         return 0xDEADBEEF;
     }
     rd = trimWhitespace(rd);
@@ -190,7 +191,8 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
     }
     
     if (op == "sll" || op == "srl") {
-        iss >> rs;
+        //iss >> rs
+        std::getline(iss, rs, ',');
         rs = trimWhitespace(rs);
         if (rs.back() == ',') rs.pop_back();
         std::string shamtStr;

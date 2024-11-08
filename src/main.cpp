@@ -43,8 +43,8 @@ int main() {
     Assembler assembler(inputFileName, outputFileName);
     assembler.assemble();
     std::cout << "Assembling completed. Check the file: " << outputFileName << std::endl;
-}
-    /*//Initializing of the units in the data path 
+
+   //Initializing of the units in the data path 
     ControlUnit CU;
     RegisterFile RF;
     HazardDetection HDU;
@@ -95,4 +95,4 @@ int main() {
 
     return 0;
 }//csmc
-//machanisim for ending a simulation...*/
+//machanisim for ending a simulation...

@@ -24,54 +24,54 @@ void ControlUnit::setControlSignals(int32_t opcode, int32_t funct) {
     // Set control signals based on opcode
     switch (opcode) {
     case Rtype:
-        RegDst = 1;
-        RegWriteEn = true;
-        ALUSrc = 0;
+            RegDst = 1;
+            RegWriteEn = true;
+            ALUSrc = 0;
 
-        switch (funct) {
-        case ADD:
-        case ADDU:
-            aluop = 0;
+            switch (funct) {
+            case ADD:
+            case ADDU:
+                aluop = 0;
+                break;
+            case SUB:
+            case SUBU:
+                aluop = 1;
+                break;
+            case OR:
+                aluop = 3;
+                break;
+            case NOR:
+                aluop = 4;
+                break;
+            case AND:
+                aluop = 2;
+                break;
+            case SLL:
+                aluop = 7;
+                ALUSrc = 1;
+                break;
+            case SRL:
+                aluop = 8;
+                ALUSrc = 1;
+                break;
+            case JR:
+                JR_Signal = true;
+                RegWriteEn = false;
+                break;
+            case XOR:
+                aluop = 5;
+                break;
+            case SLT:
+                aluop = 6;
+                break;
+            case SGT:
+                aluop = 9;
+                
+                break;
+            default:
+                break;
+            }
             break;
-        case SUB:
-        case SUBU:
-            aluop = 1;
-            break;
-        case OR:
-            aluop = 3;
-            break;
-        case NOR:
-            aluop = 4;
-            break;
-        case AND:
-            aluop = 2;
-            break;
-        case SLL:
-            aluop = 7;
-            ALUSrc = 1;
-            break;
-        case SRL:
-            aluop = 8;
-            ALUSrc = 1;
-            break;
-        case JR:
-            JR_Signal = true;
-            RegWriteEn = false;
-            break;
-        case XOR:
-            aluop = 5;
-            break;
-        case SLT:
-            aluop = 6;
-            break;
-        case SGT:
-            aluop = 9;
-            ALUSrc = 1;
-            break;
-        default:
-            break;
-        }
-        break;
 
     case ADDI:
         aluop = 0;

@@ -1,6 +1,3 @@
-
-.data
-.text
 add $t0, $t1, $t2
         sub $t0, $t1, $t2
         and $t0, $t1, $t2
@@ -16,10 +13,4 @@ add $t0, $t1, $t2
         l3:
         xor $t0, $t1, $t2
         slt $t0, $t0, $t2
-        slti $t0, $t0, 5
-	sll $t0, $t4, 5
-	andi $t0, $t1, 10
-	beq $t7, $t1, loop
-	jr $ra
-sw $t9, 2($t4)
-lw $t9, 2($t4)
+        sgt $t4, $t0, $t6

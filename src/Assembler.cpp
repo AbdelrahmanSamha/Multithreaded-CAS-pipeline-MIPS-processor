@@ -12,13 +12,13 @@ using std::vector;
 // Hash tables for opcodes, functs, and registers (same as your original code)
 std::unordered_map<std::string, uint8_t> opcodeMap = {
     {"add", 0x00},{"addu", 0x00}, {"sub", 0x00}, {"subu", 0x00}, {"and", 0x00}, {"or", 0x00}, {"nor", 0x00},{"andi",0x0C},
-    {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},{"sgt", 0x2C},
-    {"j", 0x02}, {"jal", 0x03}, {"bltz",0x01},{"bgez",0x01},{"xor", 0x00}, {"xori", 0x0E}, {"ori", 0x0D}, {"slti",0x0A},{"slt",0x00}
+    {"sll", 0x00}, {"srl", 0x00}, {"jr", 0x00}, {"addi", 0x08}, {"lw", 0x23}, {"sw", 0x2B}, {"beq", 0x04}, {"bne", 0x05},{"sgt", 0x00},
+    {"j", 0x02}, {"jal", 0x03}, {"xor", 0x00}, {"xori", 0x0E}, {"ori", 0x0D}, {"slti",0x0A},{"slt",0x00}
 };
 
 std::unordered_map<std::string, uint8_t> functMap = {
     {"add", 0x20}, {"addu", 0x21}, {"sub", 0x22}, {"subu", 0x23}, {"and", 0x24}, {"or", 0x25}, {"nor", 0x27},
-    {"sll", 0x00}, {"srl", 0x02}, {"jr", 0x08}, {"xor",0x26}, {"slt",0x2A}
+    {"sll", 0x00}, {"srl", 0x02}, {"jr", 0x08}, {"xor",0x26}, {"slt",0x2A}, {"sgt", 0x2C}
 };
 
 std::unordered_map<std::string, uint8_t> registerMap = {
@@ -140,7 +140,7 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
     }
 
 void Assembler::writeHexToAssembledFile(const Instruction& instr) {
-    std::ofstream outputFile(outputFileName, std::ios::app); // Open in append mode
+    std::ofstream outputFile(outputFileName, std::ios::app); 
     if (outputFile.is_open()) {
         outputFile << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << instr.address << " "
             << std::setw(8) << instr.machineCode << "  " << instr.basicCode << "\n";
@@ -161,14 +161,18 @@ const std::vector<Instruction>& Assembler::getInstructions() const {
     return instructionSet;
 
 }
-/*andi    jr   lw     sw*/
-/*sw/ lw -> instruction destination offset(source)
-            opcode  source   destination  offset extended
-            kkkkk
-*/
+
 uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std::string& op) {
     std::string rd, rs, rt;
     uint8_t shamt = 0;
+    if (!(iss >> rd)) {
+        return 0xDEADBEEF;
+    }
+    rd = trimWhitespace(rd);
+    if (rd.back() == ',') {
+        rd.pop_back();
+    }
+
     if (op == "jr") {
     
         if (!(iss >> rs)) {
@@ -190,14 +194,6 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         return machineCode;
     }
     
-    if (!(iss >> rd)) return 0xDEADBEEF;
-    rd = trimWhitespace(rd);
-    if (rd.back() == ',') rd.pop_back();
-
-
-    
-
-   
     if (op == "sll" || op == "srl") {
         if (!(iss >> rs)) return 0xDEADBEEF;
         rs = trimWhitespace(rs);
@@ -227,13 +223,15 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             }
         }
     }
-    return (0 << 26) |
+
+    uint32_t machineCode = (00 << 26) |
         (registerMap[rs] << 21) |
         (registerMap[rt] << 16) |
         (registerMap[rd] << 11) |
         (shamt << 6) |
         functMap[op];
-   
+
+    return machineCode;
 }
 
 
@@ -312,3 +310,14 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
         (registerMap[rt] << 16) |
         (offset & 0xFFFF);
 }
+
+
+/*
+add $s0, $s1, $s2
+op   rd  rs   rt
+ 010E602C          sgt $t4, $t0, $t6
+
+ 0000 0001 0000 1110 0110 0000 0010 1100
+ sgt done
+ 010  02c
+*/

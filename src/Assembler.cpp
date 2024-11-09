@@ -118,27 +118,27 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
 
     uint8_t opcode = opcodeIt->second;
 
-   
-        if (opcode == 0x00) { // R-type
-            return assembleRTypeInstruction(iss, op);
-        }
-        else if (opcode == 0x02 || opcode == 0x03) { // J-type
-            return assembleJTypeInstruction(iss, opcode);
-        }
-        else if (opcode == 0x04 || opcode == 0x05) { // Branch instructions
-            return assembleBranchInstruction(iss, opcode);
-        }
-        else if (opcode >= 0x08 && opcode <= 0x0E) { // I-type instructions
-            return assembleITypeInstruction(iss, opcode);
-        }
-        else if (opcode == 0x23 || opcode == 0x2B) { // LW & SW
-            return assembleLoadStore(iss, opcode);
-        }
-        return 0xDEADBEEF; // If none of the above cases match
+
+    if (opcode == 0x00) { // R-type
+        return assembleRTypeInstruction(iss, op);
     }
+    else if (opcode == 0x02 || opcode == 0x03) { // J-type
+        return assembleJTypeInstruction(iss, opcode);
+    }
+    else if (opcode == 0x04 || opcode == 0x05) { // Branch instructions
+        return assembleBranchInstruction(iss, opcode);
+    }
+    else if (opcode >= 0x08 && opcode <= 0x0E) { // I-type instructions
+        return assembleITypeInstruction(iss, opcode);
+    }
+    else if (opcode == 0x23 || opcode == 0x2B) { // LW & SW
+        return assembleLoadStore(iss, opcode);
+    }
+    return 0xDEADBEEF; // If none of the above cases match
+}
 
 void Assembler::writeHexToAssembledFile(const Instruction& instr) {
-    std::ofstream outputFile(outputFileName, std::ios::app); 
+    std::ofstream outputFile(outputFileName, std::ios::app);
     if (outputFile.is_open()) {
         outputFile << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << instr.address << " "
             << std::setw(8) << instr.machineCode << "  " << instr.basicCode << "\n";
@@ -165,21 +165,20 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
     uint8_t shamt = 0;
 
     if (op == "jr") {
-    
-        /*if (!(iss >> rs)) {
+
+        if (!(iss >> rs)) {
             return 0xDEADBEEF;
         }
         rs = trimWhitespace(rs);
         if (rs.back() == ',') {
             rs.pop_back();
         }
-        */
         return (0 << 26) |
-            (registerMap[rd] << 21) |
-            (0 << 16) |               
-            (0 << 11) |              
-            (0 << 6) |                
-            functMap[op];            
+            (registerMap[rs] << 21) |
+            (0 << 16) |
+            (0 << 11) |
+            (0 << 6) |
+            functMap[op];
 
     }
     //if (!(iss>>rd))
@@ -190,7 +189,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
     if (rd.back() == ',') {
         rd.pop_back();
     }
-    
+
     if (op == "sll" || op == "srl") {
         //iss >> rs
         std::getline(iss, rs, ',');
@@ -301,7 +300,7 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string offsetStr = offsetAndRs.substr(0, openParen);
     std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
 
-    
+
     int16_t offset = std::stoi(trimWhitespace(offsetStr));
     if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
 

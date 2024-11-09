@@ -12,4 +12,4 @@ sw $t9,2($t4)
 lw $t9,2($t4)
 lw $t5,4($t8)
 fib:
-jr   $ra
+        jr   $ra 

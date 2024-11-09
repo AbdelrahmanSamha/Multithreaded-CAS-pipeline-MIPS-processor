@@ -242,12 +242,14 @@ uint32_t Assembler::assembleJTypeInstruction(std::istringstream& iss, uint8_t op
 
 uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rs, rt, label;
-    if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
-
+    //if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
+    std::getline(iss, rs, ',');
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, label, ',');
     label = trimWhitespace(label);
     if (label.back() == ',') label.pop_back();
 
@@ -265,13 +267,14 @@ uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t o
 
 uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rt, rs, immediateStr;
-    if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
-
+    //if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, rs, ',');
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
-
+    std::getline(iss, immediateStr, ',');
     int16_t immediate = std::stoi(trimWhitespace(immediateStr));
     if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
 
@@ -283,12 +286,12 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
 
 uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string rt, offsetAndRs;
-    if (!(iss >> rt) || !(iss >> offsetAndRs)) return 0xDEADBEEF;
+    //if (!(iss >> rt) || !(iss >> offsetAndRs)) return 0xDEADBEEF;
 
-    // Remove comma from rt
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
-
+    std::getline(iss, offsetAndRs, ',');
     // Extract offset and rs from the format offset($rs)
     size_t openParen = offsetAndRs.find('(');
     size_t closeParen = offsetAndRs.find(')');
@@ -297,7 +300,7 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string offsetStr = offsetAndRs.substr(0, openParen);
     std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
 
-    // Convert offset to a signed 16-bit integer
+    
     int16_t offset = std::stoi(trimWhitespace(offsetStr));
     if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
 

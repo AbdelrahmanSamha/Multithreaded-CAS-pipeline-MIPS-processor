@@ -166,15 +166,16 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
 
     if (op == "jr") {
     
-        if (!(iss >> rs)) {
+        /*if (!(iss >> rs)) {
             return 0xDEADBEEF;
         }
         rs = trimWhitespace(rs);
         if (rs.back() == ',') {
             rs.pop_back();
         }
+        */
         return (0 << 26) |
-            (registerMap[rs] << 21) |
+            (registerMap[rd] << 21) |
             (0 << 16) |               
             (0 << 11) |              
             (0 << 6) |                

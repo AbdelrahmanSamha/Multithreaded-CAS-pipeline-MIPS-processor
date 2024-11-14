@@ -1,7 +1,6 @@
 #include <iostream>
 #include <Windows.h>
 
-
 #include "Editor.h"
 #include "Assembler.h"
 #include "GlobalClock.h"

@@ -61,9 +61,7 @@ void Assembler::firstPass() {
             continue;
         }
 
-        // Here you would parse the line to identify labels and add them to the labelTable
-        // For example:
-        if (line.back() == ':') { // Simple label detection
+        if (!line.empty() && line.back() == ':') { // Simple label detection
             std::string label = line.substr(0, line.size() - 1);
             labelMap[label] = currentAddress;
         }
@@ -165,13 +163,6 @@ const std::vector<Instruction>& Assembler::getInstructions() const {
 uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std::string& op) {
     std::string rd, rs, rt;
     uint8_t shamt = 0;
-    if (!(iss >> rd)) {
-        return 0xDEADBEEF;
-    }
-    rd = trimWhitespace(rd);
-    if (rd.back() == ',') {
-        rd.pop_back();
-    }
 
     if (op == "jr") {
 
@@ -182,24 +173,30 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         if (rs.back() == ',') {
             rs.pop_back();
         }
-
-
-        uint32_t machineCode = (0 << 26) |
+        return (0 << 26) |
             (registerMap[rs] << 21) |
             (0 << 16) |
             (0 << 11) |
             (0 << 6) |
             functMap[op];
 
-        return machineCode;
+    }
+    //if (!(iss>>rd))
+    if (!(std::getline(iss, rd, ','))) {
+        return 0xDEADBEEF;
+    }
+    rd = trimWhitespace(rd);
+    if (rd.back() == ',') {
+        rd.pop_back();
     }
 
     if (op == "sll" || op == "srl") {
-        if (!(iss >> rs)) return 0xDEADBEEF;
+        //iss >> rs
+        std::getline(iss, rs, ',');
         rs = trimWhitespace(rs);
         if (rs.back() == ',') rs.pop_back();
         std::string shamtStr;
-        if (!(iss >> shamtStr)) return 0xDEADBEEF;
+        iss >> shamtStr;
         shamt = std::stoi(shamtStr);
         return (0 << 26) |
             (registerMap[rs] << 21) |
@@ -222,16 +219,16 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
                 return 0xDEADBEEF;
             }
         }
+        return  (00 << 26) |
+            (registerMap[rs] << 21) |
+            (registerMap[rt] << 16) |
+            (registerMap[rd] << 11) |
+            (shamt << 6) |
+            functMap[op];
+
     }
 
-    uint32_t machineCode = (00 << 26) |
-        (registerMap[rs] << 21) |
-        (registerMap[rt] << 16) |
-        (registerMap[rd] << 11) |
-        (shamt << 6) |
-        functMap[op];
 
-    return machineCode;
 }
 
 
@@ -245,12 +242,14 @@ uint32_t Assembler::assembleJTypeInstruction(std::istringstream& iss, uint8_t op
 
 uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rs, rt, label;
-    if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
-
+    //if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
+    std::getline(iss, rs, ',');
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, label, ',');
     label = trimWhitespace(label);
     if (label.back() == ',') label.pop_back();
 
@@ -268,13 +267,14 @@ uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t o
 
 uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rt, rs, immediateStr;
-    if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
-
+    //if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, rs, ',');
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
-
+    std::getline(iss, immediateStr, ',');
     int16_t immediate = std::stoi(trimWhitespace(immediateStr));
     if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
 
@@ -286,12 +286,12 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
 
 uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string rt, offsetAndRs;
-    if (!(iss >> rt) || !(iss >> offsetAndRs)) return 0xDEADBEEF;
+    //if (!(iss >> rt) || !(iss >> offsetAndRs)) return 0xDEADBEEF;
 
-    // Remove comma from rt
+    std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
-
+    std::getline(iss, offsetAndRs, ',');
     // Extract offset and rs from the format offset($rs)
     size_t openParen = offsetAndRs.find('(');
     size_t closeParen = offsetAndRs.find(')');
@@ -300,7 +300,7 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string offsetStr = offsetAndRs.substr(0, openParen);
     std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
 
-    // Convert offset to a signed 16-bit integer
+
     int16_t offset = std::stoi(trimWhitespace(offsetStr));
     if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
 
@@ -319,5 +319,4 @@ op   rd  rs   rt
 
  0000 0001 0000 1110 0110 0000 0010 1100
  sgt done
- 010  02c
 */

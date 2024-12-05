@@ -29,7 +29,7 @@ private:
     std::vector<Instruction> instructionSet; // Stores all the instructions with details
     uint32_t currentAddress;
     std::unordered_map<std::string, uint32_t> labelTable; // Keeps track of instruction addresses
-
+    void thirdPass();
     void firstPass();
     void secondPass();
 

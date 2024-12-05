@@ -40,12 +40,77 @@ Assembler::Assembler(const std::string& inputFileName, const std::string& output
     : inputFileName(inputFileName), outputFileName(outputFileName), currentAddress(0x00400000) {}
 
 void Assembler::assemble() {
+
+    thirdPass();
     // First pass: record labels
     firstPass();
 
     // Second pass: assemble instructions
     secondPass();
 }
+void Assembler::thirdPass() {
+    // Read the file into memory
+    std::ifstream inputFile(inputFileName);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
+        return;
+    }
+
+    std::vector<std::string> lines;
+    std::string line;
+
+    while (std::getline(inputFile, line)) {
+        line = trimWhitespace(line);
+        std::istringstream iss(line);
+        std::string op, format, rs, label;
+
+        iss >> op;
+        if (op == "bltz" || op == "bgez") {
+            // Extract register and label
+            std::getline(iss, rs, ',');
+            rs = trimWhitespace(rs);
+            std::getline(iss, label);
+            label = trimWhitespace(label);
+
+            // Remove trailing commas if present
+            if (rs.back() == ',') rs.pop_back();
+            if (label.back() == ',') label.pop_back();
+
+            // Generate replacement instructions
+            std::string line_SLT = "slt $30, " + rs + ", $zero";
+            std::string line_branch;
+
+            if (op == "bltz") {
+                line_branch = "bne $30, $zero, " + label;
+            }
+            else { // bgez
+                line_branch = "beq $30, $zero, " + label;
+            }
+
+            // Add the replacement instructions to the lines
+            lines.push_back(line_SLT);
+            lines.push_back(line_branch);
+        }
+        else {
+            // Add the original line
+            lines.push_back(line);
+        }
+    }
+    inputFile.close();
+
+    // Write updated content back to the same file
+    std::ofstream outputFile(inputFileName, std::ios::trunc);
+    if (!outputFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+        return;
+    }
+
+    for (const auto& updatedLine : lines) {
+        outputFile << updatedLine << std::endl;
+    }
+    outputFile.close();
+}
+
 
 void Assembler::firstPass() {
     std::ifstream inputFile(inputFileName);

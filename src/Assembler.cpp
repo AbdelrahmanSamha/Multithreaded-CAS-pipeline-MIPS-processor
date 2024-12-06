@@ -25,7 +25,11 @@ std::unordered_map<std::string, uint8_t> registerMap = {
     {"$zero", 0}, {"$at", 1}, {"$v0", 2}, {"$v1", 3}, {"$a0", 4}, {"$a1", 5}, {"$a2", 6}, {"$a3", 7},
     {"$t0", 8}, {"$t1", 9}, {"$t2", 10}, {"$t3", 11}, {"$t4", 12}, {"$t5", 13}, {"$t6", 14}, {"$t7", 15},
     {"$s0", 16}, {"$s1", 17}, {"$s2", 18}, {"$s3", 19}, {"$s4", 20}, {"$s5", 21}, {"$s6", 22}, {"$s7", 23},
-    {"$t8", 24}, {"$t9", 25}, {"$k0", 26}, {"$k1", 27}, {"$gp", 28}, {"$sp", 29}, {"$fp", 30}, {"$ra", 31}
+    {"$t8", 24}, {"$t9", 25}, {"$k0", 26}, {"$k1", 27}, {"$gp", 28}, {"$sp", 29}, {"$fp", 30}, {"$ra", 31},
+    {"$0", 0}, {"$1", 1}, {"$2", 2}, {"$3", 3}, {"$4", 4}, {"$5", 5}, {"$6", 6}, {"$7", 7},
+    {"$8", 8}, {"$9", 9}, {"$10", 10}, {"$11", 11}, {"$12", 12}, {"$13", 13}, {"$14", 14}, {"$15", 15},
+    {"$16", 16}, {"$17", 17}, {"$18", 18}, {"$19", 19}, {"$20", 20}, {"$21", 21}, {"$22", 22}, {"$23", 23},
+    {"$24", 24}, {"$25", 25}, {"$26", 26}, {"$27", 27}, {"$28", 28}, {"$29", 29}, {"$30", 30}, {"$31", 31}
 };
 
 std::unordered_map<std::string, uint8_t> rtMap = {
@@ -34,20 +38,75 @@ std::unordered_map<std::string, uint8_t> rtMap = {
 };
 
 std::unordered_map<std::string, uint32_t> labelMap;
+std::unordered_map<std::string,std::string, uint32_t> labelMap_DataSeg;
 uint32_t currentAddress = 0x00400000;
 
 Assembler::Assembler(const std::string& inputFileName, const std::string& outputFileName)
     : inputFileName(inputFileName), outputFileName(outputFileName), currentAddress(0x00400000) {}
 
 void Assembler::assemble() {
-
-    thirdPass();
+    //fourthPass(); // data segment 
+    thirdPass(); // pseudo-instruction 
     // First pass: record labels
     firstPass();
 
     // Second pass: assemble instructions
     secondPass();
 }
+/*
+void Assembler::fourthPass() {
+    std::ifstream inputFile(inputFileName);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
+        return;
+    }
+    std::string line;
+
+    while (std::getline(inputFile, line)) {
+        line = trimWhitespace(line);
+        if (line.empty()) { // Skip empty lines and comments
+            continue;
+        }
+        if (line.size() >= 5 && line.substr(line.size() - 5) == ".data") { // Check if the line ends with ".data"
+            uint32_t currentAddress_DataSeg = 0x00400000;
+            while (std::getline(inputFile, line)) {
+                std::istringstream iss(line);
+                std::string label_name, label_data, temp_data;
+
+                iss >> label_name;
+
+                label_name = trimWhitespace(label_name);
+                if (label_name == ".text") {//check if code is start or not
+                    break;
+                }
+                if (label_name.back() == ':') {
+                    label_name.pop_back();
+                }
+                iss >> label_data;
+                label_data = trimWhitespace(label_data);
+                std::vector<std::string> data;
+
+                while (std::getline(iss, temp_data, ',')) {
+                    if (temp_data.empty()) {
+                        break;
+                    }
+                    else if (!temp_data.empty() && temp_data.back() == ',') {// save into data segment
+                        temp_data = temp_data.substr(0, temp_data.size() - 1);
+                        labelMap_DataSeg[label_name, temp_data] = currentAddress_DataSeg;
+                    }
+                    else {
+                        currentAddress += 4; // Increment address for the next location in data segment (assuming 4 bytes per data)
+                    }
+                }
+            }
+        }
+        else {
+            continue;
+        }
+    }
+    inputFile.close();
+    
+}*/
 void Assembler::thirdPass() {
     // Read the file into memory
     std::ifstream inputFile(inputFileName);
@@ -77,14 +136,14 @@ void Assembler::thirdPass() {
             if (label.back() == ',') label.pop_back();
 
             // Generate replacement instructions
-            std::string line_SLT = "slt $30, " + rs + ", $zero";
+            std::string line_SLT = "slt $27, " + rs + ", $zero";
             std::string line_branch;
 
             if (op == "bltz") {
-                line_branch = "bne $30, $zero, " + label;
+                line_branch = "bne $27, $zero, " + label;
             }
             else { // bgez
-                line_branch = "beq $30, $zero, " + label;
+                line_branch = "beq $27, $zero, " + label;
             }
 
             // Add the replacement instructions to the lines
@@ -137,7 +196,6 @@ void Assembler::firstPass() {
 
     inputFile.close();
 }
-
 
 void Assembler::secondPass() {
     std::ifstream inputFile(inputFileName);
@@ -308,12 +366,12 @@ uint32_t Assembler::assembleJTypeInstruction(std::istringstream& iss, uint8_t op
 uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rs, rt, label;
     //if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
-    std::getline(iss, rs, ',');
-    rs = trimWhitespace(rs);
-    if (rs.back() == ',') rs.pop_back();
     std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, rs, ',');
+    rs = trimWhitespace(rs);
+    if (rs.back() == ',') rs.pop_back();
     std::getline(iss, label, ',');
     label = trimWhitespace(label);
     if (label.back() == ',') label.pop_back();

@@ -33,9 +33,11 @@ private:
     void firstPass();
     void secondPass();
     void thirdPass();
-    /*void fourthPass(); */
+    void fourthPass(); 
     // Helper functions
     std::string trimWhitespace(const std::string& str);
+    std::string toLowerCase(const std::string& input); // convert char to lower case
+    std::string removeBeforeColon(const std::string& line); // remove lable befot instruction to convert machine code
     void writeHexToAssembledFile(const Instruction& instr);
 
 public:

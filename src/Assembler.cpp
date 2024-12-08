@@ -5,7 +5,8 @@
 #include <iomanip>
 #include <string>
 #include <vector>
-
+#include <algorithm>
+#include <cctype>
 using std::string;
 using std::vector;
 
@@ -40,12 +41,12 @@ std::unordered_map<std::string, uint8_t> rtMap = {
 std::unordered_map<std::string, uint32_t> labelMap;
 std::unordered_map<std::string,std::string, uint32_t> labelMap_DataSeg;
 uint32_t currentAddress = 0x00400000;
-
+uint32_t currentAddress_DataSeg = 0x00400000;
 Assembler::Assembler(const std::string& inputFileName, const std::string& outputFileName)
     : inputFileName(inputFileName), outputFileName(outputFileName), currentAddress(0x00400000) {}
 
 void Assembler::assemble() {
-    //fourthPass(); // data segment 
+    fourthPass(); // data segment 
     thirdPass(); // pseudo-instruction 
     // First pass: record labels
     firstPass();
@@ -53,60 +54,68 @@ void Assembler::assemble() {
     // Second pass: assemble instructions
     secondPass();
 }
-/*
+
 void Assembler::fourthPass() {
     std::ifstream inputFile(inputFileName);
     if (!inputFile.is_open()) {
         std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
         return;
     }
+
     std::string line;
+    std::vector<std::string> lines;
 
     while (std::getline(inputFile, line)) {
         line = trimWhitespace(line);
         if (line.empty()) { // Skip empty lines and comments
             continue;
         }
+        std::string line2;
         if (line.size() >= 5 && line.substr(line.size() - 5) == ".data") { // Check if the line ends with ".data"
-            uint32_t currentAddress_DataSeg = 0x00400000;
-            while (std::getline(inputFile, line)) {
-                std::istringstream iss(line);
+
+            while (std::getline(inputFile, line2)) {
+                std::istringstream iss(line2);
                 std::string label_name, label_data, temp_data;
 
                 iss >> label_name;
-
                 label_name = trimWhitespace(label_name);
-                if (label_name == ".text") {//check if code is start or not
+                if (label_name == ".text") { // Check if code starts
                     break;
                 }
-                if (label_name.back() == ':') {
-                    label_name.pop_back();
+                if (!label_name.empty() && label_name.back() == ':') {
+                    label_name.pop_back(); // Remove ':' at the end
                 }
+
                 iss >> label_data;
                 label_data = trimWhitespace(label_data);
-                std::vector<std::string> data;
 
                 while (std::getline(iss, temp_data, ',')) {
-                    if (temp_data.empty()) {
-                        break;
-                    }
-                    else if (!temp_data.empty() && temp_data.back() == ',') {// save into data segment
-                        temp_data = temp_data.substr(0, temp_data.size() - 1);
-                        labelMap_DataSeg[label_name, temp_data] = currentAddress_DataSeg;
-                    }
-                    else {
-                        currentAddress += 4; // Increment address for the next location in data segment (assuming 4 bytes per data)
+                    temp_data = trimWhitespace(temp_data);
+                    if (!temp_data.empty()) {
+                        lines.push_back(temp_data);
                     }
                 }
             }
         }
-        else {
-            continue;
-        }
     }
+
+    // Close input file before opening for writing
     inputFile.close();
-    
-}*/
+    currentAddress_DataSeg = 0x00400000;
+    std::ofstream outputFile("Data_Memory.txt", std::ios::trunc);
+    if (!outputFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+        return;
+    }
+
+    for (const auto& updatedLine : lines) {
+        outputFile << currentAddress_DataSeg <<": "  << updatedLine << std::endl;
+        currentAddress_DataSeg += 4;
+    }
+
+    outputFile.close();
+}
+
 void Assembler::thirdPass() {
     // Read the file into memory
     std::ifstream inputFile(inputFileName);
@@ -117,42 +126,61 @@ void Assembler::thirdPass() {
 
     std::vector<std::string> lines;
     std::string line;
-
     while (std::getline(inputFile, line)) {
-        line = trimWhitespace(line);
-        std::istringstream iss(line);
-        std::string op, format, rs, label;
-
-        iss >> op;
-        if (op == "bltz" || op == "bgez") {
-            // Extract register and label
-            std::getline(iss, rs, ',');
-            rs = trimWhitespace(rs);
-            std::getline(iss, label);
-            label = trimWhitespace(label);
-
-            // Remove trailing commas if present
-            if (rs.back() == ',') rs.pop_back();
-            if (label.back() == ',') label.pop_back();
-
-            // Generate replacement instructions
-            std::string line_SLT = "slt $27, " + rs + ", $zero";
-            std::string line_branch;
-
-            if (op == "bltz") {
-                line_branch = "bne $27, $zero, " + label;
-            }
-            else { // bgez
-                line_branch = "beq $27, $zero, " + label;
-            }
-
-            // Add the replacement instructions to the lines
-            lines.push_back(line_SLT);
-            lines.push_back(line_branch);
-        }
-        else {
-            // Add the original line
+        if (line.substr(line.size() - 5) == ".text") {
+            line = trimWhitespace(line);
             lines.push_back(line);
+            while (std::getline(inputFile, line)) {
+                line = trimWhitespace(line);
+                line = toLowerCase(line);
+                if ((line.size() >= 2 && line.substr(0, 2) == "//") || line.size() >= 1 && line[0] == '#') {
+                    continue; // Skip lines starting with "//" or "#"
+                }
+                
+                std::istringstream iss(line);
+                std::string op, format, rs, label;
+
+                iss >> op;
+                if (op.back() == ':') {
+                    lines.push_back(op);
+                    line = removeBeforeColon(line);
+                    iss >> op;
+                }
+                if (line.empty()) {
+                    continue;
+                }
+                
+                if (op == "bltz" || op == "bgez") {
+                    // Extract register and label
+                    std::getline(iss, rs, ',');
+                    rs = trimWhitespace(rs);
+                    std::getline(iss, label);
+                    label = trimWhitespace(label);
+
+                    // Remove trailing commas if present
+                    if (rs.back() == ',') rs.pop_back();
+                    if (label.back() == ',') label.pop_back();
+
+                    // Generate replacement instructions
+                    std::string line_SLT = "slt $27, " + rs + ", $zero";
+                    std::string line_branch;
+
+                    if (op == "bltz") {
+                        line_branch = "bne $27, $zero, " + label;
+                    }
+                    else { // bgez
+                        line_branch = "beq $27, $zero, " + label;
+                    }
+
+                    // Add the replacement instructions to the lines
+                    lines.push_back(line_SLT);
+                    lines.push_back(line_branch);
+                }
+                else {
+                    // Add the original line
+                    lines.push_back(line);
+                }
+            }
         }
     }
     inputFile.close();
@@ -180,20 +208,31 @@ void Assembler::firstPass() {
 
     std::string line;
     while (std::getline(inputFile, line)) {
-        line = trimWhitespace(line);
-        if (line.empty()) { // Skip empty lines and comments
-            continue;
-        }
-
-        if (!line.empty() && line.back() == ':') { // Simple label detection
-            std::string label = line.substr(0, line.size() - 1);
-            labelMap[label] = currentAddress;
+        if (line.substr(line.size() - 5) == ".text") { // start code from .text 
+            while (std::getline(inputFile, line)) {
+                line = trimWhitespace(line);
+                if (line.empty()) { // Skip empty lines and comments
+                    continue;
+                }
+                if ((line.size() >= 2 && line.substr(0, 2) == "//") || line.size() >= 1 && line[0] == '#') {
+                    continue; // Skip lines starting with "//" or "#"
+                }
+                std::istringstream iss(line);
+                std::string oop;
+                iss >> oop;
+                if (!oop.empty() && oop.back() == ':') { // Simple label detection
+                    std::string label = oop.substr(0, oop.size() - 1);
+                    labelMap[label] = currentAddress;
+                }
+                else {
+                    currentAddress += 4; // Increment address for the next instruction (assuming 4 bytes per instruction)
+                }
+            }
         }
         else {
-            currentAddress += 4; // Increment address for the next instruction (assuming 4 bytes per instruction)
+            continue;
         }
     }
-
     inputFile.close();
 }
 
@@ -208,27 +247,34 @@ void Assembler::secondPass() {
 
     currentAddress = 0x00400000; // Reset current address for the second pass
     std::string line;
-    while (getline(inputFile, line)) {
-        uint32_t machineCode = assembleInstruction(line);
-        if (machineCode == 0xDEADBEEF) {
-            std::cerr << "Error assembling line: " << line << "\n";
-
-        }
-
-        else {
-            // Create and store the instruction
-            Instruction instr = { currentAddress, machineCode, line };
-            instructionSet.emplace_back(instr);
-            writeHexToAssembledFile(instr);
-            currentAddress += 4;
+    while (std::getline(inputFile, line)) {
+        if (line.substr(line.size() - 5) == ".text") {
+            while (getline(inputFile, line)) {
+                line = removeBeforeColon(line);
+                if (line.empty()) {
+                    continue;
+                }
+                uint32_t machineCode = assembleInstruction(line);
+                if (machineCode == 0xDEADBEEF) {
+                    std::cerr << "Error assembling line: " << line << "\n";
+                }
+                else {
+                    // Create and store the instruction
+                    Instruction instr = { currentAddress, machineCode, line };
+                    instructionSet.emplace_back(instr);
+                    writeHexToAssembledFile(instr);
+                    currentAddress += 4;
+                }
+            }
         }
     }
-
     inputFile.close();
     outputFile.close();
 }
 
 uint32_t Assembler::assembleInstruction(const std::string& instruction) {
+
+    
     std::istringstream iss(trimWhitespace(instruction));
     std::string op, rd, rs, rt, label, immediateStr, address;
     uint8_t shamt = 0;
@@ -434,7 +480,21 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
         (offset & 0xFFFF);
 }
 
+// convert string to small latter 
+std::string Assembler::toLowerCase(const std::string& input) {
+    std::string result = input; // Copy the input string
+    std::transform(result.begin(), result.end(), result.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    return result;
+}
 
+std::string Assembler::removeBeforeColon(const std::string& line) {
+    size_t colonPos = line.find(':'); // Find the position of the first colon
+    if (colonPos != std::string::npos) {
+        return line.substr(colonPos + 1); // Return everything after the colon
+    }
+    return line; // Return the original line if no colon is found
+}
 /*
 add $s0, $s1, $s2
 op   rd  rs   rt

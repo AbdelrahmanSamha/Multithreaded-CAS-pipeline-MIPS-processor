@@ -1,7 +1,11 @@
-addi $4,$0,1
-slt $30, $4, $zero
-bne $30, $zero, L
-slt $30, $4, $zero
-beq $30, $zero, L
-L:
-addi $5,$0,1
+.text
+addi $t0,$5,1
+addi $t0,$5,1
+addi $t0,$5,1
+j l
+l:
+slt $27, $t0, $zero
+beq $27, $zero, l2
+addi $t0,$5,1
+l2:
+ addi $t0,$5,1

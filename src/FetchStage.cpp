@@ -15,7 +15,7 @@ void FetchStage::Fetchjob() {
         clk->waitforClockTick(); // Wait for the global clock tick
         ConsoleLog(1,"Fetchthread starting new clock");
         int32_t fetchedInstruction;
-        if (!hasNextInstruction()) {
+        if (!hasNextInstruction()) { //if there is no more instructions then insert NOPs
             ConsoleLog(1, "No more instructions to fetch. Halt inserted");
              fetchedInstruction = 0x00000000;
              IFIDpipe->writedata(PC, fetchedInstruction);

@@ -123,16 +123,17 @@ void Assembler::thirdPass() {
         std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
         return;
     }
-
+    bool text_flag = false; // flag to check if .text include file
     std::vector<std::string> lines;
     std::string line;
     while (std::getline(inputFile, line)) {
         if (line.substr(line.size() - 5) == ".text") {
+            text_flag = true;
             line = trimWhitespace(line);
             lines.push_back(line);
             while (std::getline(inputFile, line)) {
                 line = trimWhitespace(line);
-                line = toLowerCase(line);
+                
                 if ((line.size() >= 2 && line.substr(0, 2) == "//") || line.size() >= 1 && line[0] == '#') {
                     continue; // Skip lines starting with "//" or "#"
                 }
@@ -183,19 +184,25 @@ void Assembler::thirdPass() {
             }
         }
     }
-    inputFile.close();
-
-    // Write updated content back to the same file
-    std::ofstream outputFile(inputFileName, std::ios::trunc);
-    if (!outputFile.is_open()) {
-        std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+    if (!text_flag) {
+        std::cerr << "Error: Could not find the '.text' segment in the file!" << std::endl;
         return;
     }
+    inputFile.close();
+    
+ 
+    // Write updated content back to the same file
+    std::ofstream outputFile(inputFileName, std::ios::trunc);
+        if (!outputFile.is_open()) {
+            std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+            return;
+        }
 
-    for (const auto& updatedLine : lines) {
-        outputFile << updatedLine << std::endl;
-    }
-    outputFile.close();
+        for (const auto& updatedLine : lines) {
+            outputFile << updatedLine << std::endl;
+        }
+        outputFile.close();
+    
 }
 
 
@@ -282,6 +289,7 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
 
 
     iss >> op;
+    op = toLowerCase(op);
     auto opcodeIt = opcodeMap.find(op);
     if (opcodeIt == opcodeMap.end()) return 0xDEADBEEF;
 

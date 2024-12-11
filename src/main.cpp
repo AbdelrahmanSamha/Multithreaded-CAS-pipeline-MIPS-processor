@@ -62,9 +62,9 @@ int main() {
     //Stages object takes: (clk, previous memory or pipe, next_pipe)
     FetchStage Fetchthread(&clk, assembler.getInstructions(), &IFIDpipe, &HDU , &JU );
   
-    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU, &ZU ,&JU);
+    DecodeStage Decodethread(&clk, &IFIDpipe, &IDEXEpipe, &CU, &RF, &HDU,&FU, &ZU ,&JU);
 
-    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU, &FU);
+    ExecuteStage Executethread(&clk, &IDEXEpipe, &EXEMEMpipe, &HDU, &FU, &ZU, &JU);
 
     MemoryStage Memorythread(&clk, &EXEMEMpipe , &MEMWBpipe, &FU);
 

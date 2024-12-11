@@ -28,7 +28,7 @@ public:
 
     // Functions to set inputs and perform logic
     void JumpInputF(int32_t instruction, int32_t pc4);
-    void JumpInputD(int32_t baddress,int32_t raddress,bool zero, bool jr);
+    void JumpInputEXE(int32_t baddress,int32_t raddress,bool zero, bool jr);
     void JumpUnitSignalsOutput(); 
     void JumpUnitAddressOutput();
 

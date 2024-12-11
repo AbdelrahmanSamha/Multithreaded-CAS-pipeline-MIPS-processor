@@ -2,8 +2,8 @@
 #include "ConsoleLogger.h"
 #include <iomanip>
 
-ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU)
-	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe), HDU(HDU), FU(FU) {
+ExecuteStage::ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU, ZERO* ZU, Jump* JU)
+	: clk(clock), IDEXEpipe(prev_pipe), EXEMEMpipe(next_pipe), HDU(HDU), FU(FU), ZU(ZU),JU(JU) {
 	// Launch the decoding thread and store it in the class
 	Executethread = std::thread([this]() { Executejob(); });
 }
@@ -21,37 +21,53 @@ void ExecuteStage::Executejob() {
 		IDEXEpipe->readdata(
 		EXEdata.MemWriteEn, EXEdata.MemtoReg, //WB for the next pipe
 		EXEdata.RegWriteEn,EXEdata.MemReadEn, //MEM
-		EXEdata.ALUsrc,EXEdata.ALUOp,EXEdata.RegDst,EXEdata.JAL, PC,//exe
-		MC, //for display
+        EXEdata.ALUOp, EXEdata.RegDst, EXEdata.FC,EXEdata.FD,EXEdata.JrSignal,EXEdata.Branch,EXEdata.ZeroSignal, //exe
+        PC,
+        MC, //for display
 		EXEdata.readdata1,EXEdata.readdata2,//exe
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
+        ZU->ZeroInput(EXEdata.readdata1, EXEdata.readdata2, EXEdata.ZeroSignal);
 
-        HDU->HDUinputExecute(EXEdata.rt, EXEdata.MemReadEn);
-        //ForwardingUnit
-        FU->FUinputEXE(EXEdata.rs, EXEdata.rt);
-        FU->evaluateForwarding();
+        bool AndGate = (EXEdata.Branch && ZU->ZeroOutput());
+        HDU->HDUinputExecute(EXEdata.JrSignal, AndGate);
 
+        //branch address calculation...
+        int32_t BranchAddress = EXEdata.readdata1 + EXEdata.immediate; 
+
+        JU->JumpInputEXE(BranchAddress, EXEdata.readdata1, AndGate, EXEdata.JrSignal);
+        
+        
+        
+        
+        
+
+        
         //Mux operation 
-        JalMux(PC, EXEdata.readdata1, EXEdata.JAL);
-        Op1Mux(Out_JALM, FU->WBdata,FU->MEMdata, FU->ForwardA);
-        BeforeOp2Mux(EXEdata.readdata2, FU->WBdata, FU->MEMdata, FU->ForwardB);
-        Op2Mux(Out_BOP2M,EXEdata.immediate,EXEdata.ALUsrc);
-        RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
+        Operand1=  Op1Mux(EXEdata.readdata1, PC , FU->MEMreaddata, EXEdata.FC);
+      
+        Operand2= Op2Mux(EXEdata.readdata2 ,EXEdata.immediate, FU->MEMreaddata ,EXEdata.FD);
+
+        Out_RegDstM= RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
         //ALU
        int32_t ALUresult=  ALU(Operand1,Operand2, EXEdata.ALUOp);
 
+       FU->FUinputEXE(ALUresult ,EXEdata.rs, EXEdata.rt, Out_RegDstM, EXEdata.RegWriteEn, EXEdata.MemReadEn);
+
+       //FIX THE INPUTS TO THE MEM PIPE
 		EXEMEMpipe->writedata(PC,MC,
             EXEdata.RegWriteEn, EXEdata.MemtoReg,//WBS
             EXEdata.MemWriteEn, EXEdata.MemReadEn,//MEMS
             ALUresult,
-            Out_BOP2M,
+            EXEdata.readdata2,
+            FU->MEMreaddata,
             Out_RegDstM);
 
+        
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
-
+        
 	}
 }
 
@@ -97,76 +113,61 @@ int32_t ExecuteStage::ALU(int32_t operand1, int32_t operand2, int32_t opSel) {
     return result;
 }
 
-void ExecuteStage::JalMux(int32_t PC, int32_t Rs, bool JalSignal){
-    if (JalSignal == 1)
-        Out_JALM = PC;
-    else
-        Out_JALM = Rs;
-}
-void ExecuteStage::Op1Mux(int32_t JalMux, int32_t WB32, int32_t MEM32, int32_t ForwardA) {
-    switch (ForwardA) {
+
+int32_t ExecuteStage::Op1Mux(int32_t readata1, int32_t PC, int32_t readmemdata, int32_t ForwardC) {
+    int32_t placeholder = 0; 
+    switch (ForwardC) {
     case 0: 
-        Operand1 = JalMux;
+        placeholder = readata1;
         break;
     case 1 :
-        Operand1 = WB32;
+        placeholder = PC;
         break;
     case 2 : 
-        Operand1 = MEM32;
+        placeholder = readmemdata;
         break;
     default: 
-        Operand1 = 0xFFFFFFFF;
+        placeholder = 0xFFFFFFFF;
         break;
     }
+    return placeholder;
 }
-void ExecuteStage::BeforeOp2Mux(int32_t Rt, int32_t WB32, int32_t MEM32, int32_t ForwardB){
-    switch (ForwardB) {
+
+int32_t ExecuteStage::Op2Mux(int32_t readata2, int32_t Imm, int32_t readmemdata, int32_t ForwardD){
+    int32_t placeholder2 = 0; 
+    switch(ForwardD){
     case 0:
-        Out_BOP2M = Rt;
+        placeholder2 = readata2;
         break;
     case 1:
-        Out_BOP2M = WB32;
+        placeholder2 = Imm;
         break;
     case 2:
-        Out_BOP2M = MEM32;
+        placeholder2 = readmemdata;
         break;
     default:
-        Out_BOP2M = 0xFFFFFFFF;
+        placeholder2 = 0xFFFFFFFF;
         break;
     }
+    return placeholder2;
 }
-void ExecuteStage::Op2Mux(int32_t BOP2Mux, int32_t Imm, int32_t AluSrc){
-    switch(AluSrc){
-    case 0:
-        Operand2 = BOP2Mux;
-        break;
-    case 1:
-        Operand2 = Imm;
-        break;
-    case 2:
-        Operand2 = 0x00000000;
-        break;
-    default:
-        Operand2 = 0xFFFFFFFF;
-        break;
-    }
-}
-void ExecuteStage::RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS) {
+int32_t ExecuteStage::RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS) {
+    int32_t placeholder3 = 0; 
     switch (RegDstS) {
     case 0 : 
-        Out_RegDstM = rt; 
+        placeholder3 = rt;
         break; 
     case 1 :
-        Out_RegDstM = rd;
+        placeholder3 = rd;
         break;
     case 2: 
-        Out_RegDstM = 31; 
+        placeholder3 = 31;
         break;
     default: 
-        Out_RegDstM = 0;
+        placeholder3 = 0;
         break;
-
-}
+    }
+    return placeholder3; 
 }
 void ExecuteStage::stop() {
 	running = false;

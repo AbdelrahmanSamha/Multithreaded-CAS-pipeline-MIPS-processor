@@ -37,7 +37,7 @@ private:
 
     void Memoryjob();
     void dumpMemoryToFile(const std::string& filename);
-
+    int32_t WritedataMUX(int32_t readata2_mem, int32_t address, int32_t memreaddata, int32_t ForwardE);
 public:
     MemoryStage(GlobalClock* clock, EXEMEM* prev_pipe, MEMWB* next_pipe, ForwardingUnit* FU);
     ~MemoryStage();

@@ -13,9 +13,10 @@ private:
 	bool MemtoReg= false; //WBS
 	bool MemWriteEn= false;
 	bool MemReadEn= false; //mem
-	int32_t result= false;
-	int32_t WriteData= false;
-	int32_t WriteRegister= false;
+	int32_t result= 0;
+	int32_t WriteData= 0;
+	int32_t Memreaddata = 0;
+	int32_t WriteRegister= 0;
 
 public:
 	EXEMEM();
@@ -24,12 +25,14 @@ public:
 		bool MemWriteEnIn, bool MemReadEnIn, //mem
 		int32_t resultIn,
 		int32_t WriteDataIn,
+		int32_t MemreaddataIn,
 		int32_t WriteRegisterIn);
 	void readdata(int32_t& PCOut, int32_t &MCin,
 		bool& RegWriteEnOut, bool& MemtoRegOut,//WBS
 		bool& MemWriteEnOut, bool& MemReadEnOut, //mem
 		int32_t& resultOut,
 		int32_t& WriteDataOut,
+		int32_t& MemreaddataOut,
 		int32_t& WriteRegisterOut);
 };
 #endif

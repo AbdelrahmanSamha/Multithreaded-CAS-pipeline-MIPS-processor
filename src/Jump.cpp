@@ -5,18 +5,18 @@ Jump::Jump() : decodeSemaphore(0),JmuxSel(0), AndGate(false), Flush(false), Inst
 
 // Function to receive fetch stage input
 void Jump::JumpInputF(int32_t instruction, int32_t pc4) {
-    Instruction = instruction;
-    PC4 = pc4;
+    this->Instruction = instruction;
+    this->PC4 = pc4;
     JumpUnitAddressOutput();
 }
 
 // Function to receive decode stage input
-void Jump::JumpInputD(int32_t bAddress, int32_t rAddress, bool zANDb, bool jr) {
-    Baddress = bAddress; 
-    Raddress = rAddress;
-    AndGate = zANDb;
-    Jr = jr;
-    decodeSemaphore.release(); // Signal decode input is ready
+void Jump::JumpInputEXE(int32_t bAddress, int32_t rAddress, bool zANDb, bool jr) {
+    this->Baddress = bAddress; 
+    this->Raddress = rAddress;
+    this->AndGate = zANDb;
+    this->Jr = jr;
+    this->decodeSemaphore.release(); // Signal  input is ready
 }
 
 // Core jump logic function

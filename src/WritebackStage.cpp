@@ -17,10 +17,12 @@ void WritebackStage::WBjob() {
 		clk->waitforClockTick(); //called at the beggining of all the stages. 
 		ConsoleLog(5, "WBthread starting new clock");
 
-		bool RegWriteEn, MemtoReg;
-		int32_t ReadData, Address;
+		bool RegWriteEn= false ; 
+		bool MemtoReg= false;
+		int32_t ReadData=0;
+		int32_t Address=0;
 		int32_t WriteRegister = 0 ;
-		int32_t OutWbMux;
+		int32_t OutWbMux=0;
 
 		//read data fro,m critical section 
 		MEMWBpipe->readdata(PC, MC,
@@ -38,7 +40,7 @@ void WritebackStage::WBjob() {
 		}
 		
 		//Forwarding...
-		FU->FUinputWB(RegWriteEn, WriteRegister, OutWbMux);
+		
 		RF->writeRegister(WriteRegister,OutWbMux,RegWriteEn);
 		 
 		

@@ -5,8 +5,9 @@
 #include "IDEXE.h"
 #include "EXEMEM.h"
 #include "ForwardingUnit.h"
+#include "ZERO.h"
+#include "Jump.h"
 #include <thread>
-
 class ForwardingUnit;
 
 struct EControlSignals{
@@ -14,10 +15,13 @@ struct EControlSignals{
 	bool MemtoReg=0;
 	bool RegWriteEn=0;
 	bool MemReadEn = 0;
-	bool ALUsrc = 0;
+	bool JrSignal = false; 
+	bool Branch = false; 
+	bool ZeroSignal = false; 
+	int32_t FC = 0;
+	int32_t FD = 0; 
 	int32_t ALUOp=0;
 	int32_t RegDst=0;
-	bool JAL=0;
 	int32_t readdata1=0;
 	int32_t readdata2=0;
 	int32_t immediate=0;
@@ -43,6 +47,8 @@ private:
 	EXEMEM* EXEMEMpipe;
 	HazardDetection* HDU;
 	ForwardingUnit* FU;
+	ZERO* ZU;
+	Jump* JU;
 private:
 	//local stage needs: 
 	std::thread Executethread;
@@ -57,11 +63,11 @@ private:
 private: //functions 
 	void Executejob();
 	int32_t ALU(int32_t operand1, int32_t operand2, int32_t opSel);
-	void JalMux(int32_t PC, int32_t Rs, bool JalSignal);
-	void Op1Mux(int32_t JalMux, int32_t WB32, int32_t MEM32, int32_t ForwardA);
-	void BeforeOp2Mux(int32_t Rt, int32_t WB32, int32_t MEM32, int32_t ForwardB);
-	void Op2Mux(int32_t BOP2Mux, int32_t Imm, int32_t AluSrc);
-	void RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS);
+	
+	int32_t Op1Mux(int32_t readata1, int32_t PC, int32_t readmemdata, int32_t ForwardC);
+	
+	int32_t Op2Mux(int32_t readata2, int32_t Imm, int32_t readmemdata, int32_t ForwardD);
+	int32_t RegDstMux(int32_t rt, int32_t rd, int32_t RegDstS);
 
 private:
 	static constexpr int32_t _ADD = 0b0000;
@@ -78,7 +84,7 @@ private:
 public:
 
 	void stop();
-	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU);
+	ExecuteStage(GlobalClock* clock, IDEXE* prev_pipe, EXEMEM* next_pipe, HazardDetection* HDU, ForwardingUnit* FU, ZERO* ZU, Jump* JU);
 	~ExecuteStage();
 };
 

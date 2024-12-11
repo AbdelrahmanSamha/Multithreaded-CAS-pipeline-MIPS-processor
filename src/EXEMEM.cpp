@@ -10,6 +10,7 @@ void EXEMEM::writedata(int32_t PCIn, int32_t MCin,
                         bool MemWriteEnIn, bool MemReadEnIn, //mem
                         int32_t resultIn,
                         int32_t WriteDataIn,
+                        int32_t MemreaddataIn,
                         int32_t WriteRegisterIn) {
 
     s1.acquire();
@@ -24,6 +25,7 @@ void EXEMEM::writedata(int32_t PCIn, int32_t MCin,
     this->MemReadEn = MemReadEnIn;
     this->result = resultIn;
     this->WriteData =WriteDataIn ;
+    this->Memreaddata = MemreaddataIn;
     this->WriteRegister = WriteRegisterIn;
     ConsoleLog(3, "RegWriteEnIn", RegWriteEnIn);
     ConsoleLog(3, "MemtoRegIn", MemtoRegIn);
@@ -40,6 +42,7 @@ void EXEMEM::readdata(int32_t& PCOut, int32_t& MCOut,
                         bool& MemWriteEnOut, bool& MemReadEnOut, //mem
                         int32_t& resultOut,
                         int32_t& WriteDataOut,
+                        int32_t& MemreaddataOut,
                         int32_t& WriteRegisterOut) {
   
     // Read data
@@ -52,6 +55,7 @@ void EXEMEM::readdata(int32_t& PCOut, int32_t& MCOut,
     MemReadEnOut = this->MemReadEn;
     resultOut = this->result;
     WriteDataOut = this->WriteData;
+    MemreaddataOut = this->Memreaddata;
     WriteRegisterOut = this->WriteRegister;
 
     ConsoleLog(4, "RegWriteEnOut", RegWriteEnOut);

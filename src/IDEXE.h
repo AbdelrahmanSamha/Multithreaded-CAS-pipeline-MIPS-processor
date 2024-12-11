@@ -17,8 +17,11 @@ private:
 	int32_t MC = 0x00000000; //MachineCode
 	int32_t ALUOp=0x0;
 	int32_t RegDst=0x0;
-	bool JAL=false;
-	bool ALUsrc= false;
+	int32_t FC=0;
+	int32_t FD= 0;
+	bool JrSignal= false;
+	bool Branch = false; 
+	bool ZeroS = false; 
 	bool MemReadEn = false;
 	bool MemWriteEn= false;
 	bool MemtoReg  = false;
@@ -34,14 +37,14 @@ private:
 public : 
 	IDEXE();
 	void writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, bool MemReadEnin,
-		bool ALUsrcin, int32_t ALUOpin, int32_t RegDstin,bool JALin,
+	    int32_t ALUOpin, int32_t RegDstin, int32_t FCin, int32_t FDin,bool JrSingalin,bool Branchin, bool ZeroSignalin, 
 		int32_t PCin, int32_t MC,
 		int32_t readdata1in, int32_t readdata2in,
 		int32_t immediatein,
 		int32_t rsin, int32_t rtin, int32_t rdin);
 
 	void readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut, bool& MemReadEnOut,
-		bool& ALUsrcOut, int32_t& ALUOpOut, int32_t& RegDstOut, bool& JALOut,
+	    int32_t& ALUOpOut, int32_t& RegDstOut, int32_t& FCOut, int32_t& FDOut, bool &JrSingalOut, bool& BranchOut, bool& ZeroSignalOut,
 		int32_t& PCOut, int32_t& MCOut,
 		int32_t& readdata1Out, int32_t& readdata2Out,
 		int32_t& immediateOut,

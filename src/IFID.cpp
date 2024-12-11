@@ -10,15 +10,12 @@ void IFID::writedata(int32_t  PCin, int32_t  MCin ) {
     s1.acquire();
    
 
-    if (HDU->getIFID_Stall()) {
-        //do not overwrite the data, because there is a LW and RAW dependicy 
-    }
-    else{// Write data
+    // Write data
         ConsoleLog(1, "Writing data...");
         ConsoleLog(1, " fPC = ", std::hex, std::setw(8), std::setfill('0'), PCin, " fMC = ", MCin);
         this->PC = PCin;
         this->MC = MCin;
-    }
+   
    
    
 }

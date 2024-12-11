@@ -12,6 +12,7 @@
 #include "FetchStage.h"
 #include "ZERO.h"
 #include "Jump.h"
+#include "ForwardingUnit.h"
 
 struct ControlSignals {
     int32_t ALUop =0;
@@ -51,6 +52,7 @@ private:
     ControlUnit* CU;
     RegisterFile* RF;
     HazardDetection* HDU;
+    ForwardingUnit* FU;
    
     ZERO* ZU;
     Jump* JU;
@@ -68,10 +70,12 @@ private:
     void Decodejob();
     void InstructionDecode();
     void GenerateControlSignals();
+    int32_t FAMUX(int32_t FA, int32_t readdata1, int32_t AluResult, int32_t MEMAddress, int32_t MEMreaddata);
+    int32_t FBMUX(int32_t FB, int32_t readdata2, int32_t AluResult, int32_t MEMAddress, int32_t MEMreaddata);
 
 public:
     void stop();  // Temporary for debugging purposes (so we don't use 100% CPU)
-    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU, ZERO* Zu, Jump* JU);
+    DecodeStage(GlobalClock* clock, IFID* prev_pipe, IDEXE* next_pipe, ControlUnit* Cu, RegisterFile* rf, HazardDetection* HDU, ForwardingUnit* FU, ZERO* Zu, Jump* JU);
     ~DecodeStage();
 };
 

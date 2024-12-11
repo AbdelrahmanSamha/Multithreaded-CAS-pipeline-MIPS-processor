@@ -14,23 +14,36 @@ void MemoryStage::Memoryjob() {
         ConsoleLog(4, "MemoryThread waiting for clock tick");
         clk->waitforClockTick();
         ConsoleLog(4, "MemoryThread starting new clock");
-        bool RegWriteEn, MemtoReg; //WBS
-        bool MemWriteEn, MemReadEn; 
-        int32_t Address, WriteData;
-        int32_t WriteRegister;
-        int32_t ReadData= 0; //this is the DM output
+        bool RegWriteEn=false ; //WBS
+        bool MemtoReg  =false ; //WBS
+        bool MemWriteEn=false ; 
+        bool MemReadEn =false ;
+        int32_t Address = 0;
+        int32_t ReadRegister2_writedata=0;
+        int32_t Memreaddata_Previous_Stage=0;
+        int32_t WriteRegister_RD=0;
+        int32_t ReadData= 0xFFFFFFFF; //this is the DM output
         
-        EXEMEMpipe->readdata(PC,MC,RegWriteEn, MemtoReg, MemWriteEn, MemReadEn, Address, WriteData, WriteRegister);
+        //Values are sent bt refrence so whatever data is in the function EXEMEMpipe shall be extracted to them directly..
+        EXEMEMpipe->readdata(PC,MC,RegWriteEn, MemtoReg,//wb signals 
+            MemWriteEn, MemReadEn, Address, ReadRegister2_writedata, //address needs to be sent to WB pipe
+            Memreaddata_Previous_Stage, WriteRegister_RD);
+        
+        if (MemReadEn) { ReadData = readFromMemory(Address); }
 
         //Forwarding Early in the stage because EXECUTE is waiting on its input
-        FU->FUinputMEM(RegWriteEn,WriteRegister,Address);
+        FU->FUinputMEM(Address, ReadData, WriteRegister_RD, RegWriteEn, MemReadEn);
 
-        if (MemReadEn) { ReadData = readFromMemory(Address); }
-        if (MemWriteEn) { writeToMemory(Address, WriteData); }
+        int32_t OutMuxWriteData = WritedataMUX(ReadRegister2_writedata, Address, Memreaddata_Previous_Stage,FU->ForwardEget());
+        
+
+        if (MemWriteEn) { writeToMemory(Address, OutMuxWriteData); }//should be fine to stay unsyncronized, BUT if problems arise make a seperate FU input for it. Cant think of a case where this fails atm 12/12/24.
+        
+
 
         ConsoleLog(4, "mPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " mMC = ", MC);
 
-        MEMWBpipe->writedata(PC, MC,  RegWriteEn, MemtoReg, ReadData , Address, WriteRegister);
+        MEMWBpipe->writedata(PC, MC,  RegWriteEn, MemtoReg, ReadData , Address, WriteRegister_RD);
     }
 }
 
@@ -54,6 +67,26 @@ int32_t MemoryStage::readFromMemory(int32_t address) {
 }
 
 
+
+
+int32_t MemoryStage::WritedataMUX(int32_t readata2_mem, int32_t address, int32_t memreaddata, int32_t ForwardE) {
+    int32_t placeholder_WriteData = 0;
+    switch (ForwardE) {
+    case 0:
+        placeholder_WriteData = readata2_mem;
+        break;
+    case 1:
+        placeholder_WriteData = address;
+        break;
+    case 2:
+        placeholder_WriteData = memreaddata;
+        break;
+    default:
+        placeholder_WriteData = 0xFFFFFFFF;
+        break;
+    }
+    return placeholder_WriteData;
+}
 
 void MemoryStage::dumpMemoryToFile(const std::string& filename) {
     std::ofstream file(filename);
@@ -95,5 +128,5 @@ MemoryStage::~MemoryStage() {
     if (Memorythread.joinable()) {
         Memorythread.join();
     }
-    dumpMemoryToFile("DataSegment.txt"); // Dump memory to file on destruction
+    dumpMemoryToFile("MEMORYYYY.txt"); // Dump memory to file on destruction
 }

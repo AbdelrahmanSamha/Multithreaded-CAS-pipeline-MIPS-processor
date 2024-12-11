@@ -10,8 +10,7 @@ void RegisterFile::reset() {
     
     registers.fill(0);  // Fill all registers with 0
     registers[29] = 0x7FFFFFFC;  // $sp (stack pointer)
-    registers[31] = 0x00400000;  // PC (if using $31 to store the program counter)
-    
+        
 }
 
 // Read two registers: data1 = registers[readReg1], data2 = registers[readReg2]

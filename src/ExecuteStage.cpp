@@ -32,13 +32,14 @@ void ExecuteStage::Executejob() {
         ZU->ZeroInput(EXEdata.readdata1, EXEdata.readdata2, EXEdata.ZeroSignal);
 
         bool AndGate = (EXEdata.Branch && ZU->ZeroOutput());
-        ConsoleLog(3, "ZeroSignalEXE= ", EXEdata.ZeroSignal);
+        ConsoleLog(3, "ZeroSignalEXE= ", ZU->ZeroOutput());
         ConsoleLog(3, "AndGateEXE", AndGate);
 
         HDU->HDUinputExecute(EXEdata.JrSignal, AndGate);
 
         //branch address calculation...
-        int32_t BranchAddress = EXEdata.readdata1 + EXEdata.immediate; 
+        int32_t BranchAddress = PC + EXEdata.immediate; 
+        ConsoleLog(3, "BranchAddress", BranchAddress);
 
         JU->JumpInputEXE(BranchAddress, EXEdata.readdata1, AndGate, EXEdata.JrSignal);
         

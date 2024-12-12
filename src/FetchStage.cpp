@@ -4,7 +4,7 @@
 #include "ConsoleLogger.h"
 #include<iomanip>
 FetchStage::FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe,HazardDetection*HDU ,Jump* JU)
-    : clk(clock), instructions(instrVector), IFIDpipe(pipe),HDU(HDU),JU(JU), PC(0x00400000) {
+    : clk(clock), instructions(instrVector), IFIDpipe(pipe),HDU(HDU),JU(JU), PC(0) {
     Fetchthread = std::thread([this]() { Fetchjob(); });
 }
 
@@ -26,7 +26,7 @@ void FetchStage::Fetchjob() {
 
             ConsoleLog(1, "Fetched instruction (PC = ", std::hex ,PC , "): ", std::hex, std::setw(8), fetchedInstruction);
 
-            PC += 4;
+            PC += 1;
 
             IFIDpipe->writedata(PC, fetchedInstruction);
 
@@ -59,13 +59,13 @@ int32_t FetchStage::fetchInstruction() {
         PC = JU->Raddress;
         break;
     default:
-        address = 0x00400000;
-        PC = 0x00400000;
+        address = 0;
+        PC = 0;
         break;
     }
 
     // Calculate current index and fetch machine code
-    int32_t currentIndex = (address - BaseAddress) / 4;
+    int32_t currentIndex = address;
     return instructions[currentIndex].machineCode;
 }
 

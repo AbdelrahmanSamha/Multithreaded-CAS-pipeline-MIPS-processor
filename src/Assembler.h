@@ -20,6 +20,7 @@ private:
     uint32_t assembleBranchInstruction(std::istringstream& iss, uint8_t opcode);
     uint32_t assembleITypeInstruction(std::istringstream& iss, uint8_t opcode);
     uint32_t assembleLoadStore(std::istringstream& iss, uint8_t opcode);
+    uint32_t hexToDecimal(const std::string& hexStr);
     /*void expandBltz(std::istringstream& iss);
     void expandBeqz(std::istringstream& iss);
     void addInstruction(uint32_t& address, uint32_t machineCode, const std::string& assembly);*/

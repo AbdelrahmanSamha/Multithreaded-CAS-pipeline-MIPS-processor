@@ -102,16 +102,16 @@ void Assembler::fourthPass() {
 
     // Close input file before opening for writing
     inputFile.close();
-    currentAddress_DataSeg = 0x00400000;
+   
     std::ofstream outputFile("Data_Memory.txt", std::ios::trunc);
     if (!outputFile.is_open()) {
         std::cerr << "Error: Unable to open the file for writing!" << std::endl;
         return;
     }
-
+    uint32_t currentAddress_DataSeg = 0;
     for (const auto& updatedLine : lines) {
         outputFile << currentAddress_DataSeg <<": "  << updatedLine << std::endl;
-        currentAddress_DataSeg += 4;
+        currentAddress_DataSeg += 1;
     }
 
     outputFile.close();
@@ -144,6 +144,9 @@ void Assembler::thirdPass() {
 
                 iss >> op;
                 //remove lable before instruction
+                if (line.empty()) {
+                    continue;
+                }
                 if (op.back() == ':') {
                     lines.push_back(op);
                     line = removeBeforeColon(line);
@@ -165,7 +168,7 @@ void Assembler::thirdPass() {
                     std::string line_SLT, line_branch;
                     //support nop operation (sll $0,$0,0)
                     if (op == "nop") {
-                        line_SLT = "sll $0,$0,0";
+                        line_SLT = "sll $0,$0,0x0";
                         lines.push_back(line_SLT);
                         continue;
                     }
@@ -400,7 +403,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         if (rs.back() == ',') rs.pop_back();
         std::string shamtStr;
         iss >> shamtStr;
-        shamt = std::stoi(shamtStr);
+        shamt = hexToDecimal(shamtStr);
         return (0 << 26) |
             (registerMap[rs] << 21) |
             (registerMap[rt] << 16) |
@@ -478,7 +481,7 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
     std::getline(iss, immediateStr, ',');
-    int16_t immediate = std::stoi(trimWhitespace(immediateStr));
+    int16_t immediate = hexToDecimal(trimWhitespace(immediateStr));
     if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
 
     return (opcode << 26) |
@@ -502,7 +505,6 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
 
     std::string offsetStr = offsetAndRs.substr(0, openParen);
     std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
-
 
     int16_t offset = std::stoi(trimWhitespace(offsetStr));
     if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
@@ -528,6 +530,37 @@ std::string Assembler::removeBeforeColon(const std::string& line) {
         return line.substr(colonPos + 1); // Return everything after the colon
     }
     return line; // Return the original line if no colon is found
+}
+
+uint32_t Assembler::hexToDecimal(const std::string& hexStr) {
+    if (hexStr.size() >= 2 && (hexStr[0] == '0') && (hexStr[1] == 'x' || hexStr[1] == 'X')) {
+        // Extract the part after "0x"
+        std::string cleanHexStr = hexStr.substr(2);
+
+        uint32_t decimalValue = 0;
+        uint32_t base = 16;
+
+        // Convert the hexadecimal part to decimal
+        for (char digit : cleanHexStr) {
+            digit = std::toupper(digit);
+
+            if (digit >= '0' && digit <= '9') {
+                decimalValue = decimalValue * base + (digit - '0');
+            }
+            else if (digit >= 'A' && digit <= 'F') {
+                decimalValue = decimalValue * base + (digit - 'A' + 10);
+            }
+            else {
+                std::cerr << "Invalid character in hexadecimal string." << digit << std::endl;
+                std::exit(0);
+            }
+        }
+        return decimalValue;
+    }
+    else {
+        std::cerr << "Input does not start with '0x' or '0X'." << hexStr << std::endl;
+        std::exit(0);
+    }
 }
 /*
 add $s0, $s1, $s2

@@ -15,6 +15,7 @@ void FetchStage::Fetchjob() {
         clk->waitforClockTick(); // Wait for the global clock tick
         ConsoleLog(1,"Fetchthread starting new clock");
         int32_t fetchedInstruction;
+
         if (!hasNextInstruction()) { //if there is no more instructions then insert NOPs
             ConsoleLog(1, "No more instructions to fetch. Halt inserted");
              fetchedInstruction = 0x00000000;
@@ -51,12 +52,12 @@ int32_t FetchStage::fetchInstruction() {
         PC = JU->Jaddress;
         break;
     case 2:
-        address = JU->Baddress;
-        PC = JU->Baddress;
-        break;
-    case 3:
         address = JU->Raddress;
         PC = JU->Raddress;
+        break;
+    case 3:
+        address = JU->Baddress;
+        PC = JU->Baddress;
         break;
     default:
         address = 0;
@@ -77,7 +78,7 @@ bool FetchStage::hasNextInstruction() {
 
 
     // Calculate the maximum PC value, which corresponds to the last instruction's address
-    size_t maxPC = BaseAddress + (instructions.size() * 4);
+    size_t maxPC =  instructions.size();
 
     // Check if the PC has reached or exceeded the end of the instruction vector
     return PC < maxPC;

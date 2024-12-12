@@ -13,7 +13,7 @@ private:
 
     bool JAL; //made inside the unit
     // Semaphores for synchronization
-    std::binary_semaphore decodeSemaphore;
+    std::binary_semaphore ExecuteSemaphore;
 
 
 public:

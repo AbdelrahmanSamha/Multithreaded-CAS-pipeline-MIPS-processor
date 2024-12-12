@@ -298,7 +298,6 @@ void Assembler::secondPass() {
 
 uint32_t Assembler::assembleInstruction(const std::string& instruction) {
 
-    
     std::istringstream iss(trimWhitespace(instruction));
     std::string op, rd, rs, rt, label, immediateStr, address;
     uint8_t shamt = 0;
@@ -391,7 +390,11 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         std::cerr << "Error:" << rd << " register is not available" << std::endl;
         std::exit(0);
     }
-    
+    if (registerRd_flag->second == 27) {
+        std::cerr << "Error:" << rd << " register is reserved for pesudo-instruction" << std::endl;
+        std::exit(0);
+    }
+
     if (rd.back() == ',') {
         rd.pop_back();
     }
@@ -468,8 +471,6 @@ uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t o
         (registerMap[rt] << 16) |
         (offset & 0xFFFF);
 }
-
-
 
 uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rt, rs, immediateStr;
@@ -562,6 +563,7 @@ uint32_t Assembler::hexToDecimal(const std::string& hexStr) {
         std::exit(0);
     }
 }
+
 /*
 add $s0, $s1, $s2
 op   rd  rs   rt

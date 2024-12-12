@@ -135,7 +135,7 @@ void Assembler::thirdPass() {
             while (std::getline(inputFile, line)) {
                 line = trimWhitespace(line);
                 
-                if ((line.size() >= 2 && line.substr(0, 2) == "//") || line.size() >= 1 && line[0] == '#') {
+                if ((line.substr(0, 2) == "//") || line[0] == '#') {
                     continue; // Skip lines starting with "//" or "#"
                 }
                 

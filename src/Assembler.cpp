@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+
 using std::string;
 using std::vector;
 
@@ -142,6 +143,7 @@ void Assembler::thirdPass() {
                 std::string op, format, rs, label;
 
                 iss >> op;
+                //remove lable before instruction
                 if (op.back() == ':') {
                     lines.push_back(op);
                     line = removeBeforeColon(line);
@@ -150,9 +152,23 @@ void Assembler::thirdPass() {
                 if (line.empty()) {
                     continue;
                 }
-                
-                if (op == "bltz" || op == "bgez") {
+                op = toLowerCase(op);
+                // check error in opcode moved from SecondPass to thirdPsas 
+                auto opcodeIt_flag = opcodeMap.find(op); 
+                if (opcodeIt_flag == opcodeMap.end() && !(op == "bltz" || op == "bgez" || op == "nop")) {
+                    std::cerr << "Error: instruction are not allowed :" << op << std::endl;
+                    std::exit(0);
+                }
+
+                if (op == "bltz" || op == "bgez" || op == "nop") {
                     // Extract register and label
+                    std::string line_SLT, line_branch;
+                    //support nop operation (sll $0,$0,0)
+                    if (op == "nop") {
+                        line_SLT = "sll $0,$0,0";
+                        lines.push_back(line_SLT);
+                        continue;
+                    }
                     std::getline(iss, rs, ',');
                     rs = trimWhitespace(rs);
                     std::getline(iss, label);
@@ -161,11 +177,10 @@ void Assembler::thirdPass() {
                     // Remove trailing commas if present
                     if (rs.back() == ',') rs.pop_back();
                     if (label.back() == ',') label.pop_back();
-
+                    
                     // Generate replacement instructions
-                    std::string line_SLT = "slt $27, " + rs + ", $zero";
-                    std::string line_branch;
-
+                    
+                    line_SLT = "slt $27, " + rs + ", $zero";
                     if (op == "bltz") {
                         line_branch = "bne $27, $zero, " + label;
                     }
@@ -204,7 +219,6 @@ void Assembler::thirdPass() {
         outputFile.close();
     
 }
-
 
 void Assembler::firstPass() {
     std::ifstream inputFile(inputFileName);
@@ -291,8 +305,7 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
     iss >> op;
     op = toLowerCase(op);
     auto opcodeIt = opcodeMap.find(op);
-    if (opcodeIt == opcodeMap.end()) return 0xDEADBEEF;
-
+    
     uint8_t opcode = opcodeIt->second;
 
 
@@ -347,6 +360,12 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             return 0xDEADBEEF;
         }
         rs = trimWhitespace(rs);
+        auto register_flag = registerMap.find(rs);
+        if (register_flag == registerMap.end()) {
+            std::cerr << "Error:" << rs << " register is not available" << std::endl;
+            std::exit(0);
+        }
+        
         if (rs.back() == ',') {
             rs.pop_back();
         }
@@ -363,6 +382,13 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         return 0xDEADBEEF;
     }
     rd = trimWhitespace(rd);
+    //check rd register is available
+    auto registerRd_flag = registerMap.find(rd);
+    if (registerRd_flag == registerMap.end()) {
+        std::cerr << "Error:" << rd << " register is not available" << std::endl;
+        std::exit(0);
+    }
+    
     if (rd.back() == ',') {
         rd.pop_back();
     }

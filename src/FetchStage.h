@@ -33,9 +33,10 @@ private:
     int32_t PC = 0;              // Program Counter
     void Fetchjob();              // Fetch job method run by the thread
     bool running = true;          // temporary for debugging purposes.
-    
+    int32_t counter = 0;
 public:
-    bool hasNextInstruction();    // Check if there are more instructions
+    bool hasNextInstructionformain();    // Check if there are more instructions
+    bool hasNextInstruction();
     void stop();                    // temporary for debugging purposes.(so we dont use 100%CPU)
     FetchStage(GlobalClock* clock, const std::vector<Instruction>& instrVector, IFID* pipe,HazardDetection*HDU ,Jump*JU);
     ~FetchStage();                // Destructor to join the thread

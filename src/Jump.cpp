@@ -1,7 +1,7 @@
 #include "Jump.h"
-
+#include "ConsoleLogger.h"
 // Constructor
-Jump::Jump() : ExecuteSemaphore(0),JmuxSel(0), AndGate(false), Flush(false), Instruction(0), JAL(false), Jaddress(0),PC4(0), Jr(false) {}
+Jump::Jump() : ExecuteSemaphore(0), SyncSem(0), JmuxSel(0), AndGate(false), Flush(false), Instruction(0), JAL(false), Jaddress(0), PC4(0), Jr(false) {}
 
 // Function to receive fetch stage input
 void Jump::JumpInputF(int32_t instruction, int32_t pc4) {
@@ -12,6 +12,7 @@ void Jump::JumpInputF(int32_t instruction, int32_t pc4) {
 
 // Function to receive decode stage input
 void Jump::JumpInputEXE(int32_t bAddress, int32_t rAddress, bool zANDb, bool jr) {
+    SyncSem.acquire();
     this->Baddress = bAddress; 
     this->Raddress = rAddress;
     this->AndGate = zANDb;
@@ -36,6 +37,7 @@ void Jump::JumpUnitSignalsOutput() {
     bool S1 = Jr || AndGate;
     Flush = S1; 
     JmuxSel = (S1 << 1) | S0;
+    ConsoleLog(1, "JMuxSel after exe inp=", JmuxSel);
 }
 
 
@@ -46,3 +48,7 @@ void Jump::JumpUnitAddressOutput() {
     Jaddress = upperPC | instrAddress;
 
 }
+
+void Jump::SyncWithExecute() {
+    SyncSem.release();
+};

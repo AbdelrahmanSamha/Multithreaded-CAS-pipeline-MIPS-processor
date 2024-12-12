@@ -74,7 +74,7 @@ int main() {
 
     
     while (true) {
-        if (!Fetchthread.hasNextInstruction()) {
+        if (!Fetchthread.hasNextInstructionformain()) {
             clk.clockTick();
             clk.clockTick();
             clk.clockTick();

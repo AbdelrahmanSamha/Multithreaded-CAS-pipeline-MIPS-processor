@@ -14,7 +14,7 @@ private:
     bool JAL; //made inside the unit
     // Semaphores for synchronization
     std::binary_semaphore ExecuteSemaphore;
-
+    std::binary_semaphore SyncSem; //this one prevents the execute from changing the jumpSel before the fetch capturing it
 
 public:
     // Output data
@@ -31,6 +31,6 @@ public:
     void JumpInputEXE(int32_t baddress,int32_t raddress,bool zero, bool jr);
     void JumpUnitSignalsOutput(); 
     void JumpUnitAddressOutput();
-
+    void SyncWithExecute();
 };
 #endif

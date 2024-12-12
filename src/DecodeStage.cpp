@@ -67,7 +67,7 @@ void DecodeStage::Decodejob() {
                 MC,
                 OutMuxFA,
                 OutMuxFB,
-                instrFields.immediate,
+                signExtendedImmediate,
                 instrFields.rs,
                 instrFields.rt,
                 instrFields.rd);

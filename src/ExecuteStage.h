@@ -56,7 +56,9 @@ private:
 	int32_t MC;				//MachineCode
 	bool running = true; // temporary for debugging purposes.(so we dont use 100%CPU)
 	EControlSignals EXEdata;
-	int32_t Operand1, Operand2;
+	int32_t Operand1 = 0;
+	
+	int32_t Operand2 =0 ;
 	int32_t Out_JALM, Out_BOP2M;
 	int32_t Out_RegDstM;
 

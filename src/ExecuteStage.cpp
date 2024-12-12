@@ -21,6 +21,7 @@ void ExecuteStage::Executejob() {
 		IDEXEpipe->readdata(
 		EXEdata.MemWriteEn, EXEdata.MemtoReg, //WB for the next pipe
 		EXEdata.RegWriteEn,EXEdata.MemReadEn, //MEM
+            //Check wheather the branch signal is appropiatly sent to the pipe.....
         EXEdata.ALUOp, EXEdata.RegDst, EXEdata.FC,EXEdata.FD,EXEdata.JrSignal,EXEdata.Branch,EXEdata.ZeroSignal, //exe
         PC,
         MC, //for display
@@ -31,6 +32,9 @@ void ExecuteStage::Executejob() {
         ZU->ZeroInput(EXEdata.readdata1, EXEdata.readdata2, EXEdata.ZeroSignal);
 
         bool AndGate = (EXEdata.Branch && ZU->ZeroOutput());
+        ConsoleLog(3, "ZeroSignalEXE= ", EXEdata.ZeroSignal);
+        ConsoleLog(3, "AndGateEXE", AndGate);
+
         HDU->HDUinputExecute(EXEdata.JrSignal, AndGate);
 
         //branch address calculation...
@@ -38,12 +42,9 @@ void ExecuteStage::Executejob() {
 
         JU->JumpInputEXE(BranchAddress, EXEdata.readdata1, AndGate, EXEdata.JrSignal);
         
-        
-        
-        
-        
 
-        
+        ConsoleLog(3, "FDOut", EXEdata.FD);
+
         //Mux operation 
         Operand1=  Op1Mux(EXEdata.readdata1, PC , FU->MEMreaddata, EXEdata.FC);
       

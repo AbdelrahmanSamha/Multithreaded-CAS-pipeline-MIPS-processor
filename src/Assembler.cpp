@@ -390,7 +390,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         std::cerr << "Error:" << rd << " register is not available" << std::endl;
         std::exit(0);
     }
-    if (registerRd_flag->second == 27) {
+    if (registerRd_flag->second == 27 && (op == "bgez" || op == "bltz")) {
         std::cerr << "Error:" << rd << " register is reserved for pesudo-instruction" << std::endl;
         std::exit(0);
     }

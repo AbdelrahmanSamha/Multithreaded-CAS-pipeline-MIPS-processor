@@ -17,45 +17,65 @@ void FetchStage::Fetchjob() {
         int32_t fetchedInstruction;
         
         if (!hasNextInstruction()) { //if there is no more instructions then insert NOPs
+            if (!FirstTime) {
+                counter = 5;
+                FirstTime = true;
+            }
             ConsoleLog(1, "No more instructions to fetch. Halt inserted");
-             fetchedInstruction = 0x00000000;
-             int32_t hult = 0; 
-             IFIDpipe->writedata(hult, fetchedInstruction);
-             JU->SyncWithExecute();//in case the last instruction is branch
+            fetchedInstruction = 0x00000000;
+            int32_t hult = 0; 
+            JU->JumpInputF(fetchedInstruction, PC1);
+            JU->JumpUnitSignalsOutput();
+            IFIDpipe->writedata(hult, fetchedInstruction);
+            if (JU->JmuxSel != 0) {
+                PC = BranchingMux();
+                PC1 = PC + 1;
+                FirstTime = false;
+            }
+            counter--;
+            
         }
         else {
-            fetchedInstruction = fetchInstruction();// Fetch the current instruction
-            JU->SyncWithExecute();//allows the execute to continue execution, because it is currently stopped at JUinput.
-            int32_t temptowait = (fetchedInstruction & 0xFC000000) >> 26;
-            if ((temptowait== 0x4) || (temptowait == 0x5)) {//checks if we fetch a branch instruction
-                counter = 2; //we need to wait to see if the branch is taken or not 
-            };
+
+            fetchedInstruction = fetchInstruction(PC);// Fetch the current instruction
+            int32_t branchins = (fetchedInstruction & 0xFC000000) >> 26;
 
 
-            ConsoleLog(1, "Fetched instruction (PC = ", std::hex ,PC , "): ", std::hex, std::setw(8), fetchedInstruction);
 
-            PC += 1;
+            ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
 
-            IFIDpipe->writedata(PC, fetchedInstruction);
+            PC1 = PC;
+            PC1 += 1;
+            IFIDpipe->writedata(PC1, fetchedInstruction);
 
-
-            JU->JumpInputF(fetchedInstruction, PC);
             
+
+            JU->JumpInputF(fetchedInstruction, PC1);
             JU->JumpUnitSignalsOutput();
-            ConsoleLog(1, "JMuxSel after func call=", JU->JmuxSel);
+            PC = BranchingMux();
+
+            
         }
     }
 }
 
 // Fetch the machine code of the instruction based on Jump unit selection
-int32_t FetchStage::fetchInstruction() {
-    int32_t address;
+int32_t FetchStage::fetchInstruction(int32_t address) {
     ConsoleLog(1, "JMuxSel for current Cycle=", JU->JmuxSel);
     ConsoleLog(1, "Baddress for current Cycle=", JU->Baddress);
     // Set the address based on the jump selector
+    
+
+    // Calculate current index and fetch machine code
+    int32_t currentIndex = address;
+    return instructions[currentIndex].machineCode;
+}
+
+int32_t FetchStage::BranchingMux() {
+    int32_t address;
     switch (JU->JmuxSel) {
     case 0:
-        address = PC;
+        address = PC1;
         break;
     case 1:
         address = JU->Jaddress;
@@ -74,35 +94,26 @@ int32_t FetchStage::fetchInstruction() {
         PC = 0;
         break;
     }
-
-    // Calculate current index and fetch machine code
-    int32_t currentIndex = address;
-    return instructions[currentIndex].machineCode;
+    return address;
 }
 
 void FetchStage::stop() {
     running = false; 
 }
 
-bool FetchStage::hasNextInstructionformain() {
-    if (counter != 0 ) {
-        counter -= 1;
-        return true;
-    }
-    else {
-        // Calculate the maximum PC value, which corresponds to the last instruction's address
-        size_t maxPC = instructions.size();
 
-        // Check if the PC has reached or exceeded the end of the instruction vector
-        return PC < maxPC;
-    }
-}
 bool FetchStage::hasNextInstruction() {
     // Calculate the maximum PC value, which corresponds to the last instruction's address
-    size_t maxPC = instructions.size();
-
+    int32_t maxPC = instructions.size();
     // Check if the PC has reached or exceeded the end of the instruction vector
-    return PC < maxPC;
+    bool hasnext = (PC1 < maxPC);
+    
+    if (!hasnext && counter == 0) {
+        ENDPROGRAM = true;
+
+        
+    }
+    return PC1 < maxPC;
 }
 
 FetchStage::~FetchStage() {

@@ -44,13 +44,16 @@ void ExecuteStage::Executejob() {
         JU->JumpInputEXE(BranchAddress, EXEdata.readdata1, AndGate, EXEdata.JrSignal);
         
 
+        ConsoleLog(3, "FCOut", EXEdata.FC);
         ConsoleLog(3, "FDOut", EXEdata.FD);
-
+        //exe needs to wait for the memory input
+        FU->WaitForMemoryInput();
         //Mux operation 
+        ConsoleLog(3, "READDATA MEM B4 Mux= ", FU->MEMreaddata);
         Operand1=  Op1Mux(EXEdata.readdata1, PC , FU->MEMreaddata, EXEdata.FC);
       
         Operand2= Op2Mux(EXEdata.readdata2 ,EXEdata.immediate, FU->MEMreaddata ,EXEdata.FD);
-
+        ConsoleLog(3, "READDATA MEM after Mux= ", FU->MEMreaddata);
         Out_RegDstM= RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
         //ALU
@@ -58,7 +61,7 @@ void ExecuteStage::Executejob() {
 
        FU->FUinputEXE(ALUresult ,EXEdata.rs, EXEdata.rt, Out_RegDstM, EXEdata.RegWriteEn, EXEdata.MemReadEn);
 
-       //FIX THE INPUTS TO THE MEM PIPE
+       
 		EXEMEMpipe->writedata(PC,MC,
             EXEdata.RegWriteEn, EXEdata.MemtoReg,//WBS
             EXEdata.MemWriteEn, EXEdata.MemReadEn,//MEMS
@@ -69,7 +72,7 @@ void ExecuteStage::Executejob() {
 
         
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
-        
+        ConsoleLog(3, "READDATA MEM after execute is finish= ", FU->MEMreaddata);
 	}
 }
 

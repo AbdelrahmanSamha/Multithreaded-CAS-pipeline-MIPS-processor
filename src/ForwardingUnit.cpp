@@ -2,7 +2,7 @@
 #include <iostream>
 ForwardingUnit::ForwardingUnit()
     : ForwardA(0), ForwardB(0), ForwardC(0), ForwardD(0), ForwardE(0),
-    MEMsemaphore(0), EXEsemaphore(0), HelperSemaphore(0),
+    MEMsemaphore(0), EXEsemaphore(0), HelperSemaphore(0), wait1Sem(0),
     IFID_Rs(0), IFID_Rt(0), IFID_JalSignal(false), IFID_AluSrc(false),
     IDEXE_Rs(0), IDEXE_Rt(0), IDEXE_Rd(0), IDEXE_RegWrite(false), IDEXE_MemRead(false),
     EXEMEM_Rd(0), EXEMEM_RegWrite(false), EXEMEM_MemRead(false),
@@ -72,6 +72,7 @@ void ForwardingUnit::evaluateForwarding()
         ForwardE = 0b10;
     }
     HelperSemaphore.release();
+    
 }
 
 void ForwardingUnit::FUinputDecode(int32_t IFID_Rs, int32_t IFID_Rt, bool IFID_JalSignal, bool IFID_AluSrc) {
@@ -103,9 +104,15 @@ void ForwardingUnit::FUinputMEM(int32_t MEMAddress, int32_t MEMreaddata, int32_t
     this->EXEMEM_RegWrite = EXEMEM_RegWrite;
     this->EXEMEM_MemRead = EXEMEM_MemRead;
     MEMsemaphore.release();
+    wait1Sem.release();
 }
 
 int32_t ForwardingUnit::ForwardEget() {
     HelperSemaphore.acquire();//so we dont get a wrong ForwardE value, as we need the one after evaluating is done.
     return ForwardE;
+}
+
+void ForwardingUnit::WaitForMemoryInput() {
+    wait1Sem.acquire();
+
 }

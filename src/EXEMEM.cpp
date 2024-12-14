@@ -27,13 +27,13 @@ void EXEMEM::writedata(int32_t PCIn, int32_t MCin,
     this->WriteData =WriteDataIn ;
     this->Memreaddata = MemreaddataIn;
     this->WriteRegister = WriteRegisterIn;
-    ConsoleLog(3, "RegWriteEnIn", RegWriteEnIn);
+   /* ConsoleLog(3, "RegWriteEnIn", RegWriteEnIn);
     ConsoleLog(3, "MemtoRegIn", MemtoRegIn);
     ConsoleLog(3, "MemWriteEnIn", MemWriteEnIn);
-    ConsoleLog(3, "MemReadEnIn", MemReadEnIn);
-    ConsoleLog(3, "resultIn", resultIn);
-    ConsoleLog(3, "WriteDataIn", WriteDataIn);
-    ConsoleLog(3, "WriteRegisterIn", WriteRegisterIn);
+    ConsoleLog(3, "MemReadEnIn", MemReadEnIn);*/
+    ConsoleLog(3, "resultIn=", resultIn);
+   /* ConsoleLog(3, "WriteDataIn", WriteDataIn);
+    ConsoleLog(3, "WriteRegisterIn", WriteRegisterIn);*/
    
 }
 

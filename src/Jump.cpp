@@ -7,12 +7,12 @@ Jump::Jump() : ExecuteSemaphore(0), SyncSem(0), JmuxSel(0), AndGate(false), Flus
 void Jump::JumpInputF(int32_t instruction, int32_t pc4) {
     this->Instruction = instruction;
     this->PC4 = pc4;
-    
+    JumpUnitAddressOutput();
 }
 
 // Function to receive decode stage input
 void Jump::JumpInputEXE(int32_t bAddress, int32_t rAddress, bool zANDb, bool jr) {
-    SyncSem.acquire();
+    //SyncSem.acquire();
     this->Baddress = bAddress; 
     this->Raddress = rAddress;
     this->AndGate = zANDb;

@@ -6,7 +6,7 @@
 #include <semaphore>
 class ForwardingUnit {
 private:
-    std::binary_semaphore MEMsemaphore,HelperSemaphore, EXEsemaphore ;
+    std::binary_semaphore MEMsemaphore,HelperSemaphore, EXEsemaphore,wait1Sem ;
     // Forwarding signals initialized to 0 by default
     //DECODE STAGE INPUTS
     int32_t IFID_Rs;
@@ -42,7 +42,7 @@ public:
     void FUinputEXE(int32_t AluResult,int32_t IDEXE_Rs, int32_t IDEXE_Rt, int32_t IDEXE_Rd, bool IDEXE_RegWrite, bool IDEXE_MemRead);
     void FUinputMEM(int32_t MEMAddress, int32_t MEMreaddata, int32_t EXEMEM_Rd,  bool EXEMEM_RegWrite, bool EXEMEM_MemRead);
     int32_t ForwardEget();
-
+    void WaitForMemoryInput();
     void evaluateForwarding();
 };
 

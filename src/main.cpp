@@ -74,11 +74,8 @@ int main() {
 
     
     while (true) {
-        if (!Fetchthread.hasNextInstructionformain()) {
-            clk.clockTick();
-            clk.clockTick();
-            clk.clockTick();
-            clk.clockTick();
+        if (Fetchthread.ENDPROGRAM) {
+            
             break;
 
         }

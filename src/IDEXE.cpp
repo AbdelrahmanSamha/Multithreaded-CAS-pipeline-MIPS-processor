@@ -86,22 +86,22 @@ void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut
      rsOut         = this->rs;
      rtOut         = this->rt;
      rdOut         = this->rd;
-
-     ConsoleLog(3, "RegWriteEnOut", RegWriteEnOut);
+    
+     /*ConsoleLog(3, "RegWriteEnOut", RegWriteEnOut);
      ConsoleLog(3, "MemWriteEnOut", MemWriteEnOut);
      ConsoleLog(3, "MemtoRegOut", MemtoRegOut);
-     ConsoleLog(3, "MemReadEnOut", MemReadEnOut);
-     ConsoleLog(3, "FCOut", FCOut);
-     ConsoleLog(3, "FDOut", FDOut);
-     ConsoleLog(3, "ALUOpOut", ALUOpOut);
-     ConsoleLog(3, "RegDstOut", RegDstOut);
-     ConsoleLog(3, "PCOut", PCOut);
-     ConsoleLog(3, "readdata1Out", readdata1Out);
-     ConsoleLog(3, "readdata2Out", readdata2Out);
-     ConsoleLog(3, "immediateOut", immediateOut);
-     ConsoleLog(3, "rsOut", rsOut);
-     ConsoleLog(3, "rtOut", rtOut);
-     ConsoleLog(3, "rdOut", rdOut);
+     ConsoleLog(3, "MemReadEnOut", MemReadEnOut);*/
+     ConsoleLog(3, "FCOut=", FCOut);
+     ConsoleLog(3, "FDOut=", FDOut);
+     ConsoleLog(3, "ALUOpOut=", ALUOpOut);
+     ConsoleLog(3, "RegDstOut=", RegDstOut);
+     ConsoleLog(3, "PCOut=", PCOut);
+     ConsoleLog(3, "readdata1Out=", readdata1Out);
+     ConsoleLog(3, "readdata2Out=", readdata2Out);
+     ConsoleLog(3, "immediateOut=", immediateOut);
+     ConsoleLog(3, "rsOut=", rsOut);
+     ConsoleLog(3, "rtOut=", rtOut);
+     ConsoleLog(3, "rdOut=", rdOut);
      ConsoleLog(3, "#################");
 
     // Release semaphore 

@@ -14,9 +14,10 @@ void DecodeStage::Decodejob() {
         ConsoleLog(2, "Decodethread waiting for clock tick");
         clk->waitforClockTick();  // Called at the beginning of all the stages.
         ConsoleLog(2, "Decodethread starting new clock");
-
-        IFIDpipe->readdata(PC, MC);
-             
+       
+        IFIDpipe->readdata(PC, MC, predictionD);
+           
+        
         // Instruction decoding...
         InstructionDecode();
 
@@ -46,9 +47,9 @@ void DecodeStage::Decodejob() {
 
         HDU->detectHazard();
 
-        // Mux for the LW dependency, inserting a bubble if there is one.
+        // inserting a bubble if there is one.
         if (HDU->getNOP()) {
-            IDEXEpipe->writedata(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+            IDEXEpipe->writedata(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
         }
         else {
             IDEXEpipe->writedata(
@@ -65,6 +66,7 @@ void DecodeStage::Decodejob() {
                 controlSignals.ZERO,
                 PC,
                 MC,
+                predictionD,
                 OutMuxFA,
                 OutMuxFB,
                 signExtendedImmediate,

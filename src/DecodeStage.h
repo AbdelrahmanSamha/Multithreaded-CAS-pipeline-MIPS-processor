@@ -53,7 +53,6 @@ private:
     RegisterFile* RF;
     HazardDetection* HDU;
     ForwardingUnit* FU;
-   
     ZERO* ZU;
     Jump* JU;
 
@@ -66,6 +65,7 @@ private:
     // Decoding variables
     InstructionFields instrFields;
     ControlSignals controlSignals;
+    bool predictionD= false;
 
     void Decodejob();
     void InstructionDecode();

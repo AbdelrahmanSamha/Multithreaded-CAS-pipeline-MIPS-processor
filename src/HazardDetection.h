@@ -9,9 +9,9 @@ class HazardDetection {
 private:
     std::binary_semaphore EXEsemaphore;
     // Inputs
-    bool JRSIGNAL;
-    bool ANDGATE;
-
+    bool Is_JR;
+    bool Is_Hit;
+    bool Is_Branch;
     // Output
     bool NOP;
 
@@ -20,7 +20,7 @@ public:
     HazardDetection();
 
     // Inputs
-    void HDUinputExecute(bool JRSIGNAL, bool ANDGATE);
+    void HDUinputExecute(bool Is_JR, bool Is_Hit, bool Is_Branch);
     
     
     // Output

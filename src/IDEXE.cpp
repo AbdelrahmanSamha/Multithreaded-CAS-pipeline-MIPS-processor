@@ -7,7 +7,7 @@ IDEXE::IDEXE() : s1(0) { } // Initial state of s1 = 0 (not available), s2 = 1 (a
 
 void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, bool MemReadEnin,
                       int32_t ALUOpin, int32_t RegDstin, int32_t FCin, int32_t FDin, bool JrSingalin, bool Branchin, bool ZeroSignalin,
-                      int32_t PCin, int32_t MCin,
+                      int32_t PCin, int32_t MCin, bool PredictionInD,
                       int32_t readdata1in, int32_t readdata2in,
                       int32_t immediatein,
                       int32_t rsin, int32_t rtin, int32_t rdin) {
@@ -37,6 +37,7 @@ void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, boo
     this->rs         = rsin;
     this->rt         = rtin;
     this->rd         = rdin;
+    this->Prediction = PredictionInD;
     ConsoleLog(2,"RegWriteEnin", std::hex, RegWriteEnin);
     ConsoleLog(2,"MemWriteEnin", std::hex, MemWriteEnin);
     ConsoleLog(2,"MemtoRegin", std::hex, MemtoRegin);
@@ -58,7 +59,7 @@ void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, boo
 
 void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut, bool& MemReadEnOut,
                     int32_t& ALUOpOut, int32_t& RegDstOut, int32_t& FCOut, int32_t& FDOut, bool& JrSingalOut, bool& BranchOut, bool& ZeroSignalOut,
-                    int32_t& PCOut, int32_t& MCOut,
+                    int32_t& PCOut, int32_t& MCOut, bool& PredictionOutE,
                     int32_t& readdata1Out, int32_t& readdata2Out,
                     int32_t& immediateOut,
                     int32_t& rsOut, int32_t& rtOut, int32_t& rdOut) {
@@ -86,7 +87,7 @@ void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut
      rsOut         = this->rs;
      rtOut         = this->rt;
      rdOut         = this->rd;
-    
+     PredictionOutE = this->Prediction;
      /*ConsoleLog(3, "RegWriteEnOut", RegWriteEnOut);
      ConsoleLog(3, "MemWriteEnOut", MemWriteEnOut);
      ConsoleLog(3, "MemtoRegOut", MemtoRegOut);

@@ -26,7 +26,7 @@ void FetchStage::Fetchjob() {
             int32_t hult = 0; 
             JU->JumpInputF(fetchedInstruction, PC1);
             JU->JumpUnitSignalsOutput();
-            IFIDpipe->writedata(hult, fetchedInstruction);
+            IFIDpipe->writedata(hult, fetchedInstruction, 0);
             if (JU->JmuxSel != 0) {
                 PC = BranchingMux();
                 PC1 = PC + 1;
@@ -38,23 +38,25 @@ void FetchStage::Fetchjob() {
         else {
 
             fetchedInstruction = fetchInstruction(PC);// Fetch the current instruction
-            int32_t branchins = (fetchedInstruction & 0xFC000000) >> 26;
+            //int32_t branchins = (fetchedInstruction & 0xFC000000) >> 26;
 
 
 
             ConsoleLog(1, "Fetched instruction (PC = ", std::hex, PC, "): ", std::hex, std::setw(8), fetchedInstruction);
 
-            PC1 = PC;
-            PC1 += 1;
-            IFIDpipe->writedata(PC1, fetchedInstruction);
-
+            PC1 = PC+1;
             
 
             JU->JumpInputF(fetchedInstruction, PC1);
             JU->JumpUnitSignalsOutput();
-            PC = BranchingMux();
+            ConsoleLog(1, "Is Flush = ", JU->Flush);
+            if (JU->Flush) {
+                IFIDpipe->writedata(0, 0, 0);
+            }
+            else { IFIDpipe->writedata(PC1, fetchedInstruction, JU->Prediction); }
 
-            
+            PC = BranchingMux();
+            //if (JU->JmuxSel != 0) { PC1 = PC + 1; }
         }
     }
 }
@@ -62,12 +64,16 @@ void FetchStage::Fetchjob() {
 // Fetch the machine code of the instruction based on Jump unit selection
 int32_t FetchStage::fetchInstruction(int32_t address) {
     ConsoleLog(1, "JMuxSel for current Cycle=", JU->JmuxSel);
-    ConsoleLog(1, "Baddress for current Cycle=", JU->Baddress);
-    // Set the address based on the jump selector
-    
-
-    // Calculate current index and fetch machine code
+    ConsoleLog(1, "BaddressE for current Cycle=", JU->MissTargetAddress);
+    ConsoleLog(1, "UnitAddressOutput for current Cycle=", JU->UnitAddressOutput);
     int32_t currentIndex = address;
+
+    // Check if the index is out of bounds
+    if (currentIndex < 0 || currentIndex >= static_cast<int32_t>(instructions.size())) {
+        return 0; // Return 0 if the index is invalid
+    }
+
+    // Return the machine code if the index is valid
     return instructions[currentIndex].machineCode;
 }
 
@@ -78,16 +84,16 @@ int32_t FetchStage::BranchingMux() {
         address = PC1;
         break;
     case 1:
-        address = JU->Jaddress;
-        PC = JU->Jaddress;
+        address = JU->UnitAddressOutput;
+        PC = JU->UnitAddressOutput;
         break;
     case 2:
         address = JU->Raddress;
         PC = JU->Raddress;
         break;
     case 3:
-        address = JU->Baddress;
-        PC = JU->Baddress;
+        address = JU->MissTargetAddress;
+        PC = JU->MissTargetAddress;
         break;
     default:
         address = 0;
@@ -105,15 +111,17 @@ void FetchStage::stop() {
 bool FetchStage::hasNextInstruction() {
     // Calculate the maximum PC value, which corresponds to the last instruction's address
     int32_t maxPC = instructions.size();
+
+    
     // Check if the PC has reached or exceeded the end of the instruction vector
-    bool hasnext = (PC1 < maxPC);
+    bool hasnext = (PC < maxPC);
     
     if (!hasnext && counter == 0) {
         ENDPROGRAM = true;
 
         
     }
-    return PC1 < maxPC;
+    return PC < maxPC;
 }
 
 FetchStage::~FetchStage() {

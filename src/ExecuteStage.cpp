@@ -25,27 +25,34 @@ void ExecuteStage::Executejob() {
         EXEdata.ALUOp, EXEdata.RegDst, EXEdata.FC,EXEdata.FD,EXEdata.JrSignal,EXEdata.Branch,EXEdata.ZeroSignal, //exe
         PC,
         MC, //for display
+        predictionE,
 		EXEdata.readdata1,EXEdata.readdata2,//exe
 		EXEdata.immediate,//exe
 		EXEdata.rs,EXEdata.rt,EXEdata.rd//exe
 		);
         ZU->ZeroInput(EXEdata.readdata1, EXEdata.readdata2, EXEdata.ZeroSignal);
 
-        bool AndGate = (EXEdata.Branch && ZU->ZeroOutput());
-        ConsoleLog(3, "ZeroSignalEXE= ", ZU->ZeroOutput());
-        ConsoleLog(3, "AndGateEXE", AndGate);
 
-        HDU->HDUinputExecute(EXEdata.JrSignal, AndGate);
+        /////////////////////////////////////////////////////////JUMP UNIT REQUIRMENTSS
+        bool AndGate11 = (predictionE && ZU->ZeroOutput());
+        bool AndGate00 = (!(predictionE) && !(ZU->ZeroOutput()));
+        bool is_Hit = AndGate11 || AndGate00; 
+        HDU->HDUinputExecute(EXEdata.JrSignal, is_Hit, EXEdata.Branch);
 
         //branch address calculation...
         int32_t BranchAddress = PC + EXEdata.immediate; 
-        ConsoleLog(3, "BranchAddress", BranchAddress);
+        int32_t TargetAddress = BranchAddress; 
+        if (predictionE) { TargetAddress = PC;}
 
-        JU->JumpInputEXE(BranchAddress, EXEdata.readdata1, AndGate, EXEdata.JrSignal);
+        ConsoleLog(3, "TargetAddress= ", TargetAddress);
+        ConsoleLog(3, "EXEdata.readdata1= ", EXEdata.readdata1);
+        ConsoleLog(3, "is_Hit= ", is_Hit);
+        ConsoleLog(3, "EXEdata.JrSignal= ", EXEdata.JrSignal);
+        ConsoleLog(3, "EXEdata.Branch= ", EXEdata.Branch);
+        JU->JumpInputEXE(TargetAddress, EXEdata.readdata1, is_Hit, EXEdata.JrSignal,EXEdata.Branch);
+        /////////////////////////////////////////////////////////JUMP UNIT REQUIRMENTSS
+
         
-
-        ConsoleLog(3, "FCOut", EXEdata.FC);
-        ConsoleLog(3, "FDOut", EXEdata.FD);
         //exe needs to wait for the memory input
         FU->WaitForMemoryInput();
         //Mux operation 

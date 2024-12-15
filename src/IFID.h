@@ -1,23 +1,30 @@
 #pragma once
 #ifndef IFID_H
 #define IFID_H
-#include "FetchStage.h"
-#include "DecodeStage.h" 
 #include <thread>
 #include <semaphore>
 
+#include "DecodeStage.h" 
+#include "FetchStage.h"
+#include "HazardDetection.h"
+#include "ControlUnit.h"
+#include "Jump.h"
 class IFID {
 private:
 	
-	std::binary_semaphore s1;  // Binary semaphore for write
-	std::binary_semaphore s2;  // Binary semaphore for read
-	uint32_t PC = 0x00000000;	//Programcounter
-	uint32_t MC = 0x00000000; //MachineCode
+	std::binary_semaphore s1;  // Binary semaphore raw
+	
+	int32_t PC = 0x00000000;	//Programcounter
+	int32_t MC = 0x00000000; //MachineCode
+	HazardDetection* HDU;
+	Jump* JU;
+	bool Prediction;
+
 
 public:
-	IFID();
-	void writedata(uint32_t PCin, uint32_t MCin);
-	void readdata(uint32_t& PCout, uint32_t& MCout);
+	IFID(HazardDetection* HDU,Jump* JU);
+	void writedata(int32_t PCin, int32_t MCin, bool PredictionInF);
+	void readdata(int32_t& PCout, int32_t& MCout, bool& PredictionOutD);
 };
 
 #endif 

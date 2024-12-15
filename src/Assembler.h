@@ -15,10 +15,23 @@ struct Instruction {
 
 class Assembler {
 private:
+    uint32_t assembleRTypeInstruction(std::istringstream& iss, const std::string& op);
+    uint32_t assembleJTypeInstruction(std::istringstream& iss, uint8_t opcode);
+    uint32_t assembleBranchInstruction(std::istringstream& iss, uint8_t opcode);
+    uint32_t assembleITypeInstruction(std::istringstream& iss, uint8_t opcode);
+    uint32_t assembleLoadStore(std::istringstream& iss, uint8_t opcode);
+    /*void expandBltz(std::istringstream& iss);
+    void expandBeqz(std::istringstream& iss);
+    void addInstruction(uint32_t& address, uint32_t machineCode, const std::string& assembly);*/
+
     std::string inputFileName;
     std::string outputFileName;
     std::vector<Instruction> instructionSet; // Stores all the instructions with details
-    uint32_t currentAddress;                 // Keeps track of instruction addresses
+    uint32_t currentAddress;
+    std::unordered_map<std::string, uint32_t> labelTable; // Keeps track of instruction addresses
+
+    void firstPass();
+    void secondPass();
 
     // Helper functions
     std::string trimWhitespace(const std::string& str);

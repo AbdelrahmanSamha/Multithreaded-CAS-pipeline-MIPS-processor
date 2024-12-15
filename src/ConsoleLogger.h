@@ -2,6 +2,7 @@
 #define CONSOLE_LOGGER_H
 
 #include <iostream>
+
 #include <mutex>
 #include <Windows.h>
 #include <sstream>
@@ -29,7 +30,7 @@ template<typename... Args>
 
         // Create a stringstream to handle concatenating different types
         std::stringstream ss;
-
+        ss << std::hex;  // Set hex formatting here, affecting all integer insertions in this stream
         // Using a fold expression to unpack the parameter pack and append to the stringstream
         (ss << ... << args);
 
@@ -62,6 +63,8 @@ template<typename... Args>
         startX = (threadIdx - 1) * width; // Use threadIdx-1 to match the correct column starting from 0.
 
         SetCursorPosition(startX, startY);
+
+
 
         // Output the result to the console
         std::cout << ss.str() << std::endl;

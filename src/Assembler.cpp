@@ -128,6 +128,7 @@ void Assembler::thirdPass() {
     std::vector<std::string> lines;
     std::string line;
     while (std::getline(inputFile, line)) {
+            
         if (line.substr(line.size() - 5) == ".text") {
             text_flag = true;
             line = trimWhitespace(line);

@@ -22,11 +22,16 @@ void MEMWB::writedata(int32_t PCin, int32_t MCin,
     this->ReadData = ReadDataIn;
     this->Address = AddressIn;
     this->WriteRegister = WriteRegisterIn;
-    ConsoleLog(4, "RegWriteEnIn", RegWriteEnIn);
-    ConsoleLog(4, "MemtoRegIn", MemtoRegIn);
-    ConsoleLog(4, "ReadDataIn", ReadDataIn);
-    ConsoleLog(4, "AddressIn", AddressIn);
-    ConsoleLog(4, "WriteRegisterIn", WriteRegisterIn);
+
+    ConsoleLog(4, "PCin=", PCin);
+    ConsoleLog(4, "MCin=", MCin);
+    ConsoleLog(4, "RegWriteEnIn=", RegWriteEnIn);
+
+    ConsoleLog(4, "RegWriteEnIn=", RegWriteEnIn);
+    ConsoleLog(4, "MemtoRegIn=", MemtoRegIn);
+    ConsoleLog(4, "ReadDataIn=", ReadDataIn);
+    ConsoleLog(4, "AddressIn=", AddressIn);
+    ConsoleLog(4, "WriteRegisterIn=", WriteRegisterIn);
     
 }
 
@@ -45,11 +50,13 @@ void MEMWB::readdata(int32_t& PCout, int32_t& MCout,
     AddressOut = this->Address; 
     WriteRegisterOut = this->WriteRegister;
 
-    ConsoleLog(5, "RegWriteEnOut", RegWriteEnOut);
-    ConsoleLog(5, "MemtoRegOut", MemtoRegOut);
-    ConsoleLog(5, "ReadDataOut", ReadDataOut);
-    ConsoleLog(5, "AddressOut", AddressOut);
-    ConsoleLog(5, "WriteRegisterOut", WriteRegisterOut);
+    ConsoleLog(5, "PCout=", PCout);
+    ConsoleLog(5, "MCout=", MCout);
+    ConsoleLog(5, "RegWriteEnOut=", RegWriteEnOut);
+    ConsoleLog(5, "MemtoRegOut=", MemtoRegOut);
+    ConsoleLog(5, "ReadDataOut=", ReadDataOut);
+    ConsoleLog(5, "AddressOut=", AddressOut);
+    ConsoleLog(5, "WriteRegisterOut=", WriteRegisterOut);
     ConsoleLog(5, "#################");
     s1.release();
 }

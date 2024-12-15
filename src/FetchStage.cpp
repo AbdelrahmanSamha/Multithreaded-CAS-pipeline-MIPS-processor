@@ -63,9 +63,9 @@ void FetchStage::Fetchjob() {
 
 // Fetch the machine code of the instruction based on Jump unit selection
 int32_t FetchStage::fetchInstruction(int32_t address) {
-    ConsoleLog(1, "JMuxSel for current Cycle=", JU->JmuxSel);
-    ConsoleLog(1, "BaddressE for current Cycle=", JU->MissTargetAddress);
-    ConsoleLog(1, "UnitAddressOutput for current Cycle=", JU->UnitAddressOutput);
+    ConsoleLog(1, "JMuxSel for current Cycle =", JU->JmuxSel);
+    ConsoleLog(1, "BaddressE for current Cycle =", JU->MissTargetAddress);
+    ConsoleLog(1, "UnitAddressOutput for current Cycle =", JU->UnitAddressOutput);
     int32_t currentIndex = address;
 
     // Check if the index is out of bounds

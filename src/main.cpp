@@ -1,5 +1,5 @@
 #include <iostream>
-#include <Windows.h>
+//#include <Windows.h>
 
 #include "Editor.h"
 #include "Assembler.h"
@@ -25,14 +25,18 @@
 
 int main() {
     //force the console window to be fullscreen since the ConsoleLogger deals with Y coordinates that need to be available before hand.
-    HWND console = GetConsoleWindow();
-    ShowWindow(console, SW_MAXIMIZE);
-
+    /*HWND console = GetConsoleWindow();
+    ShowWindow(console, SW_MAXIMIZE);*/
+    std::cout << "PLEASE MAKE SURE THE WINDOW OF THE TERMINAL IS MAXIMIZED..." << std::endl;
+    std::cout << "Press any key to continue..." << std::endl;
+    std::cin.get();
     // Define the temporary file name
     Editor editor;
-    std::cout << "Opening file for editing: " << editor.getFileName() << std::endl;
+    std::cout << "Enter your mips assembly code in the opened text file: " << editor.getFileName() << std::endl;
+    std::cout << "Make sure the first line contains \".text\" by it self to ensure proper machine code " << std::endl;
+    std::cout << "For more details on the syntax please check the appendix regarding the assembler in the documentation.. " << std::endl;
+    std::cout << "Edit the file and then save it. Press Enter when done..." << std::endl;
     editor.openFileForEditing();
-    std::cout << "Edit the file and then save it. Press Enter when done...";
     std::cin.get(); // Wait for user input before proceeding
 
     // Create Assembler instance

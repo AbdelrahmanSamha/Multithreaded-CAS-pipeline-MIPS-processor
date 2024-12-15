@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <cctype>
 
 using std::string;
 using std::vector;
@@ -25,7 +27,11 @@ std::unordered_map<std::string, uint8_t> registerMap = {
     {"$zero", 0}, {"$at", 1}, {"$v0", 2}, {"$v1", 3}, {"$a0", 4}, {"$a1", 5}, {"$a2", 6}, {"$a3", 7},
     {"$t0", 8}, {"$t1", 9}, {"$t2", 10}, {"$t3", 11}, {"$t4", 12}, {"$t5", 13}, {"$t6", 14}, {"$t7", 15},
     {"$s0", 16}, {"$s1", 17}, {"$s2", 18}, {"$s3", 19}, {"$s4", 20}, {"$s5", 21}, {"$s6", 22}, {"$s7", 23},
-    {"$t8", 24}, {"$t9", 25}, {"$k0", 26}, {"$k1", 27}, {"$gp", 28}, {"$sp", 29}, {"$fp", 30}, {"$ra", 31}
+    {"$t8", 24}, {"$t9", 25}, {"$k0", 26}, {"$k1", 27}, {"$gp", 28}, {"$sp", 29}, {"$fp", 30}, {"$ra", 31},
+    {"$0", 0}, {"$1", 1}, {"$2", 2}, {"$3", 3}, {"$4", 4}, {"$5", 5}, {"$6", 6}, {"$7", 7},
+    {"$8", 8}, {"$9", 9}, {"$10", 10}, {"$11", 11}, {"$12", 12}, {"$13", 13}, {"$14", 14}, {"$15", 15},
+    {"$16", 16}, {"$17", 17}, {"$18", 18}, {"$19", 19}, {"$20", 20}, {"$21", 21}, {"$22", 22}, {"$23", 23},
+    {"$24", 24}, {"$25", 25}, {"$26", 26}, {"$27", 27}, {"$28", 28}, {"$29", 29}, {"$30", 30}, {"$31", 31}
 };
 
 std::unordered_map<std::string, uint8_t> rtMap = {
@@ -34,17 +40,187 @@ std::unordered_map<std::string, uint8_t> rtMap = {
 };
 
 std::unordered_map<std::string, uint32_t> labelMap;
+std::unordered_map<std::string, std::string, uint32_t> labelMap_DataSeg;
 uint32_t currentAddress = 0x00400000;
-
+uint32_t currentAddress_DataSeg = 0x00400000;
 Assembler::Assembler(const std::string& inputFileName, const std::string& outputFileName)
     : inputFileName(inputFileName), outputFileName(outputFileName), currentAddress(0x00400000) {}
 
 void Assembler::assemble() {
+    fourthPass(); // data segment 
+    thirdPass(); // pseudo-instruction 
     // First pass: record labels
     firstPass();
 
     // Second pass: assemble instructions
     secondPass();
+}
+
+void Assembler::fourthPass() {
+    std::ifstream inputFile(inputFileName);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
+        return;
+    }
+
+    std::string line;
+    std::vector<std::string> lines;
+
+    while (std::getline(inputFile, line)) {
+        line = trimWhitespace(line);
+        if (line.empty()) { // Skip empty lines and comments
+            continue;
+        }
+        std::string line2;
+        if (line.size() >= 5 && line.substr(line.size() - 5) == ".data") { // Check if the line ends with ".data"
+
+            while (std::getline(inputFile, line2)) {
+                std::istringstream iss(line2);
+                std::string label_name, label_data, temp_data;
+
+                iss >> label_name;
+                label_name = trimWhitespace(label_name);
+                if (label_name == ".text") { // Check if code starts
+                    break;
+                }
+                if (!label_name.empty() && label_name.back() == ':') {
+                    label_name.pop_back(); // Remove ':' at the end
+                }
+
+                iss >> label_data;
+                label_data = trimWhitespace(label_data);
+
+                while (std::getline(iss, temp_data, ',')) {
+                    temp_data = trimWhitespace(temp_data);
+                    if (!temp_data.empty()) {
+                        lines.push_back(temp_data);
+                    }
+                }
+            }
+        }
+    }
+
+    // Close input file before opening for writing
+    inputFile.close();
+
+    std::ofstream outputFile("Data_Memory.txt", std::ios::trunc);
+    if (!outputFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+        return;
+    }
+    uint32_t currentAddress_DataSeg = 0;
+    for (const auto& updatedLine : lines) {
+        outputFile << currentAddress_DataSeg << ": " << updatedLine << std::endl;
+        currentAddress_DataSeg += 1;
+    }
+
+    outputFile.close();
+}
+
+void Assembler::thirdPass() {
+    // Read the file into memory
+    std::ifstream inputFile(inputFileName);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Unable to open input file: " << inputFileName << std::endl;
+        return;
+    }
+    bool text_flag = false; // flag to check if .text include file
+    std::vector<std::string> lines;
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        if (line.substr(line.size() - 5) == ".text") {
+            text_flag = true;
+            line = trimWhitespace(line);
+            lines.push_back(line);
+            while (std::getline(inputFile, line)) {
+                line = trimWhitespace(line);
+
+                if ((line.substr(0, 2) == "//") || line[0] == '#') {
+                    continue; // Skip lines starting with "//" or "#"
+                }
+
+                std::istringstream iss(line);
+                std::string op, format, rs, label;
+
+                iss >> op;
+                //remove lable before instruction
+                if (line.empty()) {
+                    continue;
+                }
+                if (op.back() == ':') {
+                    lines.push_back(op);
+                    line = removeBeforeColon(line);
+                    iss >> op;
+                }
+                if (line.empty()) {
+                    continue;
+                }
+                op = toLowerCase(op);
+                // check error in opcode moved from SecondPass to thirdPsas 
+                auto opcodeIt_flag = opcodeMap.find(op);
+                if (opcodeIt_flag == opcodeMap.end() && !(op == "bltz" || op == "bgez" || op == "nop")) {
+                    std::cerr << "Error: instruction are not allowed :" << op << std::endl;
+                    std::exit(0);
+                }
+
+                if (op == "bltz" || op == "bgez" || op == "nop") {
+                    // Extract register and label
+                    std::string line_SLT, line_branch;
+                    //support nop operation (sll $0,$0,0)
+                    if (op == "nop") {
+                        line_SLT = "sll $0,$0,0x0";
+                        lines.push_back(line_SLT);
+                        continue;
+                    }
+                    std::getline(iss, rs, ',');
+                    rs = trimWhitespace(rs);
+                    std::getline(iss, label);
+                    label = trimWhitespace(label);
+
+                    // Remove trailing commas if present
+                    if (rs.back() == ',') rs.pop_back();
+                    if (label.back() == ',') label.pop_back();
+
+                    // Generate replacement instructions
+
+                    line_SLT = "slt $27, " + rs + ", $zero";
+                    if (op == "bltz") {
+                        line_branch = "bne $27, $zero, " + label;
+                    }
+                    else { // bgez
+                        line_branch = "beq $27, $zero, " + label;
+                    }
+
+                    // Add the replacement instructions to the lines
+                    lines.push_back(line_SLT);
+                    lines.push_back(line_branch);
+                }
+                else {
+                    // Add the original line
+                    lines.push_back(line);
+                }
+            }
+        }
+    }
+    if (!text_flag) {
+        std::cerr << "Error: Could not find the '.text' segment in the file!" << std::endl;
+        return;
+    }
+    inputFile.close();
+
+
+    // Write updated content back to the same file
+    std::ofstream outputFile(inputFileName, std::ios::trunc);
+    if (!outputFile.is_open()) {
+        std::cerr << "Error: Unable to open the file for writing!" << std::endl;
+        return;
+    }
+
+    for (const auto& updatedLine : lines) {
+        outputFile << updatedLine << std::endl;
+    }
+    outputFile.close();
+
 }
 
 void Assembler::firstPass() {
@@ -56,23 +232,33 @@ void Assembler::firstPass() {
 
     std::string line;
     while (std::getline(inputFile, line)) {
-        line = trimWhitespace(line);
-        if (line.empty()) { // Skip empty lines and comments
-            continue;
-        }
-
-        if (!line.empty() && line.back() == ':') { // Simple label detection
-            std::string label = line.substr(0, line.size() - 1);
-            labelMap[label] = currentAddress;
+        if (line.substr(line.size() - 5) == ".text") { // start code from .text 
+            while (std::getline(inputFile, line)) {
+                line = trimWhitespace(line);
+                if (line.empty()) { // Skip empty lines and comments
+                    continue;
+                }
+                if ((line.size() >= 2 && line.substr(0, 2) == "//") || line.size() >= 1 && line[0] == '#') {
+                    continue; // Skip lines starting with "//" or "#"
+                }
+                std::istringstream iss(line);
+                std::string oop;
+                iss >> oop;
+                if (!oop.empty() && oop.back() == ':') { // Simple label detection
+                    std::string label = oop.substr(0, oop.size() - 1);
+                    labelMap[label] = currentAddress;
+                }
+                else {
+                    currentAddress += 4; // Increment address for the next instruction (assuming 4 bytes per instruction)
+                }
+            }
         }
         else {
-            currentAddress += 4; // Increment address for the next instruction (assuming 4 bytes per instruction)
+            continue;
         }
     }
-
     inputFile.close();
 }
-
 
 void Assembler::secondPass() {
     std::ifstream inputFile(inputFileName);
@@ -85,27 +271,33 @@ void Assembler::secondPass() {
 
     currentAddress = 0x00400000; // Reset current address for the second pass
     std::string line;
-    while (getline(inputFile, line)) {
-        uint32_t machineCode = assembleInstruction(line);
-        if (machineCode == 0xDEADBEEF) {
-            std::cerr << "Error assembling line: " << line << "\n";
-
-        }
-
-        else {
-            // Create and store the instruction
-            Instruction instr = { currentAddress, machineCode, line };
-            instructionSet.emplace_back(instr);
-            writeHexToAssembledFile(instr);
-            currentAddress += 4;
+    while (std::getline(inputFile, line)) {
+        if (line.substr(line.size() - 5) == ".text") {
+            while (getline(inputFile, line)) {
+                line = removeBeforeColon(line);
+                if (line.empty()) {
+                    continue;
+                }
+                uint32_t machineCode = assembleInstruction(line);
+                if (machineCode == 0xDEADBEEF) {
+                    std::cerr << "Error assembling line: " << line << "\n";
+                }
+                else {
+                    // Create and store the instruction
+                    Instruction instr = { currentAddress, machineCode, line };
+                    instructionSet.emplace_back(instr);
+                    writeHexToAssembledFile(instr);
+                    currentAddress += 4;
+                }
+            }
         }
     }
-
     inputFile.close();
     outputFile.close();
 }
 
 uint32_t Assembler::assembleInstruction(const std::string& instruction) {
+
     std::istringstream iss(trimWhitespace(instruction));
     std::string op, rd, rs, rt, label, immediateStr, address;
     uint8_t shamt = 0;
@@ -113,8 +305,8 @@ uint32_t Assembler::assembleInstruction(const std::string& instruction) {
 
 
     iss >> op;
+    op = toLowerCase(op);
     auto opcodeIt = opcodeMap.find(op);
-    if (opcodeIt == opcodeMap.end()) return 0xDEADBEEF;
 
     uint8_t opcode = opcodeIt->second;
 
@@ -170,6 +362,12 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             return 0xDEADBEEF;
         }
         rs = trimWhitespace(rs);
+        auto register_flag = registerMap.find(rs);
+        if (register_flag == registerMap.end()) {
+            std::cerr << "Error:" << rs << " register is not available" << std::endl;
+            std::exit(0);
+        }
+
         if (rs.back() == ',') {
             rs.pop_back();
         }
@@ -186,6 +384,17 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         return 0xDEADBEEF;
     }
     rd = trimWhitespace(rd);
+    //check rd register is available
+    auto registerRd_flag = registerMap.find(rd);
+    if (registerRd_flag == registerMap.end()) {
+        std::cerr << "Error:" << rd << " register is not available" << std::endl;
+        std::exit(0);
+    }
+    if (registerRd_flag->second == 27 && (op == "bgez" || op == "bltz")) {
+        std::cerr << "Error:" << rd << " register is reserved for pesudo-instruction" << std::endl;
+        std::exit(0);
+    }
+
     if (rd.back() == ',') {
         rd.pop_back();
     }
@@ -197,7 +406,7 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         if (rs.back() == ',') rs.pop_back();
         std::string shamtStr;
         iss >> shamtStr;
-        shamt = std::stoi(shamtStr);
+        shamt = hexToDecimal(shamtStr);
         return (0 << 26) |
             (registerMap[rs] << 21) |
             (registerMap[rt] << 16) |
@@ -243,12 +452,12 @@ uint32_t Assembler::assembleJTypeInstruction(std::istringstream& iss, uint8_t op
 uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rs, rt, label;
     //if (!(iss >> rs) || !(iss >> rt) || !(iss >> label)) return 0xDEADBEEF;
-    std::getline(iss, rs, ',');
-    rs = trimWhitespace(rs);
-    if (rs.back() == ',') rs.pop_back();
     std::getline(iss, rt, ',');
     rt = trimWhitespace(rt);
     if (rt.back() == ',') rt.pop_back();
+    std::getline(iss, rs, ',');
+    rs = trimWhitespace(rs);
+    if (rs.back() == ',') rs.pop_back();
     std::getline(iss, label, ',');
     label = trimWhitespace(label);
     if (label.back() == ',') label.pop_back();
@@ -263,8 +472,6 @@ uint32_t Assembler::assembleBranchInstruction(std::istringstream& iss, uint8_t o
         (offset & 0xFFFF);
 }
 
-
-
 uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t opcode) {
     std::string rt, rs, immediateStr;
     //if (!(iss >> rt) || !(iss >> rs) || !(iss >> immediateStr)) return 0xDEADBEEF;
@@ -275,7 +482,7 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
     rs = trimWhitespace(rs);
     if (rs.back() == ',') rs.pop_back();
     std::getline(iss, immediateStr, ',');
-    int16_t immediate = std::stoi(trimWhitespace(immediateStr));
+    int16_t immediate = hexToDecimal(trimWhitespace(immediateStr));
     if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
 
     return (opcode << 26) |
@@ -300,7 +507,6 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
     std::string offsetStr = offsetAndRs.substr(0, openParen);
     std::string rs = offsetAndRs.substr(openParen + 1, closeParen - openParen - 1);
 
-
     int16_t offset = std::stoi(trimWhitespace(offsetStr));
     if (offset < -32768 || offset > 32767) return 0xDEADBEEF;
 
@@ -311,6 +517,52 @@ uint32_t Assembler::assembleLoadStore(std::istringstream& iss, uint8_t opcode) {
         (offset & 0xFFFF);
 }
 
+// convert string to small latter 
+std::string Assembler::toLowerCase(const std::string& input) {
+    std::string result = input; // Copy the input string
+    std::transform(result.begin(), result.end(), result.begin(),
+        [](unsigned char c) { return std::tolower(c); });
+    return result;
+}
+
+std::string Assembler::removeBeforeColon(const std::string& line) {
+    size_t colonPos = line.find(':'); // Find the position of the first colon
+    if (colonPos != std::string::npos) {
+        return line.substr(colonPos + 1); // Return everything after the colon
+    }
+    return line; // Return the original line if no colon is found
+}
+
+uint32_t Assembler::hexToDecimal(const std::string& hexStr) {
+    if (hexStr.size() >= 2 && (hexStr[0] == '0') && (hexStr[1] == 'x' || hexStr[1] == 'X')) {
+        // Extract the part after "0x"
+        std::string cleanHexStr = hexStr.substr(2);
+
+        uint32_t decimalValue = 0;
+        uint32_t base = 16;
+
+        // Convert the hexadecimal part to decimal
+        for (char digit : cleanHexStr) {
+            digit = std::toupper(digit);
+
+            if (digit >= '0' && digit <= '9') {
+                decimalValue = decimalValue * base + (digit - '0');
+            }
+            else if (digit >= 'A' && digit <= 'F') {
+                decimalValue = decimalValue * base + (digit - 'A' + 10);
+            }
+            else {
+                std::cerr << "Invalid character in hexadecimal string." << digit << std::endl;
+                std::exit(0);
+            }
+        }
+        return decimalValue;
+    }
+    else {
+        std::cerr << "Input does not start with '0x' or '0X'." << hexStr << std::endl;
+        std::exit(0);
+    }
+}
 
 /*
 add $s0, $s1, $s2

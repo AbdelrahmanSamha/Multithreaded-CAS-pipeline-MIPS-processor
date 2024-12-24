@@ -372,8 +372,8 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             rs.pop_back();
         }
         return (0 << 26) |
-            (registerMap[rs] << 21) |
-            (0 << 16) |
+            (0 << 21) |
+            (registerMap[rs] << 16) |
             (0 << 11) |
             (0 << 6) |
             functMap[op];
@@ -408,9 +408,9 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
         iss >> shamtStr;
         shamt = hexToDecimal(shamtStr);
         return (0 << 26) |
-            (registerMap[rs] << 21) |
-            (registerMap[rt] << 16) |
-            (registerMap[rd] << 11) |
+            (registerMap[rd] << 21) |
+            (registerMap[rs] << 16) |
+            (registerMap[rt] << 11) |
             (shamt << 6) |
             functMap[op];
     }
@@ -429,9 +429,9 @@ uint32_t Assembler::assembleRTypeInstruction(std::istringstream& iss, const std:
             }
         }
         return  (00 << 26) |
-            (registerMap[rs] << 21) |
-            (registerMap[rt] << 16) |
-            (registerMap[rd] << 11) |
+             (registerMap[rd] << 21) |
+            (registerMap[rs] << 16) |
+            (registerMap[rt] << 11) |
             (shamt << 6) |
             functMap[op];
 
@@ -486,8 +486,8 @@ uint32_t Assembler::assembleITypeInstruction(std::istringstream& iss, uint8_t op
     if (immediate < -32768 || immediate > 32767) return 0xDEADBEEF;
 
     return (opcode << 26) |
-        (registerMap[rs] << 21) |
-        (registerMap[rt] << 16) |
+        (registerMap[rt] << 21) |
+        (registerMap[rs] << 16) |
         (immediate & 0xFFFF);
 }
 

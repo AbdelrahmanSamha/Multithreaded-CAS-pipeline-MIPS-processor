@@ -1,17 +1,42 @@
-.text
+data
+Arr: .word 0x5, 0x7, 0x2, 0xF, 0xA, 0x10, 0x30, 0x1, 0xFF, 0x55
+ .text
 main:
-ADDI $1, $0, A
-ORI $2, $0, 0xB
-XORI $3, $0, 0xC
-ADD $4, $1, $2
-SUB $5, $4, $3
-AND $6, $1, $3
-OR $7, $2, $3
-NOR $8, $2, $3
-XOR $9, $1, $2
-SLT $10, $1, $2
-SGT $11, $3, $1
-SLL $12, $1, 2
-SRL $13, $2, 1
-LW $14, 0x0($0)
-SW $4, 0x0($0)
+
+ORI $2, $0, 0x0 
+XORI $10, $0, 0x0 
+ADDI $20, $0, 0xA
+ADD $5, $0, $0
+ADDI $1, $0, 0x1 
+ADDI $22, $0, -1
+LOOP1:
+# ADD $5, $1, $0 # Word Addressing mode
+# SLL $5, $1, 2 # Byte Addressing mode
+LW $15, 0x0($5)
+OR $10, $15, $0
+ADDI $2, $1, -1
+LOOP2:
+# use one line according to your addressing mode
+# ADD $6, $2, $0 # Word Addressing mode
+# SLL $6, $2, 2 # Byte Addressing mode
+LW $16, 0x0($6)
+SGT $25, $2, $22
+SGT $26, $16, $10
+AND $27, $26, $25
+BEQ $27, $0, EXIT2
+ADDI $7, $2, 0x1
+# this line is commented, you may use it only if your memory is byte addressable
+# SLL $7, $7, 2
+SW $16, 0x0($7)
+ADDI $2, $2, -1
+J LOOP2
+EXIT2:
+ADDI $7, $2, 0x1
+# this line is commented, you may use it only if your memory is byte addressable
+# SLL $7, $7, 2
+SW $10, 0x0($7)
+ADDI $1, $1, 0x1
+SLT $28, $1, $20
+BNE $28, $0, LOOP1
+FINISH:
+NOP # (NOP equals to SLL $0, $0, 0)

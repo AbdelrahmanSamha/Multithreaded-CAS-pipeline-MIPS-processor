@@ -5,15 +5,6 @@
 #include "Assembler.h"
 #include "GlobalClock.h"
 
-#include "FetchStage.h"
-#include "IFID.h"
-#include "DecodeStage.h"
-#include "IDEXE.h"
-#include "ExecuteStage.h"
-#include "EXEMEM.h"
-#include "MemoryStage.h"
-#include "MEMWB.h"
-#include "WritebackStage.h"
 
 
 

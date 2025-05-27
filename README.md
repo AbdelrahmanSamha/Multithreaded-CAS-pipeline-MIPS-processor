@@ -12,7 +12,7 @@ altough this software was not completed fully it works for the architecture prov
 ![Sheet](IMAGES/refrencesheet.png)
 
 
-the assembler can be tricky to handle but if you follow the example found in the ../temp_insutrctions.txt file then you should be good to try the program. 
+the assembler can be tricky to handle but if you follow the example found in the ../temp_insutrctions.txt file then you should be good to try the program. <br> 
 note: the architecture was designed with 0-based word addressable memory, so trying a MARS program on here wont functoin correctly unless you configure the memory addressing on either end to be word addressable. 
 
 # Credits 
@@ -22,3 +22,5 @@ Ehab Sbieh <br>
 Ahmad Al-hajj <br>
 Nermeen Dawoud <br>
 
+# branches
+other branches found in the repository were for testing and future refrence, some of which dont even function properly or work. but i will keep them because they contain examples on multithreaded environment behaviors. 

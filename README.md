@@ -15,6 +15,7 @@ altough this software was not completed fully it works for the architecture prov
 the assembler can be tricky to handle but if you follow the example found in the ../temp_insutrctions.txt file then you should be good to try the program. 
 note: the architecture was designed with 0-based word addressable memory, so trying a MARS program on here wont functoin correctly unless you configure the memory addressing on either end to be word addressable. 
 this project was done by my team SB2P participating in JoSDC24. 
+
 Credits : 
 Abdelrahman Samha 
 Ehab Sbieh 

@@ -23,4 +23,4 @@ Ahmad Al-hajj <br>
 Nermeen Dawoud <br>
 
 # branches
-other branches found in the repository were for testing and future refrence, some of which dont even function properly or work. but i keep them because they contain examples on multithreaded environment behaviors. 
+other branches found in the repository were for testing and future refrence, some of which dont even function properly or work. but i keep them because they contain examples on multithreaded environment behaviors that can be useful at somepoint later on. 

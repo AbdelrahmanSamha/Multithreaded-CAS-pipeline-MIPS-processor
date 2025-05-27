@@ -6,10 +6,10 @@ the benifits of this project was by getting started with simulations and multith
 altough this software was not completed fully it works for the architecture provided below, the design itself was implemented also in verilog and tested using ModelSimand it is also documented (to be published soon).
 
 #Datapath view 
-![Datapath](IMAGES/DataPath.jpg)
+![Datapath](IMAGES/DataPath.png)
 
 #refrence sheet 
-![Sheet] (IMAGES/refrencesheet.jpg)
+![Sheet](IMAGES/refrencesheet.png)
 
 
 the assembler can be tricky to handle but if you follow the example found in the ../temp_insutrctions.txt file then you should be good to try the program. 

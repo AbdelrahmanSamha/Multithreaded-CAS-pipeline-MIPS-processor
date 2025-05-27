@@ -16,7 +16,7 @@ the assembler can be tricky to handle but if you follow the example found in the
 note: the architecture was designed with 0-based word addressable memory, so trying a MARS program on here wont functoin correctly unless you configure the memory addressing on either end to be word addressable. 
 
 # Credits 
-this project was done by my team SB2P. <br> 
+this project was done by my team "SB2P" : <br> 
 Abdelrahman Samha <br>
 Ehab Sbieh <br>
 Ahmad Al-hajj <br>

@@ -30,7 +30,7 @@ void WritebackStage::WBjob() {
 		ReadData, Address,
 		WriteRegister);
 		
-		ConsoleLog(5, "AfterCritical sec read");
+		
 		ConsoleLog(5, "wPC = ", std::hex, std::setw(8), std::setfill('0'), PC, " wMC = ", MC);
 		if (MemtoReg) {
 			OutWbMux = ReadData;

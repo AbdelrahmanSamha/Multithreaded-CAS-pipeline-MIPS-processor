@@ -128,5 +128,5 @@ MemoryStage::~MemoryStage() {
     if (Memorythread.joinable()) {
         Memorythread.join();
     }
-    dumpMemoryToFile("MEMORYYYY.txt"); // Dump memory to file on destruction
+    dumpMemoryToFile("DATAMEMORY.txt"); // Dump memory to file on destruction
 }

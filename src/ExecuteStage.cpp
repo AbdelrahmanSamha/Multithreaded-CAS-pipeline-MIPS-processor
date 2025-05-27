@@ -44,10 +44,8 @@ void ExecuteStage::Executejob() {
         int32_t TargetAddress = BranchAddress; 
         if (predictionE) { TargetAddress = PC;}
 
-        ConsoleLog(3, "TargetAddress= ", TargetAddress);
-        ConsoleLog(3, "EXEdata.readdata1= ", EXEdata.readdata1);
         ConsoleLog(3, "is_Hit= ", is_Hit);
-        ConsoleLog(3, "EXEdata.JrSignal= ", EXEdata.JrSignal);
+        
         ConsoleLog(3, "EXEdata.Branch= ", EXEdata.Branch);
         JU->JumpInputEXE(TargetAddress, EXEdata.readdata1, is_Hit, EXEdata.JrSignal,EXEdata.Branch);
         /////////////////////////////////////////////////////////JUMP UNIT REQUIRMENTSS
@@ -56,11 +54,11 @@ void ExecuteStage::Executejob() {
         //exe needs to wait for the memory input
         FU->WaitForMemoryInput();
         //Mux operation 
-        ConsoleLog(3, "READDATA MEM B4 Mux= ", FU->MEMreaddata);
+        
         Operand1=  Op1Mux(EXEdata.readdata1, PC , FU->MEMreaddata, EXEdata.FC);
       
         Operand2= Op2Mux(EXEdata.readdata2 ,EXEdata.immediate, FU->MEMreaddata ,EXEdata.FD);
-        ConsoleLog(3, "READDATA MEM after Mux= ", FU->MEMreaddata);
+        
         Out_RegDstM= RegDstMux(EXEdata.rt, EXEdata.rd, EXEdata.RegDst);
 
         //ALU
@@ -79,7 +77,7 @@ void ExecuteStage::Executejob() {
 
         
 		ConsoleLog(3, "ePC = ", std::hex, std::setw(8), std::setfill('0'),  PC, " eMC = ", MC);
-        ConsoleLog(3, "READDATA MEM after execute is finish= ", FU->MEMreaddata);
+        ConsoleLog(3, "READDATA MEM after execute= ", FU->MEMreaddata);
 	}
 }
 

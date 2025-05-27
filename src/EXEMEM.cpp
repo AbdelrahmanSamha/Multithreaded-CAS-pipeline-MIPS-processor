@@ -27,13 +27,16 @@ void EXEMEM::writedata(int32_t PCIn, int32_t MCin,
     this->WriteData =WriteDataIn ;
     this->Memreaddata = MemreaddataIn;
     this->WriteRegister = WriteRegisterIn;
-   /* ConsoleLog(3, "RegWriteEnIn", RegWriteEnIn);
-    ConsoleLog(3, "MemtoRegIn", MemtoRegIn);
-    ConsoleLog(3, "MemWriteEnIn", MemWriteEnIn);
-    ConsoleLog(3, "MemReadEnIn", MemReadEnIn);*/
-    ConsoleLog(3, "resultIn=", resultIn);
-   /* ConsoleLog(3, "WriteDataIn", WriteDataIn);
-    ConsoleLog(3, "WriteRegisterIn", WriteRegisterIn);*/
+    ConsoleLog(3, "PCIn=", PCIn);
+    ConsoleLog(3, "MCin=", MCin);
+    ConsoleLog(3, "RegWriteEnIn=", RegWriteEnIn);
+    ConsoleLog(3, "MemtoRegIn=", MemtoRegIn);
+    ConsoleLog(3, "MemWriteEnIn=", MemWriteEnIn);
+    ConsoleLog(3, "MemReadEnIn=", MemReadEnIn);
+    ConsoleLog(3, "resultIn==", resultIn);
+    ConsoleLog(3, "WriteDataIn=", WriteDataIn);
+    ConsoleLog(3, "MemreaddataIn=", MemreaddataIn);
+    ConsoleLog(3, "WriteRegisterIn=", WriteRegisterIn);
    
 }
 
@@ -57,14 +60,17 @@ void EXEMEM::readdata(int32_t& PCOut, int32_t& MCOut,
     WriteDataOut = this->WriteData;
     MemreaddataOut = this->Memreaddata;
     WriteRegisterOut = this->WriteRegister;
+    ConsoleLog(4, "PCOut=", PCOut);
+    ConsoleLog(4, "MCOut=", MCOut);
 
-    ConsoleLog(4, "RegWriteEnOut", RegWriteEnOut);
-    ConsoleLog(4, "MemtoRegOut", MemtoRegOut);
-    ConsoleLog(4, "MemWriteEnOut", MemWriteEnOut);
-    ConsoleLog(4, "MemReadEnOut", MemReadEnOut);
-    ConsoleLog(4, "resultOut", resultOut);
-    ConsoleLog(4, "WriteDataOut", WriteDataOut);
-    ConsoleLog(4, "WriteRegisterOut", WriteRegisterOut);
+    ConsoleLog(4, "RegWriteEnOut=", RegWriteEnOut);
+    ConsoleLog(4, "MemtoRegOut=", MemtoRegOut);
+    ConsoleLog(4, "MemWriteEnOut=", MemWriteEnOut);
+    ConsoleLog(4, "MemReadEnOut=", MemReadEnOut);
+    ConsoleLog(4, "resultOut=", resultOut);
+    ConsoleLog(4, "MemreaddataOut=", MemreaddataOut);
+    ConsoleLog(4, "WriteDataOut=", WriteDataOut);
+    ConsoleLog(4, "WriteRegisterOut=", WriteRegisterOut);
     ConsoleLog(4, "#################");
 
     s1.release();

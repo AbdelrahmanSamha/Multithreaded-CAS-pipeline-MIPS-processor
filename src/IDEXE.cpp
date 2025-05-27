@@ -38,22 +38,26 @@ void IDEXE::writedata(bool RegWriteEnin, bool MemtoRegin, bool MemWriteEnin, boo
     this->rt         = rtin;
     this->rd         = rdin;
     this->Prediction = PredictionInD;
-    ConsoleLog(2,"RegWriteEnin", std::hex, RegWriteEnin);
-    ConsoleLog(2,"MemWriteEnin", std::hex, MemWriteEnin);
-    ConsoleLog(2,"MemtoRegin", std::hex, MemtoRegin);
-    ConsoleLog(2,"MemReadEnin", std::hex, MemReadEnin);
-    ConsoleLog(2,"FCin", std::hex, FCin);
-    ConsoleLog(2,"FDin", std::hex, FDin);
-    ConsoleLog(2,"ALUOpin",std::hex, ALUOpin);
-    ConsoleLog(2,"RegDstin", std::hex, RegDstin);
-    ConsoleLog(2,"PCin", std::hex, PCin);
-    ConsoleLog(2,"readdata1in", std::hex, readdata1in);
-    ConsoleLog(2,"readdata2in", std::hex, readdata2in);
-    ConsoleLog(2,"immediatein", std::hex, immediatein);
-    ConsoleLog(2,"rsin", std::hex, rsin);
-    ConsoleLog(2,"rtin", std::hex, rtin);
-    ConsoleLog(2,"rdin", std::hex, rdin);
-
+    ConsoleLog(2,"MC=", std::hex, MC);
+    ConsoleLog(2, "PCin=", std::hex, PCin);
+    ConsoleLog(2,"RegWriteEnin=", std::hex, RegWriteEnin);
+    ConsoleLog(2,"MemWriteEnin=", std::hex, MemWriteEnin);
+    ConsoleLog(2,"MemtoRegin=", std::hex, MemtoRegin);
+    ConsoleLog(2,"MemReadEnin=", std::hex, MemReadEnin);
+    ConsoleLog(2,"FCin=", std::hex, FCin);
+    ConsoleLog(2,"FDin=", std::hex, FDin);
+    ConsoleLog(2, "JrSingalin=", std::hex, JrSingalin);
+    ConsoleLog(2, "Branchin=", std::hex, Branchin);
+    ConsoleLog(2, "ZeroSignalin=", std::hex, ZeroSignalin);
+    ConsoleLog(2,"ALUOpin=",std::hex, ALUOpin);
+    ConsoleLog(2,"RegDstin=", std::hex, RegDstin);
+    ConsoleLog(2,"readdata1in=", std::hex, readdata1in);
+    ConsoleLog(2,"readdata2in=", std::hex, readdata2in);
+    ConsoleLog(2,"immediatein=", std::hex, immediatein);
+    ConsoleLog(2,"rsin=", std::hex, rsin);
+    ConsoleLog(2,"rtin=", std::hex, rtin);
+    ConsoleLog(2,"rdin=", std::hex, rdin);
+    ConsoleLog(2, "Prediction=", std::hex, PredictionInD);
     
 }
 
@@ -88,21 +92,25 @@ void IDEXE::readdata(bool& MemWriteEnOut, bool& MemtoRegOut, bool& RegWriteEnOut
      rtOut         = this->rt;
      rdOut         = this->rd;
      PredictionOutE = this->Prediction;
-     /*ConsoleLog(3, "RegWriteEnOut", RegWriteEnOut);
-     ConsoleLog(3, "MemWriteEnOut", MemWriteEnOut);
-     ConsoleLog(3, "MemtoRegOut", MemtoRegOut);
-     ConsoleLog(3, "MemReadEnOut", MemReadEnOut);*/
+     ConsoleLog(3, "PCOut=", PCOut);
+     ConsoleLog(3, "MCOut=", MCOut);
+     ConsoleLog(3, "RegWriteEnOut=", RegWriteEnOut);
+     ConsoleLog(3, "MemWriteEnOut=", MemWriteEnOut);
+     ConsoleLog(3, "MemtoRegOut=", MemtoRegOut);
+     ConsoleLog(3, "MemReadEnOut=", MemReadEnOut);
      ConsoleLog(3, "FCOut=", FCOut);
-     ConsoleLog(3, "FDOut=", FDOut);
+     ConsoleLog(3, "JrSingalOut=", JrSingalOut);
+     ConsoleLog(3, "BranchOut=", BranchOut);
+     ConsoleLog(3, "ZeroSignalOut=", ZeroSignalOut);
      ConsoleLog(3, "ALUOpOut=", ALUOpOut);
      ConsoleLog(3, "RegDstOut=", RegDstOut);
-     ConsoleLog(3, "PCOut=", PCOut);
      ConsoleLog(3, "readdata1Out=", readdata1Out);
      ConsoleLog(3, "readdata2Out=", readdata2Out);
      ConsoleLog(3, "immediateOut=", immediateOut);
      ConsoleLog(3, "rsOut=", rsOut);
      ConsoleLog(3, "rtOut=", rtOut);
      ConsoleLog(3, "rdOut=", rdOut);
+     ConsoleLog(3, "PredictionOutE=", PredictionOutE);
      ConsoleLog(3, "#################");
 
     // Release semaphore 

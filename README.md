@@ -5,6 +5,7 @@ although this project didnt really see big benchmarks to make use of the faster 
 the benifits of this project was by getting started with simulations and multithreaded environments and to somewhat create an evaluation environment between multiple pipeline designs and a signle cycle design. 
 altough this software was not completed fully it works for the architecture provided below, the design itself was implemented also in verilog and tested using ModelSim and it is also documented can be found in the following repo: SB-2P/Pipeline-SingleCycle-design-evaluation.
 
+Please make sure to run the debug version of the code, as tests showed deadlocks in release mode that havent got attention yet. 
 # Documentation on how to operate
 [Full PDF here](Document/HowToOperate.pdf)
 
@@ -27,3 +28,4 @@ Nermeen Dawoud <br>
 
 # branches
 other branches found in the repository were for testing and future refrence, some of which dont even function properly or work. but i keep them because they contain examples on multithreaded environment behaviors that can be useful at somepoint later on. 
+ 

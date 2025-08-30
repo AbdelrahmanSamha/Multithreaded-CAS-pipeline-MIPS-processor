@@ -8,7 +8,7 @@ altough this software was not completed fully it works for the architecture prov
 # Documentation on how to operate
 [Full PDF here](Document/HowToOperate.pdf)
 
-# Datapath view 
+# Simulated Datapath view 
 ![Datapath](IMAGES/DataPath.png)
 
 # refrence sheet 
